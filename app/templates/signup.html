@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="form">
+  <h2>Sign up</h2>
+
+ {% for field in form.errors %}
+{% for error in form.errors[field] %}
+    <div class="alert alert-error">
+        <strong>Oops...</strong> {{error}}.
+    </div>
+{% endfor %}
+{% endfor %}
+
+  <form action="{{ url_for('signup') }}" method=post>
+    {{ form.hidden_tag() }}
+
+    {{ form.firstname.label }}
+    {{ form.firstname }}
+
+    {{ form.lastname.label }}
+    {{ form.lastname }}
+
+    {{ form.email.label }}
+    {{ form.email }}
+
+    {{ form.password.label }}
+    {{ form.password }}
+
+    <p><input id="submit" name="submit" type="submit" class="btn btn-inverse" value="Create account"></p>
+  </form>
+</div>
+{% endblock %}

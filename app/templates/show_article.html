@@ -1,0 +1,11 @@
+{% extends "test.html" %}
+{% from '_macros.html' import render_post %}
+    <h1>{{ article.title }}</h1>
+
+    <p>{{ article.created_in_words }} | {{ article.category }}</p>
+    <p>{{ article.body | safe}}</p>
+
+{% block content %}
+    {{ render_post(article) }}
+    <hr/>
+{% endblock %}

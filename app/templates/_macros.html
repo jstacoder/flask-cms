@@ -1,0 +1,81 @@
+{% macro render_field(field) %}
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+  {% if field.type == "BooleanField" %}
+    {{ field }}
+    {{ field.label(class="control-label") }}
+  {% else %}
+    {{ field.label(class="control-label") }}
+    {% if field.errors %}
+        {% for error in field.errors %}
+          <div class="help-block">
+            {{ error }}
+          </div>
+        {% endfor %}
+    {% endif %}
+    {{ field(class_="form-control")|safe }}
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_post(post) %}
+<div id="post-title">
+  <h3><strong>{{ post.title|safe }}</strong></h3>
+</div>
+<div id="post-meta">
+    <small>Posted {{ post.created_in_words }} ago</small>
+    <small>By: {{ post.author }}</small>
+</div>
+<div id="post-markup">
+  {{ post.body|markdown }}
+</div>
+{% if post.is_updated %}
+  <div>
+    <p>
+      <small><em>Updated {{ post.updated|datetime }}</em></small>
+    </p>
+  </div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_nav_dropdown(label,link_list) %}
+    {# link_list should be list of (action,endpoint) or ('sep',None) #}
+    <a class=dropdown-toggle data-toggle=dropdown>{{ label }}<b class=caret></b></a>
+    <ul class=dropdown-menu>
+        {% for action,endpoint in link_list.items() %}
+            {% if not endpoint  is none %}
+                <li><a href="{{ url_for(endpoint) }}">{{ action }}</a></li>
+            {% else %}
+                {% if action == 'sep' %}
+                    <li class=divider></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% macro render_tags(tags) %}
+    <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas" id="class-sidebar"  role="navigation">
+        <ul class="list-group">
+            <li href="#" class="list-group-item active">Tags</li>
+            {% for tag in tags %}
+                <a href="{{ url_for('tag',tag=tag.name) }}"><li class="list-group-item{% if tag.name in request.url %} active{% endif %}">{{ tag.name }}</li></a>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}
+
+
+{% macro render_categories(cats) %}
+    <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas" id="cat-sidebar"  role="navigation">
+        <ul class="list-group">
+            <li href="#" class="list-group-item active">Categories
+            </li>
+            {% for cat in cats  %}
+               <a href="{{ url_for('category',category=cat.name) }}">
+                    <li class="list-group-item{% if cat.name in request.url %} active{% endif %}">{{ cat.name }}
+                    </li>
+               </a>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro %}

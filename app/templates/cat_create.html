@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6-sm">
+        <h2>Create {{ item_type|title }}</h2>
+    <form action="{{ url_for(item_type) }}" method=post>
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }}
+    {{ form.name }}
+
+    {{ form.description.label }}
+    {{ form.description }}<br/>
+
+
+    <input id="submit" name="submit" class="btn btn-inverse" type="submit" value="Create {{ item_type|title }}">
+  </form>
+  </div>
+            <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                </div>  
+            </div><!--/span-->
+        </div>
+    </div>
+{% endblock %}

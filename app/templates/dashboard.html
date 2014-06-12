@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if not articles  %}
+    <div class="dash">
+        <h1>Its Lonely here, Create Some Articles</h1>
+        <p class="btn-dash"><a href="{{ url_for('article_create') }}" class="btn btn-inverse">Get Started</a></p><br/>
+    </div>
+    {% else %}
+
+    <table class="table table-hover table-bordered">
+    <thead>
+          <tr>
+            <th>Article Name</th>
+            <th>Category</th>
+            <th>View Article</th>
+            <th>View Catagorys</th>
+            <th>Edit Article</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+           {% for posts in articles %}
+        <tr class="info">
+            <td><p class=lead>{{ posts.title }}</p></td>
+            <td><p class=lead>{{ posts.category }}</p></td>
+            <td><a class="btn btn-default" href="{{ url_for('show_article', id=posts.id, slug=posts.slug) }}">{{ posts.title }}&nbsp;&nbsp;<span class="glyphicon glyphicon-file "></span></a></td>
+            <td><a class="btn btn-default" href="{{ url_for('category_articles', category=posts.category) }}">see all {{ posts.category }}&nbsp;&nbsp;<span class="glyphicon glyphicon-list-alt pull-right"</span></a></td>
+            <td><a class="btn btn-default" href="{{ url_for('article_update', id=posts.id, slug=posts.slug) }}">Edit&nbsp;&nbsp;<span class="glyphicon glyphicon-pencil pull-right"></span></a></td>
+            <td><a class="btn btn-danger" href="{{ url_for('delete', id=posts.id, slug=posts.slug) }}">Delete&nbsp;&nbsp;<span class="glyphicon glyphicon-trash pull-right"></span></a></td>
+        </tr>
+        {% endfor %}
+
+    </table>
+{% endif %}
+{% endblock %}

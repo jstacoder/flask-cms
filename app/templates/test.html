@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Example of Twitter Bootstrap 3 Fixed Navbar</title>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</head> 
+<body>
+    <nav role="navigation" class="navbar navbar-inverse navbar-static-top">
+    <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand pull-left" href="/">Project name</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li {% if request.endpoint == 'home' %} class="active" {% endif %}><a href="{{ url_for('index') }}">Home</a></li>
+              <li {% if request.endpoint == 'about' %} class="active" {% endif %}><a href="{{ url_for('about') }}">About</a></li>
+            </ul>
+              {% if 'email' in session %}
+            <ul class="nav navbar-nav">
+                <li><a class=nav-link href="{{ url_for('dashboard', name=name) }}">DashBoard</a></li>
+                <li><a class=nav-link href="{{ url_for('article_create') }}">Create Article</a></li>
+            </ul>
+            <ul class="nav navbar-nav pull-right">
+                <li class="navbar-text">
+                    <p>{{ session.get('email') }}</p>
+                </li>
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown"
+                       class="dropdown-toggle">Admin Area <b class="caret"></b></a>
+                    <ul class="nav navbar-nav dropdown-menu" role=navigation>
+                        <li><a class=nav-link href="{{ url_for('settings') }}">Settings</a></li>
+                        <li><a class=nav-link href="{{ url_for('signout') }}">SignOut</a></li>
+                        <li><a>Action</a></li>
+                        <li><a>Another action</a></li>
+                        <li><a>Something else here</a></li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Nav header</li>
+                        <li><a>Separated link</a></li>
+                        <li><a>One more separated link</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+            {% else %}
+                <ul role="navigation" class="nav navbar-nav">
+    
+                    <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+                    <li><a href="{{ url_for('signin') }}">Sign In</a></li>
+
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    </nav>
+
+<div class="container">
+<!-- Body is here -->
+    {% block content %} {% endblock content %}
+    {% block body %} {% endblock body %}
+</div>
+<nav role="navigation" class="navbar navbar-inverse navbar-fixed-bottom">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-text">          
+        <p>&copy; - Kyle Roux 2014
+    </div>
+    </nav>
+    <script type="text/javascript" src="http://getbootstrap.com/examples/offcanvas/offcanvas.js"></script>
+</body>
+</html>                                		

@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="form">
+    <h2>Sign In</h2>
+
+ {% for field in form.errors %}
+{% for error in form.errors[field] %}
+    <div class="alert alert-error">
+        <strong>Oops...</strong> {{error}}.
+    </div>
+{% endfor %}
+{% endfor %}
+
+  <form action="{{ url_for('signin') }}" method=post>
+    {{ form.hidden_tag() }}
+
+    {{ form.email.label }}
+    {{ form.email }}
+
+    {{ form.password.label }}
+    {{ form.password }}
+
+      <p> <input id="submit" name="submit" type="submit" class="btn btn-inverse" value="Sign In"></p>
+  </form>
+</div>
+{% endblock %}

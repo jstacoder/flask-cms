@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="form">
+  <h2>Edit Profile</h2>
+
+ {% for field in form.errors %}
+{% for error in form.errors[field] %}
+    <div class="alert alert-error">
+        <strong>Oops...</strong> {{error}} for "{{ field }}".
+    </div>
+{% endfor %}
+{% endfor %}
+
+  <form action="{{ url_for('settings') }}" method=post>
+    {{ form.hidden_tag() }}
+
+    {{ form.firstname.label }}
+    {{ form.firstname }}
+
+    {{ form.lastname.label }}
+    {{ form.lastname }}
+
+    {{ form.password.label }}
+    {{ form.password }}
+
+    <p><input id="submit" name="submit" type="submit" class="btn btn-inverse" value="Update"></p>
+  </form>
+        <hr/>
+    <div class="btn-delete">
+    <a href="{{ url_for('delete_profile') }}" class="btn btn-danger btn-block">Delete Account</a>
+    </div>
+    </div>
+{% endblock %}

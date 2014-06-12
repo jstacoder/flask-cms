@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <h2>Create Article</h2>
+
+
+    <form action="?{{ request.query_string }}" method=post>
+    {{ form.hidden_tag() }}
+
+    {{ form.title.label }}
+    {{ form.title(style="width:341px;") }}<br /><br />
+
+    {{ form.body.label }}
+    {{ form.body(style="height:370px;width:338px;") }}
+
+
+    {{ form.person_name }}
+
+    <div class=button-group>
+       <input id="submit" name="submit" class="btn btn-default" type="submit" value="Create article">
+       <a href="{{ url_for('category') }}" class="btn btn-default">Create New Category</a>
+       <br />
+       <a href="{{ url_for('tag') }}" class="btn btn-default">Create New Tag</a>
+        <hr/>
+    </div>
+
+    <ul class=input-group>
+        <li>
+        {{ form.category.label }}
+        {{ form.category }}
+        </li>
+        <li>
+        {{ form.tags.label }}
+        {{ form.tags }}
+        </li>
+    </ul>
+</form>
+
+{% endblock %}

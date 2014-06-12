@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}"/>
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>-->
+    <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/bootstrap.js') }}"></script>
+    <script type="text/javascript"> $(document).ready(function () { $('.dropdown-toggle').dropdown(); }); </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='tinymce/tinymce.min.js') }}"></script>
+    <script type="text/javascript">
+    tinymce.init({
+    selector: "textarea"
+    });
+    </script>
+</head>
+
+<body>
+
+<div class="container">
+ <div class="navbar navbar-static navbar-inverse">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}"class="brand">FlaskBlog</a>
+            <ul role="navigation" class="nav">
+                     {% if 'email' in session %}
+
+                <li><a href="{{ url_for('dashboard', name=name) }}">DashBoard</a></li>
+                <li><a href="{{ url_for('article_create') }}">Create Article</a></li>
+
+            </ul>
+            <ul class="nav pull-right">
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown"
+                       class="dropdown-toggle">Admin Area <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('settings') }}">Settings</a></li>
+                        <li><a href="{{ url_for('signout') }}">SignOut</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+        {% else %}
+            <ul role="navigation" class="nav">
+
+                <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+                <li><a href="{{ url_for('signin') }}">Sign In</a></li>
+
+            </ul>
+          {% endif %}
+        </div>
+    </div>
+    <div class="header">
+        <h1 style="background-color: grey;">Flask Blog</h1>
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+    <div class="modal-footer" style="width:100%;">
+        <h4>&copy; pypix</h4>
+    </div>
+</div>
+</body>
+</html>
+
