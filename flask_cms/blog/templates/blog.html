@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+    {% block header %}
+        {% include 'header.html' with context %}
+    {% endblock header %}
+{% block content %}
+    <h2>Hi there member {{ member_id }}</h2>
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="panel">
+                    <h2 class="page-header">{% if blog %}{{ blog.title }}{% else %}Latest Blog Posts{% endif %}</h1>
+                    <hr/>
+                </div>
+                {%   for post in articles %}
+                    <h3><a href="{{ url_for('show_article', id=post.id, slug=post.slug) }}">{{ post.title }}</a></h3>
+                    <p>{{ post.body|truncate(200)| safe }}</p>
+                    <h6>
+                        By <a href="author/{{ post.person_name }}">{{ post.person_name }}</a> |
+                        {{ post.created_in_words }} ago |
+                        <a href="category/{{ post.category_name }}">{{ post.category_name }}</a>
+                    </h6>
+                    <hr/>
+                {% endfor %}
+            </div>
+    
+            <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas" id="sidebar" role="navigation">
+                <div class="list-group">
+                    <a href="#" class="list-group-item active">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                    <a href="#" class="list-group-item">Link</a>
+                </div>  
+            </div><!--/span-->
+        </div>
+{% endblock %}

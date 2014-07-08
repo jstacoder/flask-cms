@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            {% if admin is defined %}
+            body { padding-top:75px;}
+            {% endif %}
+        </style>
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css" />
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap-theme.css" />
+        {#<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}" />#}
+        {% if title is defined %}
+            <title>{{ title }}</title>
+        {% endif %}
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    <body style="{% if body_style %}{% block body_style %}{{ body_style }}{% endblock body_style %}{% else %}padding-top:75px;{% endif %}">
+        {% if not admin %}
+            <div class=container>
+        {% endif %}
+        {% block header %}
+            {% include 'admin/_header.html' with context %}
+        {% endblock header %}
+        {% if admin %}
+            <div class=container>
+        {% endif %}
+        {% block messages %}
+            {% include 'includes/_messages.html' with context %}
+        {% endblock messages %}
+        {% block body %}{% endblock body %}
+        {% block content %}{% endblock content %}
+                <footer>
+                    {% block footer %}{% endblock footer %}
+                </footer>
+            </div>
+        {% block footer_js %}
+            <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+            <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js">
+            </script>
+        {% endblock footer_js %}
+    </body>
+</html>

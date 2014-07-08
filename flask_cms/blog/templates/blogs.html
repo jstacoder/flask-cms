@@ -1,0 +1,11 @@
+{% extends "test.html" %}
+{% block content %}
+    <div class=container>
+    <h1>{{ article.title }}</h1>
+
+    <p>{{ article.created_in_words }} | {{ article.category }}</p>
+    <p>{{ article.body | safe}}</p>
+
+    <hr/>
+</div>
+     {% endblock %}
