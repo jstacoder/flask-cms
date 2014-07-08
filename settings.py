@@ -9,13 +9,13 @@
 import os
 
 class BaseConfig(object):
-    RECAPTCHA_PUBLIC_KEY = '01rJFTGDxZSREpHGjgAO1cNQ=='
-    RECAPTCHA_PRIVATE_KEY = 'd533336a9e85325ee74c50c5f86e0542'
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     ADMIN_PER_PAGE = 5
     CODEMIRROR_LANGUAGES = ['python','python2','python3','php','javascript','xml']
     CODEMIRROR_THEME = '3024-day'
     SECRET_KEY = 'A Secret Shhh'
-    SQLALCHEMY_DATABASE_URI = 'mysql://test:test@174.140.227.137/test_ee'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     CSRF_ENABLED = True
@@ -100,5 +100,5 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://test:test@174.140.227.137/test_ee'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI')
     
