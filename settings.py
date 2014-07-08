@@ -9,8 +9,8 @@
 import os
 
 class BaseConfig(object):
-    RECAPTCHA_PUBLIC_KEY = '01rJFTGDxZSREpHGjgAO1cNQ=='
-    RECAPTCHA_PRIVATE_KEY = 'd533336a9e85325ee74c50c5f86e0542'
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
     ADMIN_PER_PAGE = 5
     CODEMIRROR_LANGUAGES = ['python','python2','python3','php','javascript','xml']
     CODEMIRROR_THEME = '3024-day'
