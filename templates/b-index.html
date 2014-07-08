@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+    {% macro render_sidebar_item(label,endpoint) %}
+        <a href="{{ url_for(endpoint,**kwargs) }}" class="list-group-item autohover">{{ label }}</a>
+    {% endmacro %}
+    {% macro start_sidebar(title) %}
+        <div class="col-xs-6 col-sm-3 col-md-2 sidebar-offcanvas" id="sidebar" role="navigation">
+            <div class="list-group">
+                <div class="list-group-item well">
+                    <h2>{{ title }}</h2>
+                </div>
+    {% endmacro %}
+    {% macro end_sidebar %}
+        </div>
+    </div>
+    {% endmacro %}
+    {% macro render_sidebar(title,items) %}
+        {{ start_sidebar(title) }}
+        {% for lbl, endpoint, kwargs in items %}
+            {{ render_sidebar_item(lbl,endpoint,**kwargs) }}
+        {% endfor %}
+        {{ end_sidebar() }}
+    {% endmacro %}
+    {% block header %}
+        {% include 'header.html' with context %}
+    {% endblock header %}
+    {% block body %}
+    {% if articles %}
+        {% for a in articles %}
+            {{ a }}
+        {% endfor %}
+    {% endif %}
+    <a class="btn btn-default" id="addInput">add</a>
+    <div id="addItem"></div>
+    {#{% block sidebar %}
+        {% if sidebar_data %}
+            {% for title,items in sidebar_data %}
+                {{ render_sidebar(title,items) }}
+            {% endfor %}
+        {% endif %}
+        {% endblock sidebar %}#}
+    {% endblock body %}
+{% block footer_js %}
+{{ super() }}
+<script type=text/javascript>
+    $(document).ready(function() {
+        $(".autohover").hover(function() {
+            $(this).addClass('active');
+        }, function() {
+            $(this).removeClass('active');
+    });
+});
+    $(document).on("click","#addInput",function(){
+            var input = '<input class="form-control" type="text" value="new" />';
+            $("#addItem").append(input);
+});
+</script>
+
+{% endblock footer_js %}
