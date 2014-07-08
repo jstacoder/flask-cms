@@ -6,4 +6,3 @@ CMD='runserver'
 PY='/usr/bin/python'
 
 $PY $TGT $CMD --host=$HOST --port=$PORT
-
