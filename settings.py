@@ -15,7 +15,7 @@ class BaseConfig(object):
     CODEMIRROR_LANGUAGES = ['python','python2','python3','php','javascript','xml']
     CODEMIRROR_THEME = '3024-day'
     SECRET_KEY = 'A Secret Shhh'
-    SQLALCHEMY_DATABASE_URI = 'mysql://test:test@174.140.227.137/test_ee'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     CSRF_ENABLED = True
