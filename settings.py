@@ -100,5 +100,5 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://test:test@174.140.227.137/test_ee'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI')
     
