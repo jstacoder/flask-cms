@@ -10,6 +10,7 @@ class BaseView(MethodView):
     _context = {}
     _form_obj = None
     _obj_id = None
+    _form_args = []
 
     def render(self,**kwargs):
         if self._template is None:
@@ -21,7 +22,7 @@ class BaseView(MethodView):
                 if self._form_obj is not None:
                     self._context['form'] = self._form(obj=self._form_obj)
                 else:
-                    self._context['form'] = self._form()
+                    self._context['form'] = self._form(*self._form_args)
                 if self._obj_id is not None:
                     self._context['obj_id'] = self._obj_id
             else:

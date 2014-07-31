@@ -1,14 +1,15 @@
-from .views import (AdminDashboardView,AdminPageView,
-                    AdminTemplateView,AdminBlockView,
-                    AdminCMSListView,AdminListPageView,
-                    AdminDetailView,AdminEditView,
-                    PageListView,AdminBlogView,AdminAddCategoryView,
-                    AdminAddBlogView)
 from admin import admin
+from .views2 import AdminTemplateView as AddAdminTemplateView
+from .views import (AdminDashboardView,AdminPageView,AdminTemplateView,AdminBlockView,
+                    AdminCMSListView,AdminListPageView,AdminDetailView,AdminEditView,
+                    PageListView,AdminBlogView,AdminAddCategoryView,AdminAddBlogView)
+
 
 routes = [
         ((admin),
             ('',AdminDashboardView.as_view('index')),
+            ('/template/add',AddAdminTemplateView.as_view('template_add')),
+            ('/template/add/item_id',AddAdminTemplateView.as_view('template_edit')),
             ('/settings',AdminDashboardView.as_view('settings')),
             ('/add/category',AdminAddCategoryView.as_view('add_category')),
             ('/add/page',AdminPageView.as_view('add_page')),

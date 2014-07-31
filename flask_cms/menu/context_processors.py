@@ -51,7 +51,7 @@ def admin_nav():
                                     Blogs='admin.blocks',
                                     Pages='admin.pages',
                                     Templates='admin.templates',
-                                    Macros='admin.macros',
+                                    #Macros='admin.macros',
                               )
                     ),
                 dict(
