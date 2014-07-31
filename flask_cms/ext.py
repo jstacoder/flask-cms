@@ -11,11 +11,11 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.wtf import Form
 from flask.ext.codemirror import CodeMirror
 from flask.ext.pagedown import PageDown
-from flask.ext.script import Manager
+#from flask.ext.script import Manager
 from flask.ext.alembic import Alembic
 
 
-manager = Manager()
+#manager = Manager()
 pagedown = PageDown()
 db = SQLAlchemy()
 codemirror = CodeMirror()

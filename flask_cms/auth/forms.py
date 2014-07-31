@@ -2,7 +2,7 @@ from ext import Form
 from wtforms import fields, validators
 
 class BaseUserForm(Form):
-    email = fields.StringField('Email Address',validators=[validators.DataRequired(),
+    email = fields.StringField('Email Address',validators=[validators.InputRequired(),
                                 validators.Email()])
     password = fields.PasswordField('Password',validators=[validators.DataRequired()])
 

@@ -1,10 +1,20 @@
-from basemodels import BaseMixin
-from datetime import datetime
+from main.basemodels import BaseMixin
+import datetime
 from ext import db
 from flask import url_for
+from flask.templating import render_template_string as render_str
+import pickle
+from sqlalchemy.ext.hybrid import hybrid_property
+from jinja_tools import Block as BlockBase
 
 for attr in dir(db):
     globals()[attr] = getattr(db,attr)
+
+
+pages_macros = Table('pages_macros',
+    Column('page_id',Integer,ForeignKey('pages.id')),
+    Column('macro_id',Integer,ForeignKey('macros.id'))
+)
 
 class Page(BaseMixin,Model):
     __tablename__ = 'pages'
@@ -14,19 +24,21 @@ class Page(BaseMixin,Model):
     template_id = Column(Integer,ForeignKey('templates.id'))
     template = relationship('Template',backref=backref(
                 'pages',lazy='dynamic'))
-    blocks = relationship('Block',secondary='pages_blocks',
-            backref=backref('pages',lazy='dynamic'),lazy='dynamic')
     slug = Column(String(255))
     title = Column(String(255))
     add_to_nav = Column(Boolean,default=False)
-    #date_added = Column(DateTime,default=datetime.datetime)
+    add_left_sidebar = Column(Boolean,default=False)
+    add_right_sidebar = Column(Boolean,default=False)
+    date_added = Column(DateTime,default=datetime.datetime)
     visible = Column(Boolean,default=False)
     meta_title = Column(String(255))
-    content = Column(Text)
-    use_base_template = Column(Boolean,default=True)
     added_by = relationship('User',backref=backref(
         'pages',lazy='dynamic'))
     user_id = Column(Integer,ForeignKey('users.id'))
+    short_url = Column(String(255))
+    macros = relationship('Macro',secondary='pages_macros',
+                            backref=backref('pages',lazy='dynamic'),
+                            lazy='dynamic')
 
     def __repr__(self):
         if self.name is None:
@@ -34,15 +46,10 @@ class Page(BaseMixin,Model):
         else:
             rtn = '<Page: {} | {} lines'.format(self.name,self.line_count)
         return rtn
-       
-
-    @property
-    def add_to_sidebar(self):
-        return self.add_to_nav
 
     def _get_page_url(self):
         return url_for('page.pages',slug=self.slug)
-    
+
     @staticmethod
     def _get_create_url():
         return url_for('admin.add_page')
@@ -67,26 +74,66 @@ class Page(BaseMixin,Model):
         except:
             rtn = 0
         return rtn
-    
+
     @property
     def template_name(self):
         return self.template.name or ''
 
     @property
     def block_count(self):
-        return self.blocks.count()
+        return self.template.blocks.count()
+
+    @property
+    def blocks(self):
+        return self.template.blocks.keys()
 
 
 class Template(BaseMixin,Model):
     __tablename__ = 'templates'
+
+    name = Column(String(255),nullable=False,unique=True)
+    description = Column(Text)
+    body = Column(Text)
+    base_template = Column(String(255))
     
-    name = Column(String(255))
-    body = Column(UnicodeText)
-    filename = Column(String(255))
-    blocks = relationship('Block',secondary='templates_blocks',
-                            backref=backref(
-                            'templates',lazy='dynamic'),
-                            lazy='dynamic')
+
+    def __init__(self,*args,**kwargs):
+        self._raw_template = ''
+        self._head = ''
+        for attr in ['name','body','filename']:
+            tmp = kwargs.pop(attr,None)
+            if tmp is not None:
+                self.__dict__[attr] = attr
+        base = kwargs.pop('base_template',None)
+        if base is None:
+            self.is_base_template = True
+        else:
+            self.is_base_template = False
+            self._add_to_head(self._create_extend(base))
+        if self.body:
+            self._set_template()
+
+    def _add_to_head(self,itm):
+        self._head = self._head + '\n' + itm
+
+    def _create_extend(self,parent):
+        return '{% extends "%s" %}' % parent
+
+    def _set_template(self):
+        from jinja2 import Template
+        self._raw_template = Template(self._head + self.body[:])
+
+    @property
+    def block_count(self):
+        return len(self._raw_template.blocks)
+
+    @property
+    def blocks(self):
+        return self._raw_template.blocks.keys()
+
+    def set_body(self,data):
+        self.body = data
+        self._set_template()
 
     @property
     def body_body(self):
@@ -110,8 +157,8 @@ class Template(BaseMixin,Model):
         return rtn
 
     def __str__(self):
-        return self.body
-        
+        return self.body or ''
+
     @staticmethod
     def _get_create_url():
         return url_for('admin.add_template')
@@ -124,29 +171,51 @@ class Template(BaseMixin,Model):
             rtn = 0
         return rtn
 
-    @property
-    def sections(self):
-        return ['a','b','c']
 
-    def process_blocks(self,blocks):
-        for b in blocks:
-            if b.section in self.sections:
-                self.add_block(b)
-
-    def add_block(self,block):
-        self._temp = self.body[:] % block
-     
+    def get_block_count(self):
+        return len(self._raw_template.blocks.keys())
+    
+    @staticmethod
+    def get_base_templates():
+        return []
 
 class Block(BaseMixin,Model):
     __tablename__ = 'blocks'
-    
+
     name = Column(String(255))
-    content = Column(String(1000))
-    description = Column(String(255))
-    
+    content = Column(Text)
+
+    def __init__(self,name='',content=''):
+        self.name = name
+        self.content = content
+
+
+    @property
+    def head(self):
+        start = '{% block '
+        mid = self.name
+        end = ' %}'
+        return start + mid + end
+
+    @property
+    def foot(self):
+        start = '{% endblock '
+        mid = self.name
+        end = ' %}'
+        return start + mid + end
+
+    def set_content(self,data):
+        self.content = data
+
+    def __call__(self):
+        return self.render()
+
     def __str__(self):
+        return self.head + '\n' + self.content + '\n' + self.foot
+
+    def render(self):
         s = self.content.split('\n')
-        return '<br />'.join(map(str,s))
+        return self.head + '<br />'.join(map(str,s)) + self.foot
 
     def __repr__(self):
         if self.name is None:
@@ -155,10 +224,6 @@ class Block(BaseMixin,Model):
             rtn = '<block: {} | {} lines'.format(self.name,self.line_count)
         return rtn
 
-
-    @property
-    def section(self):
-        return 'a'
 
     @staticmethod
     def _get_create_url():
@@ -181,14 +246,49 @@ class Block(BaseMixin,Model):
             rtn = 0
         return rtn
 
+class Macro(BaseMixin,Model):
+    __tablename__ = 'macros'
+
+    name = Column(String(255),nullable=False)
+    content = Column(Text)
+    _args = Column(Text)
+    
+    def __init__(self,name='',content='',arguments=''):
+        self.name = name
+        self.content = content
+        self.args = arguments
+
+    @hybrid_property
+    def args(self):
+        return pickle.loads(self._args)
+
+    @args.setter
+    def args(self,args):
+        if args:
+            self._args = pickle.dumps(args)
+        
+    @property
+    def head(self):
+        start = '{% macro '
+        mid = '%s' % self.name
+        end = '('
+        if self._args:
+            arg_amount = len(self.args)
+            for k,v in self.args:
+                end += '%s=%s' % (k,v)
+                if k != self.args[-1][0]:
+                    end += ','
+        end += ') %}'
+        return start + mid + end
+
+    @property
+    def foot(self):
+        return '{% endmacro %}'
+
+    def __str__(self):
+        return self.head +'\n'+\
+               self.content +'\n'+\
+               self.foot + '\n'
 
 
-pages_blocks = Table('pages_blocks',metadata,
-        Column('page_id',Integer,ForeignKey('pages.id')),
-        Column('block_id',Integer,ForeignKey('blocks.id')),
-)
 
-templates_blocks = Table('templates_blocks',metadata,
-        Column('template_id',Integer,ForeignKey('templates.id')),
-        Column('block_id',Integer,ForeignKey('blocks.id')),
-)

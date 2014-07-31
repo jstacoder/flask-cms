@@ -2,7 +2,7 @@
 <html>
     <head>
         <style>
-        /*  
+        /*
         * Style tweaks
         * --------------------------------------------------
         */
@@ -16,7 +16,7 @@
             footer {
                     padding: 30px 0;
                 }
-   
+
        /*
         * Off Canvas
         * --------------------------------------------------\
@@ -64,6 +64,13 @@
     .h1 small {
         font-size: 24px;
     }
+    .well {
+        margin-top:35px;
+        min-height:150px!important;
+    }
+       .col-md-2 {
+        padding-right:0px!important;
+    }
 
         </style>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.css" />
@@ -72,32 +79,53 @@
         {% if title %}
             <title>{{ title }}</title>
         {% endif %}
+            <script type="text/javascript">
+                var SCRIPT_ROOT = "{{request.url_root}}";
+            </script>
         {% block js_head %}
         {% endblock js_head %}
         {% block extra_head %}
         {% endblock extra_head %}
     </head>
     <body style="{% if body_style %}{% block body_style %}{{ body_style }}{% endblock body_style %}{% else %}padding-top:60px;{% endif %}">
+        {% block meta_nav %}{% endblock meta_nav %}
         {% if not admin %}
-            <div class=container>
+            <div class=container-fluid>
         {% endif %}
         {% block header %}
         {% include 'includes/_header.html' with context %}
         {% endblock header %}
         {% if admin %}
-            <div class=container>
+            <div class=container-fluid>
         {% endif %}
         {% block messages %}
         {% include 'includes/_messages.html' %}
         {% endblock messages %}
+        <div class=row>
         {% block body %}{% endblock body %}
         {% block content %}{% endblock content %}
+        {% block sidebar %}{% endblock sidebar %}
+    </div>
         {% block footer %}{% endblock footer %}
             </div>
         {% block footer_js %}
         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-            <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js">
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js">
             </script>
+        {% if form %}
+            {% set ck = false %}
+            {% for f in form %}
+                {% if f.type == 'CKTextEditorField' %}
+                    {% set ck = true %}
+                {% endif %}
+            {% endfor %}
+            {% if ck %}
+                <script src="{{url_for('static',filename='js/ckeditor/ckeditor.js')}}"></script>
+                <script type="text/javascript">
+                    CKEDITOR.replace( 'ckeditor', {extraPlugins: 'codemirror',startupMode : 'source'} );
+                </script>
+            {% endif %}
+        {% endif %}
             {% if mce %}
             <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
             <script type="text/javascript">

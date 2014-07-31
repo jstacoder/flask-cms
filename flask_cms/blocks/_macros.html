@@ -249,3 +249,16 @@
 {% endmacro %}
 
 
+{% macro render_list_group(itms) %}
+    {% for itm in itms %}
+        {% if loop.first %}
+            <div class=list-group>
+        {% endif %}
+                <a href="#" class=list-group-item>
+                    {{ itm }}
+                <a/>
+        {% if loop.last %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

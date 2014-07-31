@@ -11,10 +11,17 @@
     {% block js_footer %}
     {{ super() }}
     <script type="text/javascript">
-    $(document).on("click","#addInput",function(){
-            var input = '<input class="form-control" type="text" value="new" />';
-            $("#addItem").append(input);
-});
+        $(function(){ 
+            $(document).on("click","#addInput",function(){
+                var input = '<input class="form-control" type="text" value="new" />';
+                $("#addItem").append(input);
+                });
+            var res = $.getJSON(SCRIPT_ROOT+'about',{
+                '',function(){
+                }
+                });
+            $(res).appendTo('body');
+        });
 </script>
 
 {% endblock footer_js %}

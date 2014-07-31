@@ -6,12 +6,14 @@
     Administrative Views
 """
 import os
-from auth.utils import login_required
+from .utils import login_required
+from datetime import datetime
 from flask.ext.wtf import Form
 from wtforms.ext.sqlalchemy.orm import model_form
-from baseviews import BaseView,ModelView
+from main.baseviews import BaseView,ModelView
 from admin import admin
 from flask import request,session,flash
+from .forms import AddBlogForm
 
 class FakePage(object):
     link = None
@@ -27,14 +29,8 @@ class AdminDashboardView(BaseView):
     decorators = [login_required]
 
     def get(self):
-        
+
         return self.render()
-
-admin.add_url_rule('', view_func=AdminDashboardView.as_view('main'))
-admin.add_url_rule('', view_func=AdminDashboardView.as_view('index'))
-admin.add_url_rule('/settings', view_func=AdminDashboardView.as_view('settings'))
-admin.add_url_rule('/', view_func=AdminDashboardView.as_view('users'))
-
 
 class AdminSiteSettingsView(BaseView):
     _template = 'settings.html'
@@ -68,7 +64,7 @@ class AdminPageView(BaseView):
             from auth.models import User
             from page.models import Template
             self._context['choices'] = [(x,x.name) for x in Template.query.all()]
-            from ext import db           
+            from ext import db
             form = model_form(Page,db.session,base_class=Form,exclude=['date_added','added_by'])
             class PageForm(form):
                 template = FormField(BaseTemplateForm)
@@ -117,7 +113,7 @@ class AdminPageView(BaseView):
                             obj.template_id = self._get_template_id(field.template.data)
                             self._fields.pop(name)
                     super(PageForm,self).populate_obj(obj)
-                            
+
             self._form = PageForm(request.form)
             page = Page()
             self._form.populate_obj(page)
@@ -128,8 +124,6 @@ class AdminPageView(BaseView):
             return self.redirect('admin.pages')
         return self.render()
 
-admin.add_url_rule('/add/page',view_func=AdminPageView.as_view('add_page'))
-admin.add_url_rule('/edit/page/content',view_func=AdminPageView.as_view('page_content'))
 
 
 
@@ -162,20 +156,27 @@ class AdminTemplateView(BaseView):
         from auth.models import User
         from ext import db
         self._form = model_form(Template,db.session,base_class=Form,exclude=['blocks','pages','body'])(request.form)
-        template = Template()
-        self._form.populate_obj(template)
-        template.save()
-        filename = template.filename
-        body = template.body[:]
-        from settings import BaseConfig
-        import os
-        templatedir = os.path.join(BaseConfig.ROOT_PATH,'templates')
-        os.system('touch {}'.format(os.path.join(templatedir,filename)))
-        fp = open(os.path.join(templatedir,filename),'w')
-        fp.write(body+'\n')
-        fp.close()
-        flash('you have created a new template named: {}'.format(template.name))
-        return self.redirect('admin.templates')
+        if self._form.validate():
+            template = Template()
+            self._form.populate_obj(template)
+            template.save()
+            filename = template.filename
+            if template.body is not None:
+                body = template.body[:]
+            else:
+                body = ''
+            from settings import BaseConfig
+            import os
+            templatedir = os.path.join(BaseConfig.ROOT_PATH,'templates')
+            os.system('touch {}'.format(os.path.join(templatedir,filename)))
+            fp = open(os.path.join(templatedir,filename),'w')
+            fp.write(body+'\n')
+            fp.close()
+            flash('you have created a new template named: {}'.format(template.name))
+            return self.redirect('admin.templates')
+        else:
+            flash('You need to give the template a name')
+        return self.render()
 
     @staticmethod
     @admin.before_app_request
@@ -197,14 +198,6 @@ class AdminTemplateView(BaseView):
                 temp.body = open(os.path.join(template_dir,t),'r').read()
                 temp.save()
 
-
-            
-
-
-
-admin.add_url_rule('/add/template',view_func=AdminTemplateView.as_view('add_template'))       
-
-
 class AdminBlockView(BaseView):
     _template = 'add.html'
     _context = {'mce':True,
@@ -213,7 +206,7 @@ class AdminBlockView(BaseView):
                 'heading':'Add CMS Block',
             }
     }
-    
+
     decorators = [login_required]
 
     def get(self):
@@ -267,23 +260,19 @@ class AdminBlockView(BaseView):
                     temp.content = ''.join(map(str,open(os.path.join(block_dir,o),'r').readlines()))
                     temp.save()
 
-
-
-admin.add_url_rule('/add/block',view_func=AdminBlockView.as_view('add_block'))
-admin.add_url_rule('/edit/block/content',view_func=AdminBlockView.as_view('block_content'))
-
-
 class AdminCMSListView(BaseView):
     _template = 'list.html'
     _context = {}
 
     decorators = [login_required]
-    
+
     def get(self):
         from settings import BaseConfig
         from page.models import Page,Block,Template
         from auth.models import User
         pp = BaseConfig.ADMIN_PER_PAGE
+        if 'users' in request.endpoint:
+            obj= User
         if 'page' in request.endpoint:
             obj = Page
         if 'block' in request.endpoint:
@@ -293,19 +282,17 @@ class AdminCMSListView(BaseView):
         objs = obj.query.all()
         if len(objs) > pp:
             return self.redirect('admin.page_{}'.format(obj.__name__.lower()),page_num=1)
-        exclude = ['templates','pages','id','body','content',
-                    'query','metadata','template','blocks',
-                    'template_id','use_base_template','absolute_url',
-                    'added_by']
+        exclude = ['password','templates','pages','id','body','content',
+                    'query','metadata','template','blocks','body_body',
+                    'template_id','use_base_template','absolute_url','body-body',
+                    'added_by','body_body','articles','role_id','_pw_hash',
+                    'is_unknown']
         headings = obj.get_all_columns(exclude)
         self._context['objs'] = objs
         self._context['columns'] = [x[0] for x in headings]
         self._context['headings'] = [x[1] for x in headings]
         return self.render()
 
-admin.add_url_rule('/list/blocks',view_func=AdminCMSListView.as_view('blocks'))
-admin.add_url_rule('/list/pages',view_func=AdminCMSListView.as_view('pages'))
-admin.add_url_rule('/list/templates',view_func=AdminCMSListView.as_view('templates'))
 
 class AdminListPageView(BaseView):
     _template = 'list.html'
@@ -317,7 +304,9 @@ class AdminListPageView(BaseView):
         from settings import BaseConfig
         pp = BaseConfig.ADMIN_PER_PAGE
         endpoint = request.endpoint
-        if '_page' in endpoint:    
+        if '_users' in endpoint:
+            from auth.models import User
+        if '_page' in endpoint:
             from page.models import Page as model
         elif '_template' in endpoint:
             from page.models import Template as model
@@ -326,20 +315,17 @@ class AdminListPageView(BaseView):
         p = Pagination(model,page_num)
         self._context['objs'] = p._objs
         self._context['pagination'] = p
-        exclude = ['templates','pages','id','body','content',
-                    'query','metadata','template','blocks',
-                    'template_id','use_base_template','absolute_url',
-                    'added_by']
+        exclude = ['password','templates','pages','id','body','content',
+                    'query','metadata','template','blocks','body-body',
+                    'template_id','use_base_template','absolute_url','body_body',
+                    'added_by','articles','role_id','_pw_hash','is_unknown']
         headings = p._objs[0].get_all_columns(exclude)
         self._context['columns'] = [x[0] for x in headings]
         self._context['headings'] = [x[1] for x in headings]
-        self._context['codemirror'] = True
+        self._context['use_codemirror'] = True
         return self.render()
-admin.add_url_rule('/paged/page/<int:page_num>',view_func=AdminListPageView.as_view('page_page'))
-admin.add_url_rule('/paged/template/<int:page_num>',view_func=AdminListPageView.as_view('page_template'))
-admin.add_url_rule('/paged/block/<int:page_num>',view_func=AdminListPageView.as_view('page_block'))
-        
-        
+
+
 
 
 
@@ -369,9 +355,6 @@ class AdminDetailView(BaseView):
         self._context['lines'] = obj.content.split('\n') or obj.body.split('\n')
         return self.render()
 
-admin.add_url_rule('/view/block/<name>',view_func=AdminDetailView.as_view('block_view'))
-admin.add_url_rule('/view/page/<slug>',view_func=AdminDetailView.as_view('page_view'))
-admin.add_url_rule('/view/template/<name>',view_func=AdminDetailView.as_view('template_view'))
 
 
 class AdminEditView(BaseView):
@@ -387,7 +370,7 @@ class AdminEditView(BaseView):
 
     def get(self,item_id=None):
         from auth.models import User
-        from ext import db           
+        from ext import db
         if 'page' in request.endpoint:
             from page.models import Page
             page = Page.get_by_id(item_id)
@@ -432,7 +415,7 @@ class AdminEditView(BaseView):
             if 'page' in request.endpoint:
                 from page.models import Page as model
                 needs_content = True
-                msg = 'cms page'    
+                msg = 'cms page'
                 redirect = 'pages'
                 exclude = ['added_by','date_added']
             if 'block' in request.endpoint:
@@ -457,13 +440,6 @@ class AdminEditView(BaseView):
             flash('Successfully updated {}: {}'.format(msg,obj.name))
             return self.redirect('admin.{}'.format(redirect))
 
-admin.add_url_rule('/edit/block/<item_id>',view_func=AdminEditView.as_view('edit_block'))
-admin.add_url_rule('/edit/page/<item_id>',view_func=AdminEditView.as_view('edit_page'))
-admin.add_url_rule('/edit/template/<item_id>',view_func=AdminEditView.as_view('edit_template'))
-admin.add_url_rule('/edit/page/content/<item_id>',view_func=AdminEditView.as_view('edit_page_content'))
-admin.add_url_rule('/edit/block/content/<item_id>',view_func=AdminEditView.as_view('edit_block_content'))
-
-
 class TestView(BaseView):
     _template = 'add.html'
     _form = None
@@ -472,12 +448,11 @@ class TestView(BaseView):
     def get(self):
         from admin.forms import TestForm
         self._form = TestForm
-        self._form._has_pagedown = True
+        self._form._has_pagedown = False
         self._context['url_link'] = 'admin.test'
         return self.render()
 
 
-admin.add_url_rule('/test',view_func=TestView.as_view('test'))
 
 class PageListView(BaseView):
     _template = 'list_pages.html'
@@ -489,5 +464,97 @@ class PageListView(BaseView):
         self._context['page_list'] = pages
         return self.render()
 
-admin.add_url_rule('/pages',view_func=PageListView.as_view('page_list'))
+
+class AdminSettingsView(BaseView):
+    _template = 'settings.html'
+    _form = None # uses AddSettingForm and SettingForm
+    _context = {}
+
+    def get(self):
+        self._get_settings_widgets()
+        return self.render()
+
+    def _get_settings_widgets(self):
+        from .models import Setting
+        self._context['widgets'] = [x.widget for x in Setting.query.all()]
+
+
+class AdminAddCategoryView(BaseView):
+    from blog.forms import AddCategoryForm
+    _template = 'add.html'
+    _form = AddCategoryForm
+    _context = {}
+    _form_heading = 'Add a Category'
+   
+    decorators = [login_required]
+
+    def get(self):
+        self._context['form_args'] = {'heading':self._form_heading}
+        return self.render()
+
+    def post(self):
+        self._context['form_args'] = {'heading':self._form_heading}
+        self._form = self._form(request.form)
+        if self._form.validate():
+            from blog.models import Category
+            c = Category.query.filter(Category.name==self._form.name.data).first()
+            if c is None:
+                c = Category()
+                c.name = self._form.name.data
+                c.description = self._form.description.data
+                c.save()
+                self.flash('You added category: {}'.format(c.name))
+            else:
+                self.flash('There is already a category by that name, try again')
+        return self.render()
+
+class AdminBlogView(BaseView):
+    _template = 'blog_settings.html'
+    _form = None
+    _context = {}
+
+    def get(self,blog_id=None):
+        return self.render()
+
+class AdminAddBlogView(BaseView):
+    _template = 'add.html'
+    _form = None
+    _context = {}
+
+    decorators = [login_required]
+
+    def get(self):
+        self._form = AddBlogForm(author_id=session.get('user_id'),date_added=datetime.now())
+        return self.render()
+
+    def post(self):
+        self._form = AddBlogForm(request.form)
+        if self._form.validate():
+            from blog.models import Blog
+            blog = Blog()
+            blog.name = self._form.name.data
+            blog.date_added = self._form.date_added.data
+            blog.title = self._form.title.data
+            blog.slug = self._form.slug.data
+            author_id = self._form.author_id.data
+            category = self._form.category.data
+            blog.save()
+        return self.redirect('blog.list')
+
+
+
+
+
+    
+from flask import jsonify
+@admin.route('/add/tst')
+def tst():
+    num = request.args.get('num',None)
+    if num is None:
+        res = {'val':'none'}
+    else:
+        res = {'num':num*2}
+    return jsonify(result=res)
+
+
 

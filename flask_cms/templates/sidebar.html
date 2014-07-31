@@ -1,0 +1,15 @@
+{% macro render_sidebar(title,links,left_side=True) %}
+    {% if left_side %}
+        {% set side = 'left' %}
+    {% else %}
+        {% set side = 'right' %}
+    {% endif %}
+    <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas pull-{{ side }}" id="sidebar_{{side}}" role=navigation>
+        <div class=list-group>
+            <a href="#" class="list-group-item active">{{title}}</a>
+            {% for link,text in links %}
+                <a href="{{link}}" class=list-group-item>{{text}}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+{% macro render_link(obj) %}
+    <a href="{{ url_for('.edit',id=obj.id) }}">View</a>
+{% endmacro %}
+{% macro render_post(article) %}
+    <div class=container>
+        <h1>{{ article.title }}</h1>
+
+        <p>{{ article.date_added|date_pretty }} | {{ article.category }}</p>
+        <p>{{ article.content | markdown | truncate(10) }}</p>
+
+        <hr/>
+        {{ render_link(article) }}
+    </div>
+{% endmacro %}
+{% macro render_tags(tags) %}
+    {% set link = '#' %}
+    <div class=well>
+        <div class=list-group>
+            {% for tag in tags %}
+                <a href={{link}} class=list-group-item>{{tag}}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
+        
+{% block header %}
+    {% include 'header.html' with context %}
+{% endblock header %}
+    {% block body %}
+    <div class=container>
+        <div class="page-header pull-left">
+            <h2>Page Header For 2 Columns</h2>
+        </div>
+        <div class=row>
+            <div class=col-md-2>
+                <aside>
+                    {% if tags %}
+                        {{ render_tags(tags) }}
+                    {% endif %}
+                </aside>
+            </div>
+            <div class=col-md-10>
+                {% if articles %}
+                    {% for a in articles %}
+                        {{ render_post(a) }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endblock body %}

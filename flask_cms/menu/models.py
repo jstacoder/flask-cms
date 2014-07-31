@@ -1,4 +1,4 @@
-from basemodels import BaseMixin
+from main.basemodels import BaseMixin
 from ext import db
 
 #import sqlalchemy to global namespace

@@ -12,14 +12,19 @@ from local_settings import LocalConfig
 class BaseConfig(LocalConfig):
     ADMIN_PER_PAGE = 5
     CODEMIRROR_LANGUAGES = ['python','python2','python3','php','javascript','xml']
-    CODEMIRROR_THEME = '3024-day'
+    CODEMIRROR_THEME = 'blackboard'#'vivid-chalk'#'3024-night'
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     CSRF_ENABLED = True
     ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
-    URL_ROUTE_MODULES = [
+    URL_MODULES = [
             'core.urls.routes',
+            'admin.urls.routes',
+            'auth.urls.routes',
+            'blog.urls.routes',
+            'member.urls.routes',
+            'page.urls.routes',
     ]
 
     BLUEPRINTS = [
@@ -30,7 +35,7 @@ class BaseConfig(LocalConfig):
             'blog.blog',
             'page.page',
             'auth.auth',
-                                        
+
     ]
 
     EXTENSIONS = [
@@ -38,12 +43,11 @@ class BaseConfig(LocalConfig):
             'ext.toolbar',
             'ext.pagedown',
             'ext.codemirror',
-            'ext.manager',
             'ext.alembic',
     ]
 
     CONTEXT_PROCESSORS = [
-            'core.context_processors.common_context',                      
+            'core.context_processors.common_context',
             'core.context_processors.common_forms',
             'menu.context_processors.frontend_nav',
             'menu.context_processors.admin_nav',
@@ -59,7 +63,7 @@ class BaseConfig(LocalConfig):
             'core.filters.month_name',
             'core.filters.markdown',
     ]
-    
+
     CONTACT_FORM_SETTINGS = {
     'HEADING':'Send Us a message',
     'SUBHEADING':'Or a Comment',
@@ -85,6 +89,13 @@ class BaseConfig(LocalConfig):
     'CONTACT_EMAIL':'kyle@level2designs.com',
     }
 
+    #BLOG_SIDEBAR_LEFT = False
+    #BLOG_SIDEBAR_RIGHT = True
+    BLOG_SIDEBAR_LEFT = True
+    #BLOG_SIDEBAR_RIGHT = False
+    BLOG_TITLE = 'Dynamic'
+    BLOG_CONTENT = 'some text to put into my<br />Blog'
+
 def get_choices():
     return BaseConfig.CONTACT_FORM_SETTINGS['OPTIONS']
 
@@ -97,4 +108,3 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
-    

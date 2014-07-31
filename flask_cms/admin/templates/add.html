@@ -1,21 +1,18 @@
-{% extends 'admin.html' %}
+    {% extends 'admin.html' %}
 {% from '_macros.html' import render_panel_form with context %}
     {% block extra_head %}
             {% if codemirror %}
-                {{ codemirror.include_codemirror() }}
+                {#{{ codemirror.include_codemirror() }}#}
             {% endif %}
-        {% if not mce is defined %}
             {% if pagedown %}
                 {{ pagedown.include_pagedown() }}
             {% endif %}
-        {% else %}
-            <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+            {#<script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
             <script type="text/javascript">
                 tinymce.init({
                     selector: "textarea"
                     });
-            </script>
-        {% endif %}
+            </script>#}
         <style>
             .flask-pagedown-input {
             }
@@ -40,6 +37,14 @@
             {% else %}
                 {{ render_panel_form(form) }}
             {% endif %}
+            {% for f in form %} 
+                {% if f.type == 'FormField' %}
+                    {% for t in f %}
+                    {#{{ t.type }}#}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
         </div>
         {% endif %}
         {% endblock %}
@@ -49,11 +54,14 @@
             $(document).ready(function() {
                 if($("#text").length > 1)
                     var t = $("#text").text();
-                var editor_for_body_body = CodeMirror.fromTextArea(
-                    document.getElementById("body_body"),
+                    if($(t).length > 0){
+                    CKEDITOR.instances.body_body.insertHtml(t);
+                }
+        /*        var editor_for_body_body = CodeMirror.fromTextArea(
+                    document.getElementById("body-body"),
                     {value:t,lineNumbers:true,mode:"htmlmixed",language:"python"}
                     );
-                    editor_for_body_body.setValue(t);    
+                    editor_for_body_body.setValue(t);*/
                 });
         </script>
         {% endblock footer_js %}

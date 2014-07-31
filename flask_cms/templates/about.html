@@ -26,7 +26,18 @@
     {% endblock header %}
     {% block content %}
 
-
+<div id=sidebar>
+<ul class="nav nav-pills nav-stacked">
+    <li class=active><a  class=side href="#">Menu</a></li>
+    <li><a  class=side href="#">Settings</a></li>
+    <li><a class=side href="#">Profile</a></li>
+    <li><a class=side href="#">Add Page</a></li>
+    <li><a class=side href="#">Add Post</a></li>
+    <li><a class=side href="#">Logout</a></li>
+</ul>
+</div>
+    <div class=row>
+        <div class=col-md-12>
     <!-- Button trigger modal -->
     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
         Launch demo modal
@@ -90,7 +101,8 @@
 </table>
 </form>
 
-
+</div>
+</div>
 
 
 
@@ -128,20 +140,12 @@
     <p>were pretending threre is text here</p>
     {% endif %}
 </div>
-<div id=sidebar>
-<ul class="nav nav-pills nav-stacked">
-    <li><a  class=side href="#">link</a></li>
-    <li><a class=side href="#">link</a></li>
-    <li><a class=side href="#">link</a></li>
-    <li><a class=side href="#">link</a></li>
-    <li><a class=side href="#">link</a></li>
-</ul>
-</div>
     {% endblock content %}
 
     {% block footer_js %}
     {{ super()|safe }}
     <script type="text/javascript">
+    $(function(){
         $(document).on("click","#addInput",function(){
             var txtDiv = $("#addItem");
             var txt = txtDiv.text();
@@ -170,13 +174,18 @@
                                 )
 
                         );
-            var input = '<div class="input-group"><div class="row"><div class="col-md-4"><div class="form-group"><form method=post action=""><textarea class="form-control" rows=5 type="textarea" name="content" id="content"></textarea><div class="btn-group btn-group-justified"><button type=submit class="btn btn-info">Add Tag</button></div></form></div></div></div></div>';
+            //var input = '<div class="input-group"><div class="row"><div class="col-md-4"><div class="form-group"><form method=post action=""><textarea class="form-control" rows=5 type="textarea" name="content" id="content"></textarea><div class="btn-group btn-group-justified"><button type=submit class="btn btn-info">Add Tag</button></div></form></div></div></div></div>';
             //var input = '<div class="wrapper"><input class="input" rows=5 type="textarea" /></div>'
             $("#sidebar").append(outside);
             /*tinymce.init({
                 selector: "textarea"
                 });*/
             });
+            var res = $.getJSON(SCRIPT_ROOT+'about',{
+                    ''},function(){
+                });
+    $(res).appendTo('body');
+});
 </script>
 
 {% endblock footer_js %}

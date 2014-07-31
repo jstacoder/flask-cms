@@ -1,4 +1,4 @@
-from basemodels import BaseMixin
+from main.basemodels import BaseMixin
 from LoginUtils import check_password, encrypt_password
 from ext import db
 
@@ -16,40 +16,35 @@ class Setting(BaseMixin,Model):
     default = Column(String(255))
     value = Column(String(255))
 
+    @property
+    def widget(self):
+        if self.type:
+            return self.type.widgets
+        else:
+            return ''
+
 class Type(BaseMixin,Model):
     __tablename__ = 'types'
 
     name = Column(String(255),nullable=False)
+    widgets = relationship('Widget',backref=backref(
+        'type'),lazy='dynamic')
+    html = Column(Text)
+    field_type = Column(String(255))
+    required = Column(Boolean,default=False)
+    data_type = Column(String(255))
 
     def __repr__(self):
         return self.name or ''
 
-class SiteUser(BaseMixin,Model):
-    __tablename__ = 'site_users'
+class Widget(BaseMixin,db.Model):
+    __tablename__ = 'widgets'
 
-    first_name = Column(String(55))
-    last_name = Column(String(55))
+    name = Column(String(255),nullable=False)
+    title = Column(String(255))
+    content = Column(Text,nullable=False)
+    type_id = Column(Integer,ForeignKey('types.id'))
 
-    username = Column(String(255),unique=True)
-    date_added = Column(DateTime,default=func.now())
-    _pw_hash = Column(Text)
-
-
-    def __init__(self,*args,**kwargs):
-        super(SiteUser,self).__init__(*args,**kwargs)
-        
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def pw_hash(self):
-        return self._pw_hash
-
-    @pw_hash.setter
-    def pw_set(self,pw):
-        self._pw_hash = encrypt_password(pw)
-
-    def check_password(self,pw):
-        return check_password(pw,self.pw_hash)
+    def __repr__(self):
+        return self.name
 

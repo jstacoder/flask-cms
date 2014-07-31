@@ -6,7 +6,7 @@
     <div class=container>
         <h1>{{ article.title }}</h1>
 
-        <p>{{ article.created|date_pretty }} | {{ article.category }}</p>
+        <p>{{ article.date_added|date_pretty }} | {{ article.category }}</p>
         <p>{{ article.content | markdown | truncate(10) }}</p>
 
         <hr/>

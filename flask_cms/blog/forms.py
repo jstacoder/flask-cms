@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form,RecaptchaField
 from .fields import TagField
-from wtforms import StringField, validators, PasswordField, TextAreaField, HiddenField
+from wtforms import StringField, validators, PasswordField, TextAreaField, HiddenField,SubmitField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from ext import db
 from flask.ext.pagedown.fields import PageDownField
@@ -52,6 +52,17 @@ class BlogAddForm(Form):
 class AddContentModalForm(Form):
     title = StringField('Title',[validators.DataRequired("Please enter a title.")])
     content = PageDownField()
-    item_id = HiddenField()
-    item_type = HiddenField()
     tags = TagField('Tags')
+    author_id = HiddenField()
+    category = QuerySelectField('Category', query_factory=category_choice )
+    add_cat_btn = SubmitField('Add Category')
+
+
+
+
+class AddCategoryForm(Form):
+    name = StringField('Name', [validators.InputRequired(), validators.length(min=1,max=240)])
+    description = TextAreaField('Description', [validators.InputRequired()])
+    #submit = SubmitField('Add')
+    
+

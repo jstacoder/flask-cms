@@ -1,5 +1,7 @@
-from baseviews import BaseView
-from flask import request, g
+from main.baseviews import BaseView
+from member.forms import EditProfileForm
+from member import member
+from flask import request, g,url_for,session
 from blog import blog
 from ext import db
 
@@ -11,16 +13,17 @@ class UnknownUser(object):
     id = 0
 
 class BlogIndexView(BaseView):
-    _template = 'index.html'
+    _template = 'two_column_right.html'
 
     def get(self):
         from .models import Article
+        from .models import Tag
+        tags = Tag.query.all()
         articles = Article.query.all()
         self._context['articles'] = articles
+        self._context['tags'] = tags
         return self.render()
-        return self.redirect('member.blog_list',member_id=1)
 
-blog.add_url_rule('/',view_func=BlogIndexView.as_view('index'))
 
 
 class BlogAdminView(BaseView):
@@ -28,13 +31,6 @@ class BlogAdminView(BaseView):
 
     def get(self):
         return self.render()
-
-blog.add_url_rule('/bloglist',view_func=BlogAdminView.as_view('member.admin_list',member_id=1))
-blog.add_url_rule('/bloglist',view_func=BlogAdminView.as_view('list'))
-from baseviews import BaseView
-from member.forms import EditProfileForm
-from member import member
-
 
 
 def get_modal_forms(objs,db,**kwargs):
@@ -60,15 +56,17 @@ class ModalEditView(BaseView):
         return self.render()
 
     def post(self,id):
-        from .models import Article
+        from .models import Article,Tag
         a = Article.query.get(id)
         a.title = request.form.get('title')
         a.content = request.form.get('content')
+        tags = request.form.get('tags','')
+        tags = tags.split(',')
+        Tag.update_tags(tags)
         a.update()
         self._context['a'] = a
         return self.render()
 
-blog.add_url_rule('/edit/<int:id>',view_func=ModalEditView.as_view('edit'))
 
 
 class AddView(BaseView):
@@ -84,21 +82,21 @@ class AddView(BaseView):
         articles = Article.query.all()
         self._context['articles'] = articles
         return self.render()
-    
+
     def post(self):
         from blog.forms import AddContentModalForm
+        from auth.models import User
         self._form = AddContentModalForm(request.form)
         from blog.models import Article
         a = Article()
         self._form.populate_obj(a)
-        a.author = g.get('user',None) or UnknownUser()
+        a.author = User.query.filter(User.email==session.get('email',None)).first()
         a.save()
         return self.redirect('blog.index')
 
-blog.add_url_rule('/add',view_func=AddView.as_view('add'))
 
 
-class MemberProfileView(BaseView):    
+class MemberProfileView(BaseView):
     _template = 'profile.html'
     _form = EditProfileForm
     _context = {}
@@ -116,6 +114,7 @@ class MemberArticleView(BaseView):
     _context = {}
 
     def get(self,blog_id=None,post_id=None,member_id=None):
+        from page.widgets import TagWidget
         if blog_id is not None:
             pass
         if post_id is not None:
@@ -123,17 +122,40 @@ class MemberArticleView(BaseView):
             a = Article.query.get(post_id)
             self._context['content'] = a
             self._context['type'] = 'article'
-        self._context['nav_links'] = (('core.index', 'Home'), ('blog.blogs', 'Blog'), ('core.meet', 'Meet Us'), ('core.about', 'About'), ('core.contact', 'Contact'))
+        self._context['sidebar_title'] = 'menu'
+        self._context['sidebar_links'] = (
+                                    (url_for('core.index'),'Home'),
+                                    (url_for('blog.blogs'),'Blog'),
+                                    (url_for('core.meet'),'meet us'),
+                                        )
+        self._context['nav_links'] = (
+                                    ('core.index', 'Home'),
+                                    ('blog.blogs', 'Blog'),
+                                    ('core.meet', 'Meet Us'),
+                                    ('core.about', 'About'),
+                                    ('core.contact', 'Contact')
+                                    )
         self._context['member_id'] = member_id or 'unknown'
         self._context['nav_title'] = 'My Blog'
+        self._context['sidebar_widgets'] = [TagWidget()]
         return self.render()
 
-blog.add_url_rule('/blogs',view_func=MemberArticleView.as_view('blogs'))
-blog.add_url_rule('/blog/<blog_id>',view_func=MemberArticleView.as_view('post_list'))
-blog.add_url_rule('/post/<post_id>',view_func=MemberArticleView.as_view('post_detail'))
-blog.add_url_rule('/post/<post_id>/edit',view_func=MemberArticleView.as_view('post_edit'))
-blog.add_url_rule('/blog/<blog_id>/edit',view_func=MemberArticleView.as_view('blog_edit'))
 
+class TagListView(BaseView):
+    _template = 'taglist.html'
+    _context = {}
+
+    def get():
+        return self.render()
+
+class FrontBlogView(BaseView):
+    _template = 'front_blog_list.html'
+    _context = {}
+
+    def get(self):
+        from .models import Blog
+        self._context['blogs'] = Blog.get_by_author_id(session.get('user_id',None))
+        return self.render()
 '''
 #private
 def article_update(id, slug):

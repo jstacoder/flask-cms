@@ -8,6 +8,11 @@
                     {% for itm in headings %}
                         <th>{{itm}}</th>
                     {% endfor %}
+                    {% if is_page(obj) %}
+                        <th>View on site</th>
+                    {% endif %}
+                    <th>show</th>
+                    <th>edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,20 +22,13 @@
                         {% for itm in columns %}
                             <td>{{obj|attr(itm)}}</td>
                         {% endfor %}
-                  
-                
-            
                         {% if is_page(obj) %}
-                            <div class="btn-group btn-group-sm">
                                 <td>
                                 <a class="btn btn-default" href="{{ obj._get_page_url() }}">
                                     <span class="glyphicon glyphicon-eye-open">
                                     </span>
                                 </a>
                             </td>
-                        {% else %}
-                        
-                            <div class="btn-group btn-group-sm">
                         {% endif %}
                     <td>
                         <a class="btn btn-primary" href="{{ obj.absolute_url }}">
@@ -45,15 +43,18 @@
                                     </span>
                                 </a>
                             </td>
-                            </div>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
     {% endmacro %}
     {% macro render_admin_nav(objs) %}
-        {% set create_url = objs[0]._get_create_url() %}
-
+        {% set create_url = '#' %}
+        {% if objs|count > 0 %}
+            {% if objs[0]._get_create_url %}
+               {% set create_url = objs[0]._get_create_url() %}
+            {% endif %}
+        {% endif %}
         <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a href="#">List</a></li>
             <li><a href="{{ create_url }}">Create</a></li>
@@ -61,6 +62,7 @@
         </ul>
     {% endmacro %}
     {% block content %}
+    {% if objs %}
         {{ render_admin_nav(objs) }}
         {% if headings is defined and objs is defined %}
             {{ render_obj_table(headings,objs) }}
@@ -68,5 +70,6 @@
         {% if pagination %}
             {{ render_pagination(pagination) }}
         {% endif %}
+    {% endif %}
     {% endblock %}
 

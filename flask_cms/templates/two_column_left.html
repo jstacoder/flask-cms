@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% from '_macros.html' import render_nav_sidebar %}
+{% block header %}
+    {% include 'header.html' with context %}
+{% endblock header %}
+    {% block body %}
+    <div class=container-fluid>
+        <div class=page-header>
+    
+            <h2 class=heading style="text-align:end">Page Title</h2>
+        </div>
+        <div class=row>
+            <div class=col-md-10>
+                <p>{{ lipsum() }}</p>
+                <p>{{ lipsum() }}</p>
+            </div>
+            <div class="col-md-2"   >
+                <aside>
+                    <p>{{ render_nav_sidebar(nav_links) }}</p>
+                </aside>
+            </div>
+        </div>
+    </div>
+    {% endblock body %}

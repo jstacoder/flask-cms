@@ -1,8 +1,9 @@
-from flask import session
-from baseviews import BaseView
+from flask import session,redirect,request,render_template
+from main.baseviews import BaseView
 from auth import auth
 from auth.forms import UserLoginForm, UserSignupForm
-from auth.utils import login_user, logout_user, login_required
+from auth.utils import login_user, logout_user, login_required, admin_required
+from sqlalchemy.exc import IntegrityError
 
 
 class AuthLoginView(BaseView):
@@ -12,7 +13,6 @@ class AuthLoginView(BaseView):
 
     def get(self):        
         return self.render()
-
 
     def post(self):
         form = self._form()
@@ -25,11 +25,14 @@ class AuthLoginView(BaseView):
             if u is not None:
                 if u.check_password(pw):
                     login_user(u)
-                    return self.redirect('core.index')
+                    if 'next' in request.args:
+                        return redirect(request.args['next'])
+                    else:
+                        return self.redirect('core.index')
                 else:
-                    flash('incorrect password')
+                    self.flash('incorrect password')
             else:
-                flash('user does not exist')
+                self.flash('user does not exist')
                 return self.redirect('auth.signup')
         return self.render()
 
@@ -55,20 +58,17 @@ class AuthSignupView(BaseView):
         return self.redirect('auth.signup')
 
 
-
-auth.add_url_rule('',view_func=AuthLoginView.as_view('admin_list'))
-auth.add_url_rule('/login',view_func=AuthLoginView.as_view('login'))
-auth.add_url_rule('/register',view_func=AuthSignupView.as_view('signup'))
-
 class AuthLogoutView(BaseView):
-
-
+ 
     def get(self):
         from auth.models import User
-        from auth.utils import logout_user
         if 'user_id' in session:
             user = User.get_by_id(session['user_id'])
             logout_user(user)
         return self.redirect('core.index')
 
-auth.add_url_rule('/logout',view_func=AuthLogoutView.as_view('logout'))
+
+@auth.app_errorhandler(404)
+def not_found(e):
+    return render_template('error.html',error_code=404)
+

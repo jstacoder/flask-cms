@@ -9,11 +9,11 @@
     form - form to render
     should have
     name,email,subject,message
-    
+
     CONTACT_FORM_SETTINGS - settings for form
     should be in format:
-    
-    
+
+
 CONTACT_FORM_SETTINGS = {
     'HEADING':'text',
     'SUBHEADING':'text',
@@ -53,12 +53,13 @@ CONTACT_FORM_SETTINGS = {
             <div class="col-md-8">
                 <div class="well well-sm">
                     <form>
+                        {{form.hidden_tag()}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 {{form.name.label}}
                                 {{ form.name(class_='form-control',id="name",placeholder="Enter name")}}
-                            
+
                             </div>
                             <div class="form-group">
                                 {{form.email.label}}
@@ -69,15 +70,16 @@ CONTACT_FORM_SETTINGS = {
                             </div>
                         </div>
                         <div class="form-group">
-                            
+
                             {{form.subject.label}}
-                            {{form.subject(class_="form-control",id="subject",options=CONTACT_FORM_SETTINGS['OPTIONS'])}}    
+                            {{form.subject(class_="form-control",id="subject",options=CONTACT_FORM_SETTINGS['OPTIONS'])}}
                         </div>
+                        {{ form.recaptcha }}
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">                            
+                        <div class="form-group">
                             {{form.message.label}}
-                            {{form.message(class_="form-control",rows=9,cols=25,placeholder="message")}}                                                
+                            {{form.message(class_="form-control",rows=9,cols=25,placeholder="message")}}
                         </div>
                     </div>
                     <div class="col-md-12">

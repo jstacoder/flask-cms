@@ -8,6 +8,17 @@
         }
     </style>
     {% endblock extra_head %}
+    {% block meta_nav %}
+        {% if 'email' in session %}
+            <ul class="nav nav-tabs">
+                <li> <a href="#">settings</a></li>
+                <li><a href="#">Add Page</a></li>
+                <li><a href="#">logout</a></li>
+            </ul>
+        {% else %}
+            <small><a href="#">Login</a></small>
+        {% endif %}
+    {% endblock meta_nav %}
     {% block header %}
         {% include 'header.html' with context %}
     {% endblock header %}
@@ -26,12 +37,15 @@
 </div>
     {% endblock content %}
     {% block footer_js %}
+    <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
     {{ super()|safe }}
     <script type="text/javascript">
+        var ccount = 0;
         $(document).on("click","#addInput",function(){
+            ccount += 1;
             var txtDiv = $("#addItem");
             var txt = txtDiv.text();
-            txtDiv.text("");
+            //txtDiv.text("");
             var outside =
                 $("<div>").addClass("input-group")
                     .html($("<div>").addClass("row")
@@ -39,10 +53,10 @@
                             .html($("<div>").addClass("form-group")
                                 .html($("<form>").attr("method","post")
                                     .html($("<textarea>").attr("rows",5).text(txt)
-                                    .attr("id","content").attr("name","content")
+                                    .attr("id","content"+ccount).attr("name","content")
                                     .addClass("form-control"))
                                         .append($("<button>")
-                                            .addClass("btn btn-info")
+                                            .addClass("btn btn-primary")
                                             .text("Submit"))
                                         .append($("<button>")
                                             .addClass("btn btn-warning")
@@ -58,9 +72,21 @@
                         );        
             $("#addItem").append(outside);
             tinymce.init({
-                selector: "textarea"
+                selector: "#content"+ccount,
                 });
-            });
+            $(document).on("click","button.btn.btn-warning",function(e) {
+                    e.preventDefault();
+                    if($("textarea").length == 1){
+                        $("textarea").text(txt);
+                        }
+                    });
+            $(document).on("click","button.btn.btn-danger",function(e) {
+                    e.preventDefault();
+                    outside.remove();
+                    $("textarea").text(txt);
+                    });
+
+        });
 </script>
 
 {% endblock footer_js %}

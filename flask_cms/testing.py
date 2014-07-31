@@ -8,7 +8,6 @@
 """
 
 from flask.ext.testing import TestCase
-from auth import User,Role
 #from blog import Blog,Tag,Post
 #from page import Page,Template,Block,Subject
 from main import AppFactory
@@ -22,6 +21,8 @@ class KitTestCase(TestCase):
         return AppFactory(TestingConfig).get_app(__name__)
 
     def setUp(self):
+        create_app().test_request_context().push()
+        from auth.models import User,Role
         db.create_all()
         self.user = User(username='John Doe', email='john@doe.com', password='test')
         self.user.save()

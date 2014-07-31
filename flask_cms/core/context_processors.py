@@ -4,12 +4,20 @@
     core.context_processors
 """
 from flask.helpers import url_for
+from faker.factory import Factory
+
+def _get_name():
+    factory = Factory()
+    faker = factory.create()
+    return faker.name()
+
 
 def common_context():
     return {            
             'my_email': 'kyle@level2designs.com',
             'type':type,
             'dir':dir,
+            'get_name':_get_name,
             }
 
 

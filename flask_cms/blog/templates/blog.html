@@ -1,15 +1,102 @@
 {% extends 'layout.html' %}
+{% from 'sidebar.html' import render_sidebar %}
+    {% block extra_head %}
+        {{ super() }}
+        <style>
+
+            /*
+                Ratings Stars
+                    (with as little code as possible)
+                    */
+.rating {
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            text-align: center;
+            }
+.rating > span {
+            display: inline-block;
+            position: relative;
+            width: 1.1em;
+            }
+.rating > span:hover,
+.rating > span:hover ~ span {
+            color: transparent;
+            cursor:pointer;
+
+            }
+.rating > span:hover:before,
+.rating > span:hover ~ span:before {
+            content: "\2605";
+            position: absolute;
+            left: 0; 
+            color: gold;
+            }
+
+            h4 {
+                margin-top: 25px;
+                }
+               /* .row {
+                    margin-bottom: 20px;
+                    }
+                    .row .row {
+                        margin-top: 10px;
+                        margin-bottom: 0;
+                        }
+                        [class*="col-"] {
+
+                            padding-top: 15px;
+                            padding-bottom: 15px;
+                            background-color: #eee;
+                            background-color: rgba(86,61,124,.15);
+                            border: 1px solid #ddd;
+                            border: 1px solid rgba(86,61,124,.2);
+                        }*/
+
+                        hr {
+                            margin-top: 40px;
+                            margin-bottom: 40px;
+                        }
+        {% if config['BLOG_SIDEBAR_LEFT'] %}
+                        #sidebar_left {
+                margin-left:-30px;
+                /*float:none!important;*/
+                width:175px;
+            }
+                        /*.list-group-item {
+                            left: -95px;
+                        }*/
+        {% endif %}
+        {% if config['BLOG_SIDEBAR_RIGHT'] %}
+                        #sidebar_right {
+                            margin-right:-30px;
+                            width:175px;
+                /*margin-left:161px;*/
+                /*top:-190px;
+                left:818px;*/
+            }
+        {% endif %}
+            </style>
+    {% endblock extra_head %}
     {% block header %}
         {% include 'header.html' with context %}
     {% endblock header %}
 {% block content %}
     <h2>Hi there member {{ member_id }}</h2>
+    {% if config['BLOG_SIDEBAR_LEFT'] or config['BLOG_SIDEBAR_RIGHT'] %}
+        {% if config['BLOG_SIDEBAR_LEFT'] %}
+            {{ render_sidebar(sidebar_title,sidebar_links,true) }}
+        {% elif config['BLOG_SIDEBAR_RIGHT'] %}
+            {{ render_sidebar(sidebar_title,sidebar_links,false) }}
+        {% endif %}
+    {% endif %}
         <div class="row">
-            <div class="col-lg-9">
+        <div class="col-lg-9">
                 <div class="panel">
                     <h2 class="page-header">{% if blog %}{{ blog.title }}{% else %}Latest Blog Posts{% endif %}</h1>
                     <hr/>
                 </div>
+                <div class="adder"></div>
+                <a class="btn btn-default add-btn">add post</a>
                 {%   for post in articles %}
                     <h3><a href="{{ url_for('show_article', id=post.id, slug=post.slug) }}">{{ post.title }}</a></h3>
                     <p>{{ post.body|truncate(200)| safe }}</p>
@@ -21,19 +108,28 @@
                     <hr/>
                 {% endfor %}
             </div>
-    
-            <div class="col-xs-6 col-sm-3 col-lg-2 sidebar-offcanvas" id="sidebar" role="navigation">
-                <div class="list-group">
-                    <a href="#" class="list-group-item active">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                    <a href="#" class="list-group-item">Link</a>
-                </div>  
-            </div><!--/span-->
         </div>
-{% endblock %}
+        <div class="rating">
+            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        </div>
+        <div class="rating">
+            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        </div>
+        {% endblock %}
+        {% block footer_js %}
+            {{ super () }}
+            <script type="text/javascript">
+                $(document).ready(function() {
+                        $("a:not(.btn)").click(function(e) {
+                            e.preventDefault();
+                        });
+                        $(".add-btn").click(function(){
+                              var post = $("<div>").html($("<h2>").addClass("text-center").text("{{config['BLOG_TITLE']}}").append($("<p>").addClass("text-center").text("{{config['BLOG_CONTENT']|safe}}")));
+                              var well = $("<div>").addClass("well");
+                              post.appendTo(well);
+                              $(".adder").append(well);
+                              //$(".adder").html($(".adder").html()+well.html());
+                              });
+                        });
+            </script>
+        {% endblock footer_js %}

@@ -29,14 +29,18 @@
     {% endif %}
     {% if a %}
         <h2>{{ a.title }}</h2>
-        <p>{{ a.content|markdown }}</p>
-        <p>{{ a.created|date_pretty }}</p>
+            <div class=row>
+                <div class="col-md-8 col-md-offest-2">
+                    <p>{{ a.content|markdown }}</p>
+                    <p>added: {{ a.date_added|date_pretty }}</p>
+                </div>
+            </div>
     {% endif %}
         
 
     <!-- Button trigger modal -->
     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
-        Add Post
+        Edit Post
     </button>
 
     <!-- Modal -->

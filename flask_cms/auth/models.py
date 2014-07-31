@@ -1,4 +1,5 @@
-from basemodels import BaseMixin
+from main.basemodels import BaseMixin
+from flask import url_for
 from ext import db
 from LoginUtils import encrypt_password, check_password
 
@@ -29,9 +30,11 @@ class User(BaseMixin,Model):
     role_id = Column(Integer,ForeignKey('roles.id'))
     role = relationship('Role',backref=backref(
                     'users',lazy='dynamic'))
-    articles = relationship('Article',backref="author",lazy="dynamic")
     add_date = Column(DateTime,default=func.now())
     _pw_hash = Column(UnicodeText,nullable=False)
+    articles = relationship('Article',backref=backref(
+                    'author'),lazy='dynamic',passive_deletes='all')
+    age = Column(Integer)
 
 
     def __init__(self,*args,**kwargs):
@@ -80,4 +83,14 @@ class User(BaseMixin,Model):
 
     def __repr__(self):
         return 'User<{} {}'.format(self.email,self.first_name)
+
+    def _get_absolute_url(self):
+        return url_for('member.profile',member_id=str(int(self.id)))
+
+    def _get_edit_url(self):
+        return '#'
+
+    @property 
+    def article_count(self):
+        return self.articles.query.count()
 

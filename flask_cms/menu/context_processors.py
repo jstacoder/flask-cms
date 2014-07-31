@@ -3,7 +3,7 @@
 def example_context():
     return {'example':'value'}
 
-def nav():
+'''def nav():
     brand = 'Admin'
     nav_links = {
             'Home':'index',
@@ -19,7 +19,7 @@ def nav():
                 'more nothing':'admin'
             }
         }
-
+'''
 def frontend_nav():
     return {'nav_links':
             (
@@ -35,30 +35,35 @@ def frontend_nav():
 def admin_nav():
     return {'admin_nav_links':
             (
-                ('Admin','admin.index'),
-                ('Pages','page.page'),
-                ('template','admin.add_template'),
-                ('Settings','admin.settings'),
-                ('Manage Users','admin.users'),
+                ('AdminDashBoard','admin.index'),
             ),
-            'admin_nav_title':'Site Admin',
+            'admin_nav_title':'Admin',
             'admin_dropdowns':(
-            
+                dict(
+                    Manage=dict(
+                                    Users='admin.users',
+                                    Blogs='admin.blogs',
+                                    Settings='admin.settings',
+                              )
+                    ),
                 dict(
                     List=dict(
-                                    Blocks='admin.blocks',
+                                    Blogs='admin.blocks',
                                     Pages='admin.pages',
                                     Templates='admin.templates',
+                                    Macros='admin.macros',
                               )
                     ),
                 dict(
                     Add=dict(
                                     Template='admin.add_template',
-                                    Page='admin.add_page',
-                                    Block='admin.add_block',
+                                    Page='page.add_page',
+                                    Macro='admin.add_block',
+                                    Blog='admin.add_blog',
                               )
-                    ),),
-                }
+                    ),
+                ),
+        }
 
 
 

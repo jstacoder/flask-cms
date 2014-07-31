@@ -188,6 +188,8 @@
                         &nbsp;
                         {% endif %}
                 {% endif %}
+                {% if f.flags.required %}<sub style="color:red;font-size:2em;">*</sub/>&nbsp;
+                    <span style="color:red;">Required</span><br/>{% endif %}
                 {% if f.type == 'FormField' %}
                     {{ f.hidden_tag() }}
                     {% for field in f %}
@@ -215,7 +217,9 @@
                         {% elif f.type == 'RadioField' %}
                             {{ render_radio(f) }}
                         {% elif f.type ==  'QuerySelectField' %}
+                            {{ render_field(f) }}
                         {% elif f.type ==  'QuerySelectMultipleField' %}
+                            {{ render_field(f) }}
                         {% elif f.type == 'TextField' or f.type == 'StringField' %}
                             {{ f.label }}{{ f(class_='form-control') }}
                         {% else %}
@@ -241,9 +245,7 @@
 {% macro render_panel_form(form,heading='',action='',action_text='Submit',class_='form',btn_class='btn btn-default') %}
     <div class=container>
         <div class="row centered-form">
-            <div class=col-md-4>
-            </div>
-            <div class="col-xs-6 col-sm-6 col-md-6">
+            <div class="col-xs-6 col-sm-6 col-md-11">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">{{ heading }}</h3>
@@ -293,4 +295,18 @@
         <li><a href="#">link</a></li>
         <li><a href="#">link</a></li>
     </ul>
+{% endmacro %}
+
+{% macro render_list_group(itms) %}
+    {% for itm in itms %}
+        {% if loop.first %}
+            <div class=list-group>
+        {% endif %}
+                <a href="#" class=list-group-item>
+                    {{ itm }}
+                <a/>
+        {% if loop.last %}
+            </div>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}

@@ -1,6 +1,102 @@
 {% extends 'layout.html' %}
-    {% block header %}
-        {% include 'header.html' with context %}
-    {% endblock header %}
-    {% block body %}
-    {% endblock body %}
+{% macro render_about() %}
+<div class="well">
+    <h1 class="text-center">Meet Our Crew</h1>
+</div>
+    <div class="list-group">
+        <a href="#" class="list-group-item active">
+        <div class="media col-md-3">
+            <figure class="pull-left">
+                <img class="media-object img-rounded img-responsive"  src="http://placehold.it/150x250" alt="placehold.it/150x250" >
+            </figure>
+        </div>
+        <div class="col-md-6">
+            <h4 class="list-group-item-heading"> Don Jonson</h4>
+            <p class="list-group-item-text">
+                    Qui diam libris ei, vidisse incorrupte at mel. His euismod salutandi 
+                    dissentiunt eu. Habeo offendit ea mea. Nostro blandit sea ea, viris timeam 
+                    molestiae an has. At nisl platonem eum. 
+                    Vel et nonumy gubergren, ad has tota facilis probatus.
+                    Ea legere legimus tibique cum, sale tantas vim ea, eu vivendo
+                    expetendis vim. Voluptua vituperatoribus et mel, ius no elitr 
+                    deserunt mediocrem. Mea facilisi torquatos ad.
+            </p>
+        </div>
+    </a>
+
+            <a href="#" class="list-group-item">
+            <div class="media col-md-3">
+                <figure class="pull-left">
+                    <img class="media-object img-rounded img-responsive" src="http://placehold.it/150x250" alt="placehold.it/150x250" >
+                </figure>
+            </div>
+            <div class="col-md-6">
+                <h4 class="list-group-item-heading"> Sam Smith</h4>
+                <p class="list-group-item-text"> 
+                        Eu eum corpora torquatos, ne postea constituto mea, quo tale lorem 
+                        facer no. Ut sed odio appetere partiendo, quo meliore salutandi ex. 
+                        Vix an sanctus vivendo, sed vocibus accumsan petentium ea. 
+                        Sed integre saperet at, no nec debet erant, quo dico incorrupte 
+                        comprehensam ut. Et minimum consulatu ius, an dolores iracundia est, 
+                        oportere vituperata interpretaris sea an. Sed id error quando indoctum, 
+                        mel suas saperet at.                         
+                </p>
+            </div>
+        </a>
+            <a href="#" class="list-group-item">
+            <div class="media col-md-3">
+                <figure class="pull-left">
+                    <img class="media-object img-rounded img-responsive" src="http://placehold.it/150x250" alt="placehold.it/150x250">
+                </figure>
+            </div>
+            <div class="col-md-6">
+                <h4 class="list-group-item-heading"> John Doe</h4>
+                <p class="list-group-item-text">
+                        Ut mea viris eripuit theophrastus, cu ponderum accusata consequuntur cum. 
+                        Suas quaestio cotidieque pro ea. Nam nihil persecuti philosophia id, nam quot populo ea. 
+                        Falli urbanitas ei pri, eu est enim volumus, mei no volutpat periculis.
+                        Est errem iudicabit cu. At usu vocibus officiis, ad ius eros tibique appellantur.
+                </p>
+            </div>
+            </a>    
+        </div>
+    </div>
+</div>
+{% endmacro %}
+{% block header %}
+    {% include 'header.html' with context %}
+{% endblock header %}
+{% block body %}
+<style type=text/css>
+li.ui-state-default {
+    font-size : 10px;
+}
+div.ui-tabs-panel {
+    Formatting Content | 13
+    www.it-ebooks.info
+    font-size : 15px;
+    font-family : georgia;
+    font-style : italic;
+}
+</style>
+<div id=tabs>
+    <ul>
+        <li><a href=#tab1>Tab 1</a></li>
+        <li><a href=#tab2>Tab 2</a></li>
+        <li><a href=#tab3>Tab 3</a></li>
+    </ul>
+    <div id=tab1>Contents of first tab</div>
+    <div id=tab2>Contents of the second tab</div>
+    <div id=tab3>Contents of the third tab</div>
+</div>
+{% endblock body %}
+{% block footer_js %}
+    {{ super() }}
+    <script type="text-javascript" src="{{url_for('static',filename='js/jquery.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',filename='js/jquery-ui.js')}}"></script>
+    <link rel=stylesheet type=text/css href="{{url_for('static',filename='css/jquery-ui-1.8.16.custom.css')}}" />
+<script>
+$("#tabs").tabs();
+</script>
+{% endblock footer_js %}
+

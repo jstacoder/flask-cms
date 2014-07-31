@@ -4,3 +4,36 @@
     {% endblock header %}
     {% block body %}
     {% endblock body %}
+    {% block footer_js %}
+        {{ super() }}
+        $(document).on("click",".save-btn",function(){
+            $.getJSON('/add_page',{
+                date_added:$('input[name="date_added"]').val(),
+                date_end:$('input[name="date_end"]').val(),
+                name:$('input[name="name"]').val(),
+                description:$('input[name="description"]').val(),
+                slug:$('input[name="slug"]').val(),
+                short_url:$('input[name="short_url"]').val(),
+                title:$('input[name="title"]').val(),
+                add_to_nav:$('input[name="add_to_nav"]').val(),
+                add_sidebar: $('input[name="add_sidebar"]').val(),
+                visible:$('input[name="visible"]').val(),
+                meta_title:$('input[name="meta_title"]').val(),
+                content:$('input[name="content"]').val(),
+                template:$('input[name="template"]').val(),
+                category:$('input[name="category"]').val(),
+                tags:$('input[name="tags"]').val(),
+                use_base_template:$('input[name="use_base_template"]').val()
+            },function(data){
+                    var successMsg = 'Page created';
+                    var failMsg = 'Page creation Failed';
+                if(data.result == 1){
+                    var result_html = $('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'+successMsg+'</div>');
+                }else{
+                    var result_html = $('<div class="alert alert-success" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'+failMsg+'</div>');
+                }
+                $(result_html).appendTo($('body'));
+                });
+            });
+    {% endblock footer_js %}
+        

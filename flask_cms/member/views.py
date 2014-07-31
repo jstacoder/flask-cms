@@ -1,4 +1,4 @@
-from baseviews import BaseView
+from main.baseviews import BaseView
 from member.forms import EditProfileForm
 from member import member
 
@@ -28,11 +28,6 @@ class MemberArticleView(BaseView):
         self._context['nav_title'] = 'My Blog'
         return self.render()
 
-member.add_url_rule('/blogs',view_func=MemberArticleView.as_view('blog_list'))
-member.add_url_rule('/blog/<blog_id>',view_func=MemberArticleView.as_view('post_list'))
-member.add_url_rule('/post/<post_id>',view_func=MemberArticleView.as_view('post_detail'))
-member.add_url_rule('/post/<post_id>/edit',view_func=MemberArticleView.as_view('post_edit'))
-member.add_url_rule('/blog/<blog_id>/edit',view_func=MemberArticleView.as_view('blog_edit'))
 
 '''
 #private

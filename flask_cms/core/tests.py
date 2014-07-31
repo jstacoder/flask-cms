@@ -5,7 +5,7 @@
 """
 
 from flask import url_for
-from testing import KitTestCase
+from .testing import KitTestCase
 
 
 class TestFrontBlueprint(KitTestCase):

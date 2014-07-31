@@ -1,0 +1,30 @@
+{% extends 'admin.html' %}
+{% macro render_widget(widget) %}
+    {% if widget|attr('title') %}
+        {{widget.title}}
+    {% endif %}
+    {% if widget|attr('content') %}
+        {% set c = widget|attr('content') %}
+        {% if c is iterable %}
+            {% if c is string %}
+                {{c}}
+            {% elif c is mapping %}
+                {% for k,v in c.items() %}
+                    <h2>{{k}}</h2>
+                    <p>{{v}}</p>
+                {% endfor %}
+            {% else %}
+                {% for itm in c %}
+                    {{itm}}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {{c}}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+    {% if widgets %}
+        {% for widget in widgets %}
+            {{render_widget(widget)}}
+        {% endfor %}
+    {% endif %}

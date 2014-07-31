@@ -6,9 +6,10 @@
 """
 
 from core import core
-from baseviews import BaseView
+from main.baseviews import BaseView
 from flask import flash, redirect, request, url_for
-
+from admin.forms import AddPageForm
+from blog.models import Category,Tag    
 
 
 class IndexView(BaseView):
@@ -17,25 +18,27 @@ class IndexView(BaseView):
     def get(self):
         return self.redirect('blog.blogs')
 
-core.add_url_rule('', view_func=IndexView.as_view('index'))
 
 class AboutView(BaseView):
-    _template = 'about.html'
+    _template = 'new_post.html'
 
     def get(self):
+        self._form = AddPageForm()
+        self._form.tags.query_factory = Tag.query.all
+        self._form.category.query_factory = Category.query.all
+        
         return self.render()
+
     def post(self):
         self._context['content'] = request.form.get('content')
         return self.render()
 
-core.add_url_rule('about',view_func=AboutView.as_view('about'))
 
 class MeetView(BaseView):
-    _template = 'meet_us.html'
+    _template = 'jumbo.html'
 
     def get(self):
         return self.render()
-core.add_url_rule('meet',view_func=MeetView.as_view('meet'))
 
 
 
@@ -43,19 +46,28 @@ class ContactView(BaseView):
     _template = 'contact.html'
     _form = None
     _context = {}
-    
+
     def get(self):
+        import datetime
+        from .models import ContactMessage
         if len(request.args) > 0:
-            self._context['args'] = {'email':request.args['email']}
+            message = ContactMessage()
+            message.name = request.args['name']
+            message.email = request.args['email']
+            message.subject = request.args['subject']
+            message.message = request.args['message']
+            message.ip_address = request.environ['REMOTE_ADDR']
+            message.save()
+            self.flash("Thanks {} for sending us a message".format(request.args['name']))
         from page.forms import ContactUsForm
         from app import app
         self._context['CONTACT_FORM_SETTINGS'] = app.config.get('CONTACT_FORM_SETTINGS',None)
         ContactUsForm.subject.choices =  self._context['CONTACT_FORM_SETTINGS']['OPTIONS']
         self._form = ContactUsForm
+        self._form_args = {'ip_address':request.environ['REMOTE_ADDR']}
         if self._context.get('mce'):
             self._context.pop('mce')
         return self.render()
-core.add_url_rule('contact',view_func=ContactView.as_view('contact'))
 
 class TestView(BaseView):
     _template = 'test.html'
@@ -64,4 +76,9 @@ class TestView(BaseView):
         return self.render()
 
 
-core.add_url_rule('test',view_func=TestView.as_view('test'))
+class NewView(BaseView):
+    _template = 'new.html'
+
+    def get(self):
+        self._context['itms'] = ('item1','item2','item3','item4')
+        return self.render()
