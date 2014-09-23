@@ -1,0 +1,72 @@
+{% macro big_button_widget(txt,link,link_txt) %}
+	<div class="well text-center">
+		<p class="lead">
+			{{txt}}
+		</p>
+		<a href="{{link}}" class="btn btn-primary btn-lg">Subscribe to my feed</a>
+	</div>
+{% endmacro %}
+{% macro tag_widget(tags=false) %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Tags</h4>
+		</div>
+		<div class="panel-body">
+			<ul class="list-inline">
+                {% if tags == false %}
+                    {% set tags = get_model('tag','blog').query.all() %}
+                {% endif %}
+				{% for tag in tags %}
+					<li><a href="{{tag.get_absolute_url()}}">{{tag.name}}</a></li>
+				{% endfor %}							
+			</ul>
+		</div>
+	</div>
+{% endmacro %}
+{% macro category_widget(categorys=false) %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Categories</h4>
+		</div>
+		<div class="list-group">
+            {% if categorys == false %}
+                {% set categorys = get_model('category','page').query.all() %}
+            {% endif %}
+			{% for cat in categorys %}
+				<a class="list-group-item" href="{{cat.get_absolute_url()}}">{{cat.name}}{% if cat.use_icon %}&nbsp;
+					<span class="glyphicon glyphicon-{{cat.icon}}"></span>{% endif %}
+				</a>
+			{% endfor %}				
+		</div>
+	</div>
+{% endmacro %}
+{% macro comment_widget(comments=false) %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Recent Comments</h4>
+		</div>
+		<div class="list-group">
+            {% if comments == false %}
+                {% set comments = get_model('comment','blog').query.all() %}
+            {% endif %}
+			{% for comment in comments %}
+				<a class="list-group-item" href="{{comment.get_absolute_url()}}">{{comment.content}}</a>
+			{% endfor %}						
+		</div>
+	</div>
+{% endmacro %}
+{% macro post_widget(posts=false) %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4>Latest Posts</h4>
+		</div>
+		<div class="list-group">
+            {% if posts == false %}
+                {% set posts = get_model('article','blog').query.all() %}
+            {% endif %}
+			{% for post in posts %}
+				<a class="list-group-item" href="{{post.get_absolute_url()}}">{{loop.index}}. {{post.title}}</a>
+			{% endfor %}			
+		</div>
+	</div>
+{% endmacro %}

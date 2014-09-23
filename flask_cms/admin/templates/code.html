@@ -1,0 +1,79 @@
+{% extends 'admin.html' %}
+{% macro render_sort_item(title,file_list) %}
+    <div class="group">
+    <h3>{% if title %}
+            {{title}}
+        {% else %}
+            Item:{{ num }}
+        {% endif %}
+    </h3>
+    <div>
+        <div>
+            <div class="group-list">
+                {% for file,content in file_list[0] %}
+                    <a class=group-list-item href="{{url_for('admin.edit_file',file_path=file)}}">file</a>
+                {% endfor %}
+            </div>  
+        </div>
+    </div>
+  </div>
+{% endmacro %}
+{% macro sortable(title,items) %}
+    
+            {{ render_sort_item(title,items.values()) }}        
+    
+{% endmacro %}
+{% block extra_head %}
+    {{ super() }}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+        <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+        <script>
+                $(function() {
+                  $( "#accordion" )
+                    .accordion({
+                          header: "> div > h3",
+                          collapsible: true
+                        })
+                    .sortable({
+                        axis: "y",
+                        handle: "h3",
+                        stop: function( event, ui ) {
+                              // IE doesn't register the blur when sorting
+                              // so trigger focusout handlers to remove .ui-state-focus
+                              ui.item.children( "h3" ).triggerHandler( "focusout" );
+ 
+                              // Refresh accordion to handle new order
+                              $( this ).accordion( "refresh" );
+                        }
+                    });
+                });
+        </script>
+  <!--<link rel="stylesheet" href="/resources/demos/style.css">-->
+  <style>
+  /* IE has layout issues when sorting (see #5413) */
+  .group { zoom: 1 }
+  </style>
+  
+{% endblock extra_head %}
+{% block content %}
+    <script type="text/javascript">
+        $(function(){
+            var addText = function(elem){
+                $(elem).text($(elem).attr("value"));
+            }
+            for (var i = 0;i <= $(".ckeditor").length; i++) {
+                addText($(".ckeditor")[i]);
+            }            
+        });
+    </script>
+        {% if files %}
+        <div id="accordion">        
+            {% for dn in dir_list %}
+                {% set title = dn %}                
+                {{ sortable(title,dir_dict[dn]) }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+{% endblock %}

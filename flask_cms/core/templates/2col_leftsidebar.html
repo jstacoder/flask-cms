@@ -1,0 +1,79 @@
+{% extends base %}
+    {% set wide = true %}
+    {% block extra_head %}
+        <link rel="stylesheet" href="{{url_for('static',filename='css/blog.css')}}" />
+    {% if display_blocks %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />
+    {% endif %}
+    {% endblock extra_head %}
+    {% block body %}
+    {% block header %}
+        {% include navbar with context %}
+    {% endblock header %}
+    {% block messages %}
+        {% include 'includes/_messages.html' with context %}
+    {% endblock messages %}
+    <div class="container{% if wide %}-fluid{% endif %}">
+        <div class=row>
+            {% block sidebar %}
+            <div class="col-md-2 col-sm-2 box sidebar">
+                <div class=row>
+                    <div class="col-md-12 box box4">
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock sidebar %}
+        {% block content %}
+        {% set blogs = get_model('blog').query.all() %}
+        {% set lst = [] %}
+        {% for blog in blogs %}
+            {{ lst.append((blog.name,url_for('blog.post_list',item_id=blog.id)))}}
+        {% endfor %}
+            <div class="col-md-10 col-sm-4 box content">
+                <div class=row>
+                    <div class="col-md-6 box box1">
+                        {% for name,link in lst %}
+                            <a href="{{link}}"><h2>{{name}}</h2></a>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6 box box2">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock content %}
+        {% block footer %}
+        <div class=row>
+            <div class="col-md-12 col-sm-6 footer">
+                <div class=row>
+                    <div class="col-md-4 box footer-left">
+                    </div>
+                    <div class="col-md-4 box footer-mid">
+                    </div>
+                    <div class="col-md-4 box footer-right">
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock footer %}
+    </div>
+    {% block footer_js %}{% endblock footer_js %}
+    {% endblock body %}
+
+

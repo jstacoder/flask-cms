@@ -1,0 +1,77 @@
+{% extends 'admin.html' %}
+{% macro parse_setting(setting) %}
+    {% if type(setting) == type(true) %}
+        {% set widget = 'checkbox' %}
+    {% elif  type(setting) == type('') %}
+        {% set widget = 'text' %}
+    {% else %}
+        {% set widget = 'textarea' %}
+    {% endif %}
+{% endmacro %}
+{% macro parse_list(lst) %}
+    <ul>
+        {% for itm in lst %}
+            <li>{{itm}}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+{% macro parse_pair(k,v) %}
+    <dt>{{k}}</dt>
+    <dd>{{v}}</dd>
+{% endmacro %}
+{% macro parse_dict(dct) %}
+    <dl>
+        {% for key,val in dct.items() %}
+            {{ parse_pair(key,val) }}
+        {% endfor %}
+    </dl>
+{% endmacro %}
+{% macro parse_tuple(tpl) %}
+    <dl>
+    {% for k,v in tpl %}
+        {{ parse_pair(k,v) }}
+    {% endfor %}
+    </dl>
+{% endmacro %}
+{% macro render_settings() %}
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th><input type=checkbox /></th>
+                <th>Setting</th>
+                <th>Value</th>                
+                <th>Change</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for setting,value  in extract_settings(config) %}
+                    <tr>                        
+                        <td><input type=checkbox /></td>
+                        <td>{{setting}}</td>                        
+                        <td>
+                            {% if type(value) == type([]) %}
+                                {{ parse_list(value) }}
+                            {% elif type(value) == type({}) %}
+                                {{ parse_dict(value) }}
+            <dt>{{key}}</dt>
+            <dd>{{val}}</dd>
+                            {% elif type(value) == type('') or type(value) == type(1) or type(value) == type(true) %}
+                                {{value}}
+                            {% else %}
+                                {{ parse_tuple(value) }}
+                            {% endif %}
+                        </td>
+                        <td><a class="btn btn-default btn-xs" href="#">{{get_icon('edit')}}Edit</a></td>
+                    </tr>                
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+{% macro render_setting(setting) %}
+    <p>{{config.__dict__[setting.upper()]}}</p>
+{% endmacro %}
+{% block body %}
+    {{ render_settings() }}
+    {{ render_setting('root_path') }}
+    <h2>Hi</h2>
+{% endblock %}

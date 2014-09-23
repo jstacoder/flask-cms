@@ -1,0 +1,28 @@
+{% extends 'admin.html' %}
+{% block body %}
+    <form action='' method="post">
+        <fieldset>
+        <div class="row">
+            <div class=col-md-8>
+                <label>{{f.name.label}}</label>
+                {{ f.name(class_="form-control input-sm")}}
+                {{ f.content()}}
+            </div>
+        
+            <div class="col-md-2 col-md-push-2">
+                <div class=row>
+                    <div class="col-md-6">
+                        <label>{{f.argument.label}}</label>
+                        {{f.argument(class_="form-control input-xs")}}
+                    </div>
+                    <div class="col-md-6">
+                        <label>{{f.default.label}}</label>
+                        {{f.default(class_="form-control input-xs")}}
+                    </div>
+                    {{ get_button('add_arg')}}
+                </div>
+            </div>
+        </div>
+        </fieldset>
+{% endblock %}
+        

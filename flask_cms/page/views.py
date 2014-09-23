@@ -149,3 +149,11 @@ class AddPageView(BaseView):
             p.save()
             res = 1
         return jsonify(result=res,content=data['content'])
+
+@page.before_app_first_request
+def make_macro_file():
+    from page.models import Macro
+    from auth.models import User
+    Macro._generate_macro_file()
+
+    

@@ -1,0 +1,83 @@
+{% extends base %}
+    {% if not wide is defined %}
+        {% set wide = false %}
+        {% endif %}
+    {% block extra_head %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/blog.css')}}" />
+        <link rel=stylesheet href="{{url_for('static',filename='css/blog_admin.css')}}" />
+        {# <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />#}
+    {% endblock extra_head %}
+    {% block body %}
+    <div class="container{% if wide %}-fluid{% endif %}">
+    {% block header %}
+        {% if not navbar_name is defined %}
+            {% set navbar_name = 'clean' %}
+        {% endif %}
+        {% include _get_navbar(navbar_name) with context %}
+    {% endblock header %}
+        <div class=row>
+            <div class="col-md-10 col-sm-4 box content">
+                <div class=row>
+                    <div class="col-md-12 box box2">
+                        {% block column_one %}
+                        {% endblock column_one %}
+                    </div>
+                </div>
+            </div>        
+            <div class="col-md-2 col-sm-2 box sidebar">
+                <div class=row>
+                    <div class="col-md-12 box box4">
+                        {% block sidebar %}
+                        <div class=row>
+                            <div class="col-md-12 sidebar-module-inset widget box">
+                                {% block sidebar_widget1 %}
+                                {% endblock sidebar_widget1 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 sidebar-module-inset widget box">
+                                {% block sidebar_widget2 %}
+                                {% endblock sidebar_widget2 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 sidebar-module widget box">
+                                {% block sidebar_widget3 %}
+                                {% endblock sidebar_widget3 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 sidebar-module-inset widget box">
+                                {% block sidebar_widget4 %}
+                                {% endblock sidebar_widget4 %}
+                            </div>
+                        </div>
+                        {% endblock sidebar %}
+                    </div>
+                </div>
+            </div>
+        {% block footer %}
+            <div class=row>
+                <div class="col-md-12 col-sm-6 footer">
+                        <div class=row>
+                            <div class="col-md-4 box footer-left">
+                                {% block footer_left %}
+                                {% endblock footer_left %}
+                            </div>
+                            <div class="col-md-4 box footer-mid">
+                                {% block footer_mid %}
+                                {% endblock footer_mid %}
+                            </div>
+                            <div class="col-md-4 box footer-right">
+                                {% block footer_right %}
+                                {% endblock footer_right %}
+                            </div>
+                       </div>
+                </div>
+            </div>
+        {% endblock footer %}
+        </div>
+    </div>
+{% endblock body %}
+
+

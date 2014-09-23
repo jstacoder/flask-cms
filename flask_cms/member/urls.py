@@ -9,5 +9,6 @@ routes = [
             ('/post/<post_id>/edit',MemberArticleView.as_view('post_edit')),
             ('/blog/<blog_id>/edit',MemberArticleView.as_view('blog_edit')),
             ('/profile',MemberProfileView.as_view('profile')),
+            ('/edit/profile',MemberProfileView.as_view('profile_edit')),
         )
     ]

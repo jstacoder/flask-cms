@@ -1,0 +1,83 @@
+{% extends base %}
+    {% set wide = true %}
+    {% block extra_head %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />
+    {% endblock extra_head %}
+    {% block content %}
+    {% block header %}
+        {% include navbar with context %}
+        <div class=row>
+            <div class="col-md-2 col-sm-2 box sidebar">
+                {% block sidebar %}
+                <div class=row>
+                    <div class="col-md-12 box box4">
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                                {% block sidebar_widget1 %}
+                                {% endblock sidebar_widget1 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                                {% block sidebar_widget1 %}
+                                {% endblock sidebar_widget1 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                                {% block sidebar_widget1 %}
+                                {% endblock sidebar_widget1 %}
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                                {% block sidebar_widget1 %}
+                                {% endblock sidebar_widget1 %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endblock sidebar %}
+            </div>
+            <div class="col-md-10 col-sm-4 box content">
+                <div class=row>
+                    {% block content %}
+                    <div class="col-md-4 box box1">
+                        {% block column_one %}
+                        {% endblock column_one %}
+                    </div>
+                    <div class="col-md-4 box box2">
+                        {% block column_two %}
+                        {% endblock column_two %}
+                    </div>
+                    <div class="col-md-4 box box8">
+                        {% block column_three %}
+                        {% endblock column_three %}
+                    </div>
+                    {% endblock content %}
+                </div>
+            </div>
+        </div>
+        <div class=row>
+            <div class="col-md-12 col-sm-6 footer">
+                <div class=row>
+                    {% block footer %}
+                    <div class="col-md-4 box footer-left">
+                        {% block footer_left %}
+                        {% endblock footer_left %}
+                    </div>
+                    <div class="col-md-4 box footer-mid">
+                        {% block footer_mid %}
+                        {% endblock footer_mid %}
+                    </div>
+                    <div class="col-md-4 box footer-right">
+                        {% block footer_right %}
+                        {% endblock footer_right %}
+                    </div>
+                    {% endblock footer %}
+                </div>
+            </div>
+        </div>
+    {% endblock content %}
+
+

@@ -1,0 +1,60 @@
+{% if base %}{% extends base %}{% else %}{% extends 'layout.html' %}{% endif %}
+{#{% from 'macros/navbar.html' import render_nav %}#}
+    {% set wide = true %}
+    {% block extra_head %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />
+    {% endblock extra_head %}
+    {% block body %}
+        {% block navbar %}
+            {{ render_nav('clean','title',nav_links)|safe }}
+        {% endblock navbar %}
+        {% block content %}
+            <div class=row>
+                <div class="col-md-2 col-sm-2 box sidebar">
+                    <div class=row>
+                        <div class="col-md-12 box box4">
+                            <div class=row>
+                                <div class="col-md-12 widget box">
+                                </div>
+                            </div>
+                            <div class=row>
+                                <div class="col-md-12 widget box">
+                                    {#{{ get_model('user','auth').query.first().first_name }}#}
+                                    {{ get_block('test_get_model') }}
+                                </div>
+                            </div>
+                            <div class=row>
+                                <div class="col-md-12 widget box">
+                                </div>
+                            </div>
+                            <div class=row>
+                                <div class="col-md-12 widget box">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10 col-sm-4 box content">
+                    <div class=row>
+                        <div class="col-md-12 box box2">
+                            {{get_block('blog_navbar_test')}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class=row>
+                <div class="col-md-12 col-sm-6 footer">
+                    <div class=row>
+                        <div class="col-md-4 box footer-left">
+                        </div>
+                        <div class="col-md-4 box footer-mid">
+                        </div>
+                        <div class="col-md-4 box footer-right">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock content %}
+    {% endblock body %}
+
+

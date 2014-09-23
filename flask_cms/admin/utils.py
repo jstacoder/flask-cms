@@ -1,8 +1,30 @@
+import os
 from ext import db
 from flask import session, g, flash, redirect, url_for, request
 from functools import wraps
 from flask import url_for
 from settings import BaseConfig
+
+def get_files_of_type(ext):
+    root = BaseConfig.ROOT_PATH
+    count = 0
+    rtn = {}
+    counts = {}
+    for dn,dl,fl in os.walk(os.path.abspath(root)):
+        for f in fl:
+            counts[count] = os.path.join(dn,f)
+           
+            if f.endswith(ext):
+                with open(os.path.join(os.path.abspath(dn),f),'r') as fp:
+                    if rtn.get("dn",False):
+                        rtn[dn].append((f,fp.read(),count))                           
+                    else:
+                        rtn[dn] = [(f,fp.read(),count)]
+            count += 1            
+    return (rtn,counts)
+        
+    
+
 
 class Pagination(object):
     _model = None
@@ -19,12 +41,12 @@ class Pagination(object):
         else:
             self._query = query
         self._model = model
-        self._page_num = page_num or self._page_num
+        self._page_num = int(page_num) or self._page_num
         self._objs = self._query.all()
         self.set_page(self._objs)
 
     def set_page(self,obj_list):
-        s = ((self._per_page*self._page_num)-self._per_page)
+        s = ((int(self._per_page*self._page_num))-self._per_page)
         self._obj_page = []
         total = 0
         while total != self._per_page:

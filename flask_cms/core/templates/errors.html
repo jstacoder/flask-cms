@@ -1,0 +1,15 @@
+{% extends base %}
+    {% block body %}
+        <div class=container>
+            <div class=row>
+                <div class="col-md-4 col-md-push-2">
+                    <div class="system_message">
+                        <h2>{{code}}</h2>
+                        <p class=lead>{{msg}}</p>
+                        <a href="{{url_for('core.index')}}">Lost? Go Back Home...</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+

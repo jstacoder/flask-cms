@@ -1,0 +1,28 @@
+{% extends 'admin.html' %}
+{% block content %}
+        {% if obj %}
+            {% if obj.content %}
+                <div id="text" style="display:none;">
+                    {{ obj.content }}
+                </div>
+            {% endif %}
+        {% endif %}    
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.content(class_="ckeditor") }}
+        {{ form.submit() }}
+    </form>
+    
+{% endblock content %}
+{% block footer_js %}
+    {{ super() }}
+    <script type="text/javascript">
+      $(document).ready(function() {
+                if($("#text").length > 1)
+                    var t = $("#text").text();
+                    if($(t).length > 0){
+    CKEDITOR.instances.content_content.insertHtml(t);
+                    };
+      });
+    </script>
+{% endblock footer_js %}

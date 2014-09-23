@@ -2,9 +2,10 @@
  * Globals
  */
 
-body {
+body#body {
   font-family: Georgia, "Times New Roman", Times, serif;
   color: #555;
+  padding-top:0px!important;
   }
 
 h1, .h1,
@@ -165,3 +166,28 @@ h6, .h6 {
 .blog-footer p:last-child {
   margin-bottom: 0;
   }
+
+.box .widget {
+    min-height:145px;
+}
+.content-column{
+    min-height:580px;
+}
+.sidebar {
+    border:0;
+}
+.content {
+    height:auto;
+}
+.footer .box {
+    min-height:90px;
+}
+
+
+.flask-pagedown-preview {
+    height:450px;
+    border:1.2px dashed grey;
+    width:55%;
+    background-color:#edece3;
+}
+

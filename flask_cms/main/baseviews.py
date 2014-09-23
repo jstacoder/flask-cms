@@ -47,9 +47,10 @@ class BaseView(MethodView):
         return redirect(url_for(endpoint,**kwargs))
 
     def flash(self,*args,**kwargs):
-        if type(self._form.errors) == type({}):
-            if len(self._form.errors) > 0:
-                self._flash_form_errors()
+        if self._form is not None:
+            if type(self._form.errors) == type({}):
+                if len(self._form.errors) > 0:
+                    self._flash_form_errors()
         flash(*args,**kwargs)
 
 class ModelView(BaseView):

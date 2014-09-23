@@ -15,8 +15,11 @@ CKEDITOR.editorConfig = function( config ) {
          lineNumbers:true,
          lineWrapping:false,
          autoCloseBrackets:false,
-         mode:'application/x-httpd-php',
+         mode: {name: "jinja2",
+               version: 2,
+               singleLineStringErrors: false},
          showSearchButton:false,
+         highlightActiveLine: false
      }
 
 

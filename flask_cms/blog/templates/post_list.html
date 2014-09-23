@@ -1,0 +1,13 @@
+{% extends layouts['blog'] %}
+{% block column_one %}
+    <div class="blog-header">
+        <h2 class="blog-title">{{blog.name}} <small class="blog-description">{{blog.category.name}}</small></h2>
+    </div>
+    <div class="blog-main">
+   {% if posts %}
+      {% for post in posts %}
+          <a href="{{url_for('blog.view_post',item_id=post.id)}}"><h3>{{post.name}}</h3></a>
+      {% endfor %}
+   {% endif %}
+   </div>
+{% endblock %}

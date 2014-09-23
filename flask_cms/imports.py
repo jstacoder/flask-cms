@@ -13,3 +13,10 @@ from member.models import Profile
 from core.models import ContactMessage
 from blog.models import Blog
 from page.models import Macro
+from page.models import Button
+from page.models import StaticBlock
+from page.models import TemplateBlock
+from admin.models import AdminTab
+from blog.models import Post
+from admin.models import FontIcon
+from admin.models import FontIconLibrary

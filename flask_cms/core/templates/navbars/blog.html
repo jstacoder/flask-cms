@@ -1,0 +1,14 @@
+{% macro render_blog_nav(nav_links) %}
+    <div class="blog-masthead">
+      <div class="container-fluid">
+        <nav class="blog-nav">
+    {% for endpoint,text in nav_links %}   
+          <a class="blog-nav-item{% if endpoint == request.endpoint.split('.')[-1] %} active{% endif %}" href="{{url_for(endpoint,**kwargs)}}">{{text}}</a>
+    {% endfor %}
+        </nav>
+      </div>
+    </div>
+{% endmacro %}
+{% if nav_links %}
+    {{ render_blog_nav(nav_links) }}
+{% endif %}

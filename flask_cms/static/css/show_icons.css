@@ -1,0 +1,54 @@
+.col-md-1 {
+    padding-top:14px;
+}
+dd,
+.genericon {
+    font-size:2em;
+}
+.ionicon {
+    font-size:2em;
+}
+dt {
+    font-size:8px;
+}
+.octicon {
+    font-size:1.5em;
+}
+.modal-body > span {
+    font-size:10em;
+    margin-left:210px;
+}
+.modal-title {
+    text-transform: capitalize;
+    font-weight: bold;
+}
+.modal-arrow > span {
+    font-size:3em;
+    position:relative;
+    top:-107px;
+    cursor:pointer;
+}
+.lib-name {
+    background: darkgrey;
+    padding:10px 17px 17px 45px;
+    text-transform: capitalize;
+    font-weight:bold;
+    font-variant: small-caps;
+    margin-bottom:0px;
+    width:102.7%;
+    position: relative;
+    left:-15px;
+    border-radius: 8px 8px 2px 2px;
+    
+}
+div.icons {
+    border:5px inset grey;
+    display: none;
+}
+#body small {
+    color:honeydew;
+}
+div h2,
+div h1 {
+    display:inline-block;
+}

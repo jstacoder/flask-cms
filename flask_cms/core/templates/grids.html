@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+    {% set wide = true %}
+    {% block extra_head %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />
+    {% endblock extra_head %}
+    {% block content %}
+        <div class=row>
+            <div class="col-md-12 col-sm-4 box">
+                <div class=row>
+                    <div class="col-md-6 box box1">
+                    </div>
+                    <div class="col-md-6 box box2">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-2 box">
+                <div class=row>
+                    <div class="col-md-4 box box3">
+                    </div>
+                    <div class="col-md-8 box box4">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-4 box">
+                <div class=row>
+                    <div class="col-md-2 box box5">
+                    </div>
+                    <div class="col-md-4 col-md-pull-6 box box6">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-6 box">
+                <div class=row>
+                    <div class="col-md-1 box box7">
+                    </div>
+                    <div class="col-md-11 box box8">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 not-visible-sm box">
+                <div class=row>
+                    <div class="col-md-3 box box9">
+                    </div>
+                    <div class="col-md-9 box box10">
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock content %}
+
+

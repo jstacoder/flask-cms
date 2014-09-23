@@ -22,9 +22,10 @@
                         <button type="submit" class="btn btn-default">Submit</button>
                     </form>
                     {% if 'email' in session %}
-                    <span class="nav navbar-nav navbar-right" role="navigation">
-                        <p class="nav navbar-text pull-right">{{ email }}</p><i class="glyphicon glyphicon-user"></i>
-                    </span>
+                    <span class="glyphicon glyphicon-user"></span>
+                    <div class="nav navbar-nav navbar-right" role="navigation">
+                        <p class="nav navbar-text navbar-right">{{ email.split('@')[0] }}</p>
+                    </div>
                     {% endif %}
                     <ul class="nav navbar-nav navbar-right" role="navigation">
                         <li class="dropdown">

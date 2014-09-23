@@ -1,0 +1,42 @@
+{% extends base %}
+{% macro render_directory(dirName,files,dirs) %}
+<div class=container>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title">Files in:</h2>
+    </div>
+    <div class="panel-body">
+        <p>{{dirName}}</p>
+    </div>
+        <table class="table-bordered table-hover table table-striped">
+            <thead>
+                <tr>
+                    <th>Files</th>
+                    <th></th>
+                    <th>Dirs</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td><a href="{{url_for('admin.files',dirName=parent)}}"><p>..</p></a></td>
+              </tr>
+                {% for file,dir in zip(files,dirs) %}    
+                            <tr>
+                                <td>{% if file %}<a href="{{url_for('admin.files',dirName=dirName,fileName=file)}}">{{file}}</a>{% endif %}</td>
+                                <td></td>
+                                <td>{% if dir %}<a href="{{url_for('admin.files',dirName=dir)}}">{{dir}}</a>{% endif %}</td>
+                            </tr>
+                    
+                {% endfor %}
+            </tbody>
+        </table>
+</div>
+</div>
+{% endmacro %}
+{% block body %}
+    {% if fileList %}
+        {{ render_directory(dirName,fileList,dirList) }}
+    {% endif %}
+{% endblock %}

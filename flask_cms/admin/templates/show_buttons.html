@@ -1,0 +1,29 @@
+{% extends "admin.html" %}
+    {% macro render_button(button) %}
+        <td>
+            {{ get_button(button.name) }}
+            <dl>
+                <dt>Name</dt>
+                <dd>{{button.name}}</dd>
+                <dt>Type</dt>
+                <dd>{{button.type}}</dd>
+                <dt>Link?</dt>
+                <dd>{{button.is_link}}</dd>
+                {% if button.is_link and button.endpoint %}
+                    <dt>Endpoint</dt>
+                    <dd>{{button.endpoint}}</dd>
+                {% endif %}
+            </dl>
+        </td>
+    {% endmacro%}
+    {% macro render_buttons() %}
+        <table>
+            {% for btn in get_model('button','page').query.all() %}
+                {{ render_button(btn) }}
+            {% endfor %}
+        </table>
+    {% endmacro %}
+    {% block content %}
+        {{ render_buttons() }} 
+    {% endblock content %}
+            

@@ -1,0 +1,27 @@
+{% extends layouts['blog'] %}
+    {% block sidebar_widget1 %}
+        <p>Im in the sidebarf</p>
+    {% endblock sidebar_widget1 %}
+    {% block sidebar_widget4 %}
+    <div class="well">
+        <h4>This is in a lower sidebar widget</h4>
+    </div>
+    {% endblock sidebar_widget4 %}
+    {% block column_one %}
+        <h2>Blog Home Page</h2>
+        {% set blogs = get_model('blog').query.all() %}        
+        {% if blogs %}
+            <ul>
+            {% for blog in blogs %}
+            <li>
+            <h2>{{blog.name}}</h2>
+            <a href="{{url_for('blog.post_list',item_id=blog.id)}}">View Posts</a>
+            </li>
+            {% endfor %}
+        {% endif %}
+    {% endblock column_one %}
+    {% block footer_js %}
+        {{super()}}
+        <script type="text/javascript" src="{{url_for('static',filename='js/main.js')}}"></script>
+    {% endblock footer_js %}
+

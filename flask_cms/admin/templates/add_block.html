@@ -1,0 +1,50 @@
+{% extends 'admin.html' %}    
+    {% macro render_block_form(form,block='') %}
+        <form class=form-inline role=form action="{{url_for('admin.save_static_block')}}">
+            {{form.content(id='editor',value=(block or block.content))}}
+            <div class="panel panel-default">
+                <div class="panel panel-body">
+            <div class=col-md-12>
+            <div class=col-md-4>
+            <div class=input-group>
+                {{form.name.label}}{{form.name(class_='form-control')}}
+            </div>
+            </div>
+            <div class=col-md-4>
+            <div class=input-group>
+                {{form.block_id.label}}{{form.block_id(class_='form-control')}}
+            </div>
+            </div>
+            <div class=col-md-4>
+            <div class=input-group>
+                {{ get_button('save_btn') }}
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+        </form>
+    {% endmacro %}
+    {% block body %}
+        {% if content %}
+            <div class=content style="display: none;">
+                {{content}}
+            </div>
+        {% endif %}
+        {% if form %}
+            {{render_block_form(form)}}
+        {% endif %}
+    {% endblock body %}
+    {% block footer_js %}
+        <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+        {{ super() }}
+        <script type="text/javascript">
+            $(function(){
+                if ($(".content").length > 0) {
+                        $("textarea").ckeditor().val($.trim($(".content").text()));                    
+                }
+            });
+        </script>
+        <script type="text/javascript" src="{{url_for('static',filename='js/save.js')}}"></script>
+    {% endblock footer_js %}

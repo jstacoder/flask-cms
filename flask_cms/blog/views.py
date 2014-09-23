@@ -1,4 +1,5 @@
 from main.baseviews import BaseView
+from slugify import slugify
 from member.forms import EditProfileForm
 from member import member
 from flask import request, g,url_for,session
@@ -109,9 +110,13 @@ class MemberProfileView(BaseView):
         return self.render()
 
 class MemberArticleView(BaseView):
-    _template = 'blog.html'
+    _template = 'blog_home.html'
     _form = None
-    _context = {}
+    _context = {
+            'body_style':'margin-top:0px;',
+            'wide':False,
+
+    }
 
     def get(self,blog_id=None,post_id=None,member_id=None):
         from page.widgets import TagWidget
@@ -138,6 +143,7 @@ class MemberArticleView(BaseView):
         self._context['member_id'] = member_id or 'unknown'
         self._context['nav_title'] = 'My Blog'
         self._context['sidebar_widgets'] = [TagWidget()]
+        g.nav_id = 'clean'
         return self.render()
 
 
@@ -156,6 +162,149 @@ class FrontBlogView(BaseView):
         from .models import Blog
         self._context['blogs'] = Blog.get_by_author_id(session.get('user_id',None))
         return self.render()
+
+class AjaxAddBlogView(BaseView):
+
+    def get(self):
+        from .models import Blog, Article, Tag, Category
+        data = dict(
+            date_added=request.args.get('date_added',None),
+            date_end=request.args.get('date_end',None),
+            name=request.args.get('name',None),
+            description=request.args.get('description',None),
+            slug=request.args.get('slug',None),
+            short_url=request.args.get('short_url',None),
+            title=request.args.get('title',None),
+            add_to_nav=request.args.get('add_to_nav',None),
+            add_sidebar=request.args.get('add_sidebar',None),
+            visible=request.args.get('visible',None),
+            meta_title=request.args.get('meta_title',None),
+            content=request.args.get('content',None),
+            template=request.args.get('template',None),
+            category=request.args.get('category',None),
+            tags=request.args.get('tags',None),
+            use_base_template=request.args.get('use_base_template',None),
+        )
+        blog = Blog.get_current_blog()
+        post = Article.query.filter(Article.name==data['name'])\
+                            .filter(Article.blog==blog)\
+                            .first()
+        if post is not None:
+            res = 0
+        else:
+            tags = [x.name for x in Tag.query.all()]
+            new_tags = []
+            for tag in data['tags']:
+                if not tag in tags:
+                    t = Tag()
+                    t.name = tag
+                    new_tags.append(t.save())
+            new_tags = new_tags + tags
+            post = Article()
+            post.tags = new_tags
+            post.name = data.get('name')
+            post.date_added = data.get('date_added')            
+            post.description = data.get('description',None)
+            post.slug = data.get('slug',None)
+            post.url = data.get('short_url',None)
+            post.title = data.get('title',None)            
+            post.visible = data.get('visible',None)
+            post.meta_title = data.get('meta_title',None)
+            post.content = data.get('content',None)
+            post.category = data.get('category',None)
+            post.save()
+            res = 1
+        return jsonify(result=res,content=data['content'])
+
+
+class BlogListView(BaseView):
+    _template = 'blog_list.html'
+    _context = {
+            'body_style':'',
+    }
+
+    def get(self):
+        from .models import Blog
+        blogs = Blog.query.all()
+        self._context['blogs'] = blogs
+        if len(blogs) == 1:
+            blog = blogs[0]
+            return self.redirect('blog.list_posts',item_id=blog.id)
+        return self.render()
+
+class PostListView(BaseView):
+    _template = 'post_list.html'
+    _context = {
+            'body_style':'',
+    }
+
+    def get(self,item_id):
+        from .models import Blog
+        blog = Blog.get_by_id(item_id)
+        if blog is None:
+            self.flash('Error: No blog found with id: {}'.format(item_id))
+            return self.redirect('core.index')
+        self._context['blog'] = blog
+        self._context['posts'] = blog.posts 
+        return self.render()
+
+class SinglePostView(BaseView):
+    _template = 'post.html'
+    _context = {
+            'body_style':'',
+    }
+
+    def get(self,item_id):
+        from .models import Post
+        post = Post.get_by_id(item_id)
+        if post is None:
+            self.flash('Error: No post found with id: {}'.format(item_id))
+            return self.redirect('core.index')
+        self._context['post'] = post
+        return self.render()
+
+class AddPostView(BaseView):
+    _template = 'add_post.html'
+    _context = {'wide':True}
+
+    def get(self):
+        from .forms import AddPostForm
+        self._form = AddPostForm
+
+        return self.render()
+
+    def post(self):
+        from .forms import AddPostForm
+        self._form = AddPostForm(request.form)
+        if self._form.validate():
+            from .models import Post,Blog,Category,Tag
+            post = Post.query.filter(Post.name==self._form.name.data).first()
+            if post is None:
+                blog = Blog.query.all()[0]
+                post = Post()
+                post.name = self._form.name.data
+                post.content = self._form.content.data
+                post.category = Category.get_by_name(self._form.category.data)
+                post.slug = slugify(unicode(post.name))
+                #post.tags = [t for t in self._form.tags.data if not t in [tag.name for tag in Tag.query.all()]]
+                post.author_id = g.get('user_id',None)
+                if self._form.excerpt_length.data and self._form.excerpt_length.data > 0: 
+                    post.excerpt_length = self._form.excerpt_length.data
+                post.blog = blog
+                post.save()
+                self.flash('add a new post to {}'.format(blog.name))
+            else:
+                self.flash('A post exists with that name')
+        else:
+            self.flash('form validation error')
+        return self.redirect('core.index')
+            
+
+
+        
+
+
+
 '''
 #private
 def article_update(id, slug):

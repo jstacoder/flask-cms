@@ -13,7 +13,7 @@ strip_filter = lambda x: x.strip() if x else None
 
 def category_choice():
     from blog.models import Category
-    return Category.query
+    return Category.query.all()
 tag_choice = category_choice
 
 class ArticleCreateForm(Form):
@@ -63,6 +63,20 @@ class AddContentModalForm(Form):
 class AddCategoryForm(Form):
     name = StringField('Name', [validators.InputRequired(), validators.length(min=1,max=240)])
     description = TextAreaField('Description', [validators.InputRequired()])
+    last_url = HiddenField()
+
     #submit = SubmitField('Add')
     
 
+
+class AddPostForm(Form):
+    from blog.models import Category
+    name = StringField('post name',[validators.InputRequired()])
+    content = PageDownField()
+    excerpt_length = StringField('excerpt Length')
+    tags = TagField('tags')
+    category = QuerySelectField('categoy',query_factory=category_choice)
+    author = HiddenField('author_id')
+    
+
+    

@@ -5,6 +5,7 @@ from ext import db
 import datetime
 from webhelpers.date import time_ago_in_words
 from webhelpers.text import urlify
+#from flask.ext.xxl.basemodels import BaseMixin
 from main.basemodels import BaseMixin
 
 
@@ -18,12 +19,30 @@ class Blog(BaseMixin, db.Model):
     category = db.relationship('Category',backref=db.backref(
                         'blogs',lazy='dynamic'))
     author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    author = db.relationship('User',backref=db.backref(
-                        'blogs',lazy='dynamic'))
+    #author = db.relationship('User',backref=db.backref(
+    #                    'blogs',lazy='dynamic'))
+
+    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
+    icon = db.relationship('FontIcon',backref='blogs')
+
+
+    @property
+    def post_count(self):
+        return len(self.posts)
+    
 
     @staticmethod
     def get_by_author_id(author_id):
         return Blog.query.filter(Blog.author_id==author_id).all()
+
+    def _get_absolute_url(self):
+        return url_for('blog.post_list',item_id=self.id)
+
+    def _get_edit_url(self):
+        return url_for('admin.add_blog')
+    
+    def _get_create_url(self):
+        return url_for('admin.add_blog')
 
 
 class Tag(BaseMixin, db.Model):
@@ -31,6 +50,9 @@ class Tag(BaseMixin, db.Model):
 
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.Text)
+    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
+    icon = db.relationship('FontIcon',backref='tags')
+    
 
     def __unicode__(self):
         return self.name
@@ -54,9 +76,15 @@ class Category(BaseMixin, db.Model):
 
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.Text)
+    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
+    icon = db.relationship('FontIcon',backref='categories')
 
     def __unicode__(self):
         return self.name
+    
+    @classmethod
+    def get_by_name(cls,name):
+        return cls.query.filter(cls.name==name).first()
 
 
 class Article(BaseMixin, db.Model):
@@ -72,8 +100,14 @@ class Article(BaseMixin, db.Model):
     author_id = db.Column(db.Integer,db.ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
     blog_id = db.Column(db.Integer,db.ForeignKey('blogs.id'))
     blog = db.relationship('Blog',backref=db.backref(
-                        'posts',lazy='dynamic'),lazy='select')
+                        'articles',lazy='dynamic'),lazy='select')
     #author = db.relationship('User',backref="articles",lazy="dynamic")
+    visible = db.Column(db.Boolean,default=False)
+    description = db.Column(db.Text)
+    slug = db.Column(db.String(255))
+    url =  db.Column(db.String(255))
+    meta_title =  db.Column(db.String(255))
+    tags =  db.Column(db.String(255))
 
 
     @classmethod
@@ -117,3 +151,89 @@ def create_article(**kwargs):
     return temp
 
 
+
+class Comment(BaseMixin,db.Model):
+    __tablename__ = 'comments'
+
+    slug = db.Column(db.String(255),nullable=False,unique=True)
+    content = db.Column(db.Text,nullable=False)
+    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    author = db.relationship('User',backref=db.backref(
+                'comments',lazy="dynamic"))
+    article_id = db.Column(db.Integer,db.ForeignKey('articles.id'))
+    article = db.relationship('Article',backref=db.backref(
+                'comments',lazy='dynamic'))
+
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
+    post = db.relationship('Post',backref=db.backref(
+                'comments',lazy='dynamic'))
+
+    def __init__(self,*args,**kwargs):
+        if kwargs.get('content',False):
+            self.content = kwargs.pop('content')
+        if kwargs.get('author_id',False):
+            self.author_id = kwargs.pop('author_id')
+        else:
+            self.author_id = None
+        if kwargs.get('article_id',False):
+            self.article_id = kwargs.pop('article_id')
+        else:
+            self.article_id = None
+        if kwargs.get('slug',False):
+            self.slug = kwargs.pop('slug')
+        else:
+            tmp = '/comments/'
+            if self.article_id is not None:
+                tmp += self.article_id + '/'
+            if self.author_id is not None:
+                tmp += self.author_id + '/'
+            self.slug = tmp
+        super(Comment,self).__init__(*args,**kwargs)
+
+
+
+class Post(BaseMixin,db.Model):
+    __tablename__ = 'posts'
+
+    name = db.Column(db.String(255),nullable=False)
+    content = db.Column(db.Text)
+    blog_id = db.Column(db.Integer,db.ForeignKey('blogs.id'))
+    blog = db.relationship('Blog',backref=db.backref(
+                    'posts'),uselist=False)
+    category_id = db.Column(db.Integer,db.ForeignKey('categories.id'))
+    category = db.relationship('Category',backref=db.backref(
+                    'posts'),uselist=False)
+    #tags = db.relationship('Tag',secondary='posts_tags',backref=db.backref(
+    #                'posts',lazy='dynamic'),lazy='dynamic')
+    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
+    author = db.relationship('User',backref=db.backref(
+                    'posts'),uselist=False)
+    date_added = db.Column(db.DateTime,default=db.func.now())
+    date_modified = db.Column(db.DateTime,default=db.func.now(),onupdate=db.func.now())
+    excerpt_length = db.Column(db.Integer,default=55,nullable=False)
+    slug = db.Column(db.String(255),unique=True)
+    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
+    icon = db.relationship('FontIcon',backref='posts')
+
+    @property
+    def comment_count(self):
+        return len(self.comments.query.all())
+
+    @property 
+    def author_name(self):
+        return self.author.name or ''
+    
+    @property
+    def title(self):
+        return self.name.title()
+
+    @property
+    def excerpt(self):
+        return self.content[:self.excerpt_length]
+
+'''posts_tags = db.Table('posts_tags',db.metadata,
+        db.Column('post_id',db.Integer,db.ForeignKey('posts.id')),
+        db.Column('tag_id',db.Integer,db.ForeignKey('tags.id')),
+)
+
+'''

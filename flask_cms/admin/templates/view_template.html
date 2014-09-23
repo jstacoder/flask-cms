@@ -3,9 +3,11 @@
         {% if obj %}
             {{obj.name}}
             {% if lines %}
+        {% highlight 'python' %}
                 {% for line in lines %}
                     <br />{{line}}
                 {% endfor %}
+        {% endhighlight %}
             {% endif %}
         {% endif %}
     {% endblock %}

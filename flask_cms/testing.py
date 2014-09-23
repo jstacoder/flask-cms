@@ -10,26 +10,37 @@
 from flask.ext.testing import TestCase
 #from blog import Blog,Tag,Post
 #from page import Page,Template,Block,Subject
-from main import AppFactory
+from .main.factory import AppFactory
 from settings import TestingConfig
-from ext import db
+from sqlalchemy import MetaData
+
+meta = MetaData()
 
 
-class KitTestCase(TestCase):
+class TC(TestCase):
 
     def create_app(self):
         return AppFactory(TestingConfig).get_app(__name__)
 
     def setUp(self):
-        create_app().test_request_context().push()
-        from auth.models import User,Role
-        db.create_all()
-        self.user = User(username='John Doe', email='john@doe.com', password='test')
-        self.user.save()
+        self.app = self.create_app()
+        self.db = self.app.extensions['sqlalchemy'].db
+        from imports import (
+                Page,User,Setting)
+        import sqlalchemy_utils as squ
+        if squ.database_exists(self.db.engine.url):
+            squ.drop_database(self.db.engine.url)
+        squ.create_database(self.db.engine.url)
+        #import imports
+        #for module in dir(imports):
+        #    globals()[module] = getattr(imports,module)            
+        meta.bind = self.db.engine
+        meta.create_all()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        self.db.session.remove()
+        meta.drop_all()
+
 
     def assertContains(self, response, text, count=None,
                        status_code=200, msg_prefix=''):

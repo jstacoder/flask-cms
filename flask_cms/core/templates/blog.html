@@ -1,4 +1,5 @@
 {% extends 'layout.html' %} 
+{% from 'buttons2.html' import get_button as button %}
 {% macro render_post_list(lst) %}
   {{lst}}
 {% endmacro %}
@@ -41,16 +42,17 @@
     <![endif]-->
 {% endblock %}
 {% block header %}
-    {% if 'email' in session and 'user_id' in session %}
-        <ul class="nav nav-pills">
+{#{% if 'email' in session and 'user_id' in session %}
+    <ul class="nav nav-pills">
               <li class="active"><a href="#">Add Post</a></li>
               <li><a href="#">Profile</a></li>
               <li><a href="#">Messages</a></li>
-        </ul>
+          </ul>
     {% endif %}
     {% if nav_links %}
         {{ render_blog_nav(nav_links) }}
-    {% endif %}
+        {% endif %}
+        #}{{ get_block('blog_navbar_test')|safe }}
 {% endblock header %}
 {% block body %}
       <div class="blog-header">
@@ -61,20 +63,19 @@
       <div class="row">
 
         <div class="col-md-offset-1 col-sm-9 blog-main">
+            {{ button(**get_button('submit')) }}
 
           {% if blog_posts %}
               {{ render_post_list(blog_posts) }}
           {% endif %}
 
-          <ul class="pager">
-            <li><a href="#">Previous</a></li>
-            <li><a href="#">Next</a></li>
-          </ul>
+            {{ get_block('mini_pager')|safe }}
 
         </div><!-- /.blog-main -->
 {% endblock body %}
 {% block sidebar %}
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+        <div class="col-sm-2 blog-sidebar">
+            {{ get_block('block1')|safe }}
             {% if sidebar_widgets %}
                 {% for widget in sidebar_widgets %}
                     {% if not widget|attr('inset') %}
@@ -89,12 +90,7 @@
         </div><!-- /.blog-sidebar -->
 {% endblock sidebar %}
 {% block footer %}
-    <div class="blog-footer">
-      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
-      <p>
-        <a href="#">Back to top</a>
-      </p>
-    </div>
+    {{ get_block('footer1')|safe }}
 {% endblock footer %}
 {% block footer_js %}
     <!-- Bootstrap core JavaScript

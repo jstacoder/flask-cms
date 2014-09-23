@@ -1,0 +1,154 @@
+{% extends base %}
+    {% block body %}
+        <style>            
+            .content,
+            .sidebar {
+                height:600px;
+            }
+            .widget,
+            .content,
+            .sidebar,
+            .inner-footer {
+                width:100%;
+                border:1px solid black;
+            }
+            .footer,
+            .inner-footer {
+                height:120px;
+            }
+            .widget {
+                height:144.8px;
+            }
+            .inner-footer {
+                margin-top:-20px;
+            }
+            .inner-foot-a,
+            .inner-foot-b,
+            .inner-foot-c {
+                background:whitesmoke;
+            }
+            .inner-foot-b {
+                width:102.6%;
+                margin-left:-10px;
+            }
+            #body > div.container-fluid > div.footer > div > div > div > div:nth-child(1){
+                padding-left:0px;
+                padding-right:25px;
+            }   
+            #body > div.container-fluid > div.footer > div > div > div > div.col-md-8 {
+                padding: 0px 4x 0px 4px;
+            }
+            #body > div.container-fluid > div.footer > div > div > div > div:nth-child(3) {
+                padding-right:0px;
+                padding-left:25px
+            }
+        </style>
+        <link rel=stylesheet href="{{url_for('static',filename='css/blog_admin.css')}}" />
+        {% block header %}
+            {% include navbar %}
+        {% endblock header %}
+        <div class=container-fluid>
+            <div class=row>
+                <div class="col-md-12 col-xs-8">
+                    <div class=row>
+                        <div class=col-md-2><!-- left sidebar -->
+                            <div class=sidebar>
+                                Left Sidebar
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget A
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget B
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget C
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget D
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class=col-md-8> <!-- content -->
+                           <div class=content>
+                                Content
+                            </div>
+                        </div>
+                        <div class=col-md-2><!-- right sidebar -->
+                            <div class=sidebar>
+                                right Sidebar
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget E
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget F
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget G
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=row>
+                                    <div class=col-md-12>
+                                        <div class=widget>
+                                            Widget H
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class=footer>
+                <div class=row>
+                    <div class=col-md-12>
+                        <div class=row>
+                            <div class=col-md-2>
+                                <div class="inner-foot-a inner-footer">
+                                    Footer A
+                                </div>
+                            </div>
+                            <div class=col-md-8>
+                                <div class="inner-foot-b inner-footer">
+                                    Footer B
+                                </div>
+                            </div>
+                            <div class=col-md-2>
+                                <div class="inner-foot-c inner-footer">
+                                    Footer C
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+                

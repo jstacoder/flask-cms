@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+    {% set wide = true %}
+    {% block extra_head %}
+        <link rel=stylesheet href="{{url_for('static',filename='css/grid.css')}}" />
+    {% endblock extra_head %}
+    {% block content %}
+        <div class=row>
+            <div class="col-md-2 col-sm-2 box sidebar">
+                <div class=row>
+                    <div class="col-md-12 box box4">
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                        <div class=row>
+                            <div class="col-md-12 widget box">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-sm-4 box content">
+                <div class=row>
+                    <div class="col-md-12 box box2">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=row>
+            <div class="col-md-12 col-sm-6 footer">
+                <div class=row>
+                    <div class="col-md-4 box footer-left">
+                    </div>
+                    <div class="col-md-4 box footer-mid">
+                    </div>
+                    <div class="col-md-4 box footer-right">
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock content %}
+
+

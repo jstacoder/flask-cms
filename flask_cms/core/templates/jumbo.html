@@ -1,4 +1,7 @@
 {% extends 'layout.html' %}
+{% macro get_name() %}
+    {{ lipsum()|truncate(5) }}
+{% endmacro %}
 {% block extra_head %}
     {{ super() }}
     <link href="{{url_for('static',filename='css/jumbotron-narrow.css')}}" rel="stylesheet" />
@@ -43,7 +46,5 @@
       </div>
 {% endblock content %}
 {% block footer %}
-      <div class="footer">
-        <p>&copy; Company 2014</p>
-      </div>
+    {% include 'includes/footer.html' %}
 {% endblock footer %}

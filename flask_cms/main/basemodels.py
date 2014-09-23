@@ -68,6 +68,13 @@ class BaseMixin(object):
                             rtn.append((attr,_clean_name(attr)))
         return rtn
 
+    @classmethod
+    def get_columns(cls,excludes=[]):
+        return [x[0] for x in cls.get_all_columns(excludes)]
+    
+    @classmethod
+    def get_headings(cls,excludes=[]):
+        return [x[1] for x in cls.get_all_columns(excludes)]
     
 def _clean_name(name):
     names = name.split('_')

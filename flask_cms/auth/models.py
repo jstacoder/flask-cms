@@ -35,6 +35,8 @@ class User(BaseMixin,Model):
     articles = relationship('Article',backref=backref(
                     'author'),lazy='dynamic',passive_deletes='all')
     age = Column(Integer)
+    blogs = relationship('Blog',backref=backref(
+                    'author',lazy='select'),lazy='dynamic')
 
 
     def __init__(self,*args,**kwargs):
@@ -64,6 +66,7 @@ class User(BaseMixin,Model):
 
     @property
     def password(self):
+        return 'private'
         raise ValueError('Private Value!!!!')
 
     @password.setter
@@ -73,6 +76,10 @@ class User(BaseMixin,Model):
     @property
     def full_name(self):
         return '{} {}'.format(self.first_name.title(),self.last_name.title())
+
+    @property
+    def name(self):
+        return str(self.first_name)
 
     def __str__(self):
         if self.first_name != "":
@@ -87,8 +94,16 @@ class User(BaseMixin,Model):
     def _get_absolute_url(self):
         return url_for('member.profile',member_id=str(int(self.id)))
 
+    @property
+    def absolute_url(self):
+        return str(self._get_absolute_url())
+
     def _get_edit_url(self):
         return '#'
+
+    @property
+    def edit_url(self):
+        return str(self._get_edit_url())
 
     @property 
     def article_count(self):

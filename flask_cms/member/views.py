@@ -1,21 +1,52 @@
 from main.baseviews import BaseView
 from member.forms import EditProfileForm
 from member import member
+from flask import abort
+
+
+
 
 
 
 
 class MemberProfileView(BaseView):    
     _template = 'profile.html'
-    _form = EditProfileForm
     _context = {}
 
-    def get(self):
+    def get(self,member_id):
+        from auth.models import User
+        user = User.query.get_or_404(member_id)
+        if user is not None:
+            self._context['user'] = user
+        else:
+            self.flash('No user with id {} found'.format(member_id))
         return self.render()
 
 
     def post(self):
         return self.render()
+
+class EditProfileView(BaseView):
+    _template = 'profile.html'
+    _form = EditProfileForm
+    _context = {}
+
+    def get(self,member_id):
+        if session.get('user_id') != member_id:
+            return abort(403)
+        from auth.models import User
+        self._context['user'] = User.query.get_or_404(member_id)
+        self._context['member'] = Member.query.get(member_id)
+        self._form_args = {
+                'last_name':user.last_name,
+                'phone_number':member.phone_number,
+                'birth_date':member.birth_date,
+                'first_name':user.first_name,
+                'email':user.email,
+        }
+        return self.render()
+
+    
 
 class MemberArticleView(BaseView):
     _template = 'blog.html'

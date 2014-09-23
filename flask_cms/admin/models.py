@@ -37,7 +37,7 @@ class Type(BaseMixin,Model):
     def __repr__(self):
         return self.name or ''
 
-class Widget(BaseMixin,db.Model):
+class Widget(BaseMixin,Model):
     __tablename__ = 'widgets'
 
     name = Column(String(255),nullable=False)
@@ -48,3 +48,56 @@ class Widget(BaseMixin,db.Model):
     def __repr__(self):
         return self.name
 
+
+class AdminTab(BaseMixin,Model):
+    __tablename__ = 'admin_tabs'
+
+    name = Column(String(255),nullable=False)
+    tab_id = Column(String(50),nullable=False)
+    tab_title = Column(String(255))
+    content = Column(Text)
+
+    def __str__(self):
+        return self.content or ''
+
+    @staticmethod
+    def get_tab_links():
+        rtn = []
+        for panel in AdminTab.query.all():
+            rtn.append((panel.name,panel.tab_id))
+        return rtn
+    
+    
+class FontIcon(BaseMixin,Model):
+    __tablename__ = 'font_icons'
+
+    name = Column(String(255),nullable=False)
+    library_id = Column(Integer,ForeignKey('font_icon_librarys.id'))
+    library = relationship('FontIconLibrary',backref=backref(
+                'font_icons',lazy='dynamic'))
+
+    #__table_args__ = (UniqueConstraint(library,name,name='_library_font_icon'),)
+    
+    
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return '<span class="{0} {0}-{1}"></span>'.format(self.library.name,self.name)
+
+
+
+
+
+class FontIconLibrary(BaseMixin,Model):
+    __tablename__ = 'font_icon_librarys'
+
+    name = Column(String(255),unique=True)
+    call_string = Column(String(255),unique=True)
+
+    
+
+
+
+
+    

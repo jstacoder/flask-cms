@@ -5,22 +5,29 @@
     ~~~~~~
 """
 import subprocess
+from flask import url_for
 from flask.ext.script import Shell, Manager, prompt_bool
 from flask.ext.script.commands import Clean,ShowUrls
 from app import app
 from ext import db
-
+import urllib
 import sqlalchemy_utils as squ
 from flask.ext.alembic.cli.script import manager as alembic_manager
 manager = Manager(app)
 
-
 @manager.command
-def clean_pyc():
-    """Removes all *.pyc files from the project folder"""
-    clean_command = "find . -name *.pyc -delete".split()
-    subprocess.call(clean_command)
-
+def show_routes():
+    output = []
+    for rule in app.url_map.iter_rules():
+        options = {}
+        for arg in rule.arguments:
+            options[arg] = "<{0}>".format(arg)
+        methods = ','.join(rule.methods)
+        url = url_for(rule.endpoint,**options)
+        line = urllib.unquote("{:30s} {:20s} {}".format(rule.endpoint,methods,url))
+        output.append(line)
+    for line in sorted(output):
+        print line
 
 @manager.command
 def init_data():
@@ -63,6 +70,6 @@ if __name__ == '__main__':
                     Widget,Article,Page,
                     User,Setting,Type,
                     Template,Tag,Role,
-                    Category,Block
+                    Category,Block,AdminTab,Blog,
     )
     manager.run()

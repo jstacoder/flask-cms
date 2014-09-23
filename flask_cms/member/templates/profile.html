@@ -1,0 +1,32 @@
+{% extends base %}
+    {% block body %}
+        {% if form %}
+            <form method=post action="">
+                {{ form.hidden_tag() }}
+                {% for field in form %}
+                    {% if field.name in ['first_name','last_name','phone_number','birth_date','email'] %}
+                        <div class="form-group">
+                            {{field.label}}
+                            {{field(class_='form-control')}}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </form>
+        {% elif user %}
+            <h2 class=page-header>
+                Welcome to your profile {{ user.name }}
+            </h2>
+            <div>
+                <p> Your data:</p>
+                <ul>
+                    {% for itm in dir(user) %}
+                        {% if not itm.startswith('_') %}
+                            {% if type(user|attr(itm)) == type('') or type(user|attr(itm)) == type(1) %}
+                                <li>{{itm}} : {{user|attr(itm)}}</li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endblock %}

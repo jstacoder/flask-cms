@@ -1,0 +1,9 @@
+{% extends layouts['blog'] %}
+    {% block body %}
+        {% if blogs %}
+            {% for blog in blogs %}
+                <h3>{{blog.name}}</h3>
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
+

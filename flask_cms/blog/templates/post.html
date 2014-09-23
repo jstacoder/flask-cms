@@ -1,0 +1,15 @@
+{% extends layouts['blog'] %}
+    {% block header %}
+        {% include navbar with context %}
+    {% endblock header %}
+    {% block column_one %}
+        <div class=row>
+            <div class="blog-main col-md-8 col-md-push-2">
+        {% if post %}
+            <h2>{{post.name}}</h2>
+            <p>{{post.content|markdown|safe}}</p>
+        {% endif %}
+        <a href="{{url_for('blog.post_list',item_id=post.blog.id)}}">go back</a>
+            </div>
+        </div>
+    {% endblock %}

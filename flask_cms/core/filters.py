@@ -36,3 +36,5 @@ def markdown(value):
     extras = ['fenced-code-blocks', 'wiki-tables']
     return Markup(md2(value, extras=extras))
 
+def split(value,symbol=' '):
+    return value.split(symbol)

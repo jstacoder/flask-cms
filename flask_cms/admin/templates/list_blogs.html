@@ -1,0 +1,287 @@
+{% extends base %}
+{% macro render_admin_actions(obj,current='list') %}
+    <ul class="nav nav-tabs" role="tablist">
+        <li class=active><a href=#{#{% else %}><a href={{obj._get_edit_url()}}{% endif %}#}>List</a></li>
+        <li><a href=#>Create</a></li>
+        <li><a href=#>edit</a></li>
+    </ul>
+{% endmacro %}
+{% macro render_obj_table(obj,excludes) %}
+    {% set objs =  get_model(*obj).query.all() %}
+    {% set columns = get_model(*obj).get_columns(excludes) %}
+    {% set headings = get_model(*obj).get_headings(excludes) %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {% for itm in headings %}
+                        <th>{{itm}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in objs %}
+                    <tr>
+                        <td>
+                          <input class="checkbox" type="checkbox" id="{{ obj.id }}" />
+                        </td>
+                        {% for itm in columns %}
+                            <td>{{obj|attr(itm)}}</td>
+                        {% endfor %}                                    
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}
+{% macro render_table_panel(obj,excludes,num) %}
+    {% if num < 10 %}
+        {% set num = "0%s" % num %}
+    {% endif %}
+    {% set pane = "tab-pane%s" % num %}
+    <div class="tab {{pane}}">
+        <h2 class="sub-header">{{obj[0].title()}} list</h2>
+        {{ render_admin_actions(obj) }}
+        {{ render_obj_table(obj,excludes) }}
+    </div>
+{% endmacro %}
+{% macro render_sidebar(sidebar_links) %}
+    <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+            {% for text in sidebar_links %}
+                <li link={% if loop.index < 10 %}0{% endif %}{{ loop.index }} {% if loop.index == 1 %}
+                    class="active"{% endif %}>
+                    <a href="#pane{{loop.index}}">{{text[0]}}s</a>
+                </li>
+            {% endfor %}
+        </ul>
+     </div>
+{% endmacro %}
+    {% block extra_head %}
+      <link href="{{url_for('static',filename='css/bootstrap.css')}}" rel="stylesheet">
+      <link href="{{url_for('static',filename='css/dashboard.css')}}" rel="stylesheet">
+    {% endblock extra_head %}
+    {% block body %}
+        {% block navbar %}
+         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+              <div class="container-fluid">
+                  <div class="navbar-header">
+                      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                      </button>
+                      <a class="navbar-brand" href="#">Admin</a>
+                  </div>
+                  <div class="navbar-collapse collapse">
+                      <ul class="nav navbar-nav navbar-right">
+                          <li><a href="#">Dashboard</a></li>
+                          <li><a href="#">Settings</a></li>
+                          <li><a href="#">Profile</a></li>
+                          <li><a href="#">Help</a></li>
+                      </ul>
+                      <form class="navbar-form navbar-right">
+                          <input type="text" class="form-control" placeholder="Search...">
+                      </form>
+                  </div>
+              </div>
+          </div>
+        {% endblock navbar %}
+        {% block sidebar  %}
+            
+            {% if add_sidebar %}
+              <div class="container-fluid">
+                  <div class="row">
+                      {{ render_sidebar(obj_list) }}
+            {% endif %}
+        {% endblock sidebar %}
+        {% block content %}
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            
+            {% for obj in obj_list %}
+                {{ render_table_panel(obj,excludes,loop.index) }}
+            {% endfor %}
+            </div>
+        {% endblock content %}
+            <!--<script src="http://code.jquery.com/jquery.js"></script>-->
+            <!--<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>-->
+            <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+            <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+            <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js"></script>
+            <script type="text/javascript">
+                $(function(){
+                    $(".tab").hide();
+                    $(".tab").eq(0).show();
+                    $(".nav-sidebar").children()
+                        .on("click",function(e){
+                                e.preventDefault();
+                                $(".nav-sidebar").children()
+                                .removeClass("active");
+                                $(this).addClass("active");
+                                var tab = $(".tab-pane" + $(this).attr("link"));
+                                $(".tab").hide();
+                                tab.show();
+                                });
+                        $(".panel").sortable({
+                                axis: "y",
+                                handle: "h3",
+                                stop: function( event, ui ) {
+                                      // IE doesn't register the blur when sorting
+                                      // so trigger focusout handlers to remove .ui-state-focus
+                                      ui.item.children( "h3" ).triggerHandler( "focusout" );
+                                    }
+                            })
+                        .draggable({
+                                connectToSortable:".panel",
+                                revert:"invalid",                                
+                        });
+                    });                                                    
+            </script>
+{% endblock body %}
+
+              <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                  <div class="tab tab-pane01">
+                      <h1 class="page-header">Dashboard</h1>      
+                      <div class="row placeholders">
+                          <div class="col-xs-6 col-sm-3 placeholder">
+                              <img src="http://placehold.it/200x200/2c95dd/000000" class="img-responsive" alt="Generic placeholder thumbnail">
+                              <h4>Label</h4>
+                              <span class="text-muted">Something else</span>
+                          </div>
+                          <div class="col-xs-6 col-sm-3 placeholder">
+                              <img src="http://placehold.it/200x200/f23334/000000" class="img-responsive" alt="Generic placeholder thumbnail">
+                              <h4>Label</h4>
+                              <span class="text-muted">Something else</span>
+                          </div>
+                          <div class="col-xs-6 col-sm-3 placeholder">
+                              <img src="http://placehold.it/200x200/3321dd/000000" class="img-responsive" alt="Generic placeholder thumbnail">
+                              <h4>Label</h4>
+                              <span class="text-muted">Something else</span>
+                          </div>
+                          <div class="col-xs-6 col-sm-3 placeholder">
+                              <img src="http://placehold.it/200x200/11d2e3/000000" class="img-responsive" alt="Generic placeholder thumbnail">
+                              <h4>Label</h4>
+                              <span class="text-muted">Something else</span>
+                          </div>
+                      </div>
+                </div>
+                <div class="tab tab-pane02">
+                    <h2 class="sub-header">Section title</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    {% for itm in headings %}
+                                        <th>{{itm}}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                               {% for obj in blogs %}
+                                  <tr>
+                                    <td>
+                                      <input class="checkbox" type="checkbox" id="{{ obj.id }}" />
+                                    </td>
+                                      {% for itm in columns %}
+                                          <td>{{obj|attr(itm)}}</td>
+                                      {% endfor %}
+                              {% endfor %}
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="tab tab-pane03">
+                      <div class="page-header">
+                                  <h1>Panels</h1>
+                              </div>
+                              <div class="row">
+                                  <div class="col-sm-4">
+                                      <div class="panel panel-default">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                          
+                                      </div>
+                                      <div class="panel panel-primary">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                      </div>
+                                  </div><!-- /.col-sm-4 -->
+                                  <div class="col-sm-4">
+                                      <div class="panel panel-success">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                      </div>
+                                      <div class="panel panel-info">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                      </div>
+                                  </div><!-- /.col-sm-4 -->
+                                  <div class="col-sm-4">
+                                      <div class="panel panel-warning">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                      </div>
+                                      <div class="panel panel-danger">
+                                          <div class="panel-heading">
+                                              <h3 class="panel-title">Panel title</h3>
+                                          </div>
+                                          <div class="panel-body">
+                                              Panel content
+                                          </div>
+                                      </div>
+                                  </div><!-- /.col-sm-4 -->
+                              </div>
+                  </div>
+                  <div class="tab tab-pane04">
+                      <h2 class="page-header">Tab 4</h2>
+                  </div>
+                  <div class="tab tab-pane05">
+                      <h2 class="page-header">Tab 5</h2>
+                  </div>
+                  <div class="tab tab-pane06">
+                      <h2 class="page-header">Tab 6</h2>
+                  </div>
+                  <div class="tab tab-pane07">
+                      <h2 class="page-header">Tab 7</h2>
+                  </div>
+                  <div class="tab tab-pane08">
+                      <h2 class="page-header">Tab 8</h2>
+                  </div>
+                  <div class="tab tab-pane09">
+                      <h2 class="page-header">Tab 9</h2>
+                  </div>
+                  <div class="tab tab-pane10">
+                      <h2 class="page-header">Tab 10</h2>
+                  </div>
+                  <div class="tab tab-pane11">
+                      <h2 class="page-header">Tab 11</h2>
+                  </div>
+                  <div class="tab tab-pane12">
+                      <h2 class="page-header">Tab 12</h2>
+                  </div>
+            </div>
+        

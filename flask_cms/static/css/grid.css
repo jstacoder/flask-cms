@@ -1,0 +1,29 @@
+.box {
+    border:2px solid black;
+    min-height:100px;
+}
+
+body {
+ /*   padding-top: 50px!important;*/
+}
+
+.content,
+.sidebar,
+.content>div>div,
+.sidebar>div>div {
+    height:750px;
+}
+
+.content {}
+
+
+.sidebar {}
+
+
+.footer>div>div {
+    height:112px;
+}
+
+.widget {
+    height:187px;
+}

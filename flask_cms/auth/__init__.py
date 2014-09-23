@@ -5,9 +5,5 @@ auth = Blueprint('auth',__name__,
                  url_prefix='/auth')
                                     
 
-try:
-    from views import *
-except ImportError, e:
-    print 'Could not load {} '.format(e)
 
 

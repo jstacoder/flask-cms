@@ -1,15 +1,38 @@
 {% extends 'admin.html' %}
-{% from '_macros.html' import render_nav_sidebar %}
+{% block extra_head %}  
+    <link rel="stylesheet" src="{{url_for('static',filename='css/dashboard.css')}}" />
+{% endblock %}
+{% from '_macros.html' import render_nav_sidebar, render_admin_tabs with context %}
 {% block content %}
-    <div class=container>
+    <div class=container-fluid>
         <div class="row">
-            <div class="col-md-2 pull-left">
-                <h2>Content</h2>
-                {{ render_nav_sidebar('','') }}
+            <div class="col-md-2 col-md-pull-1">                
+                {{ render_nav_sidebar('admin') }}
             </div>
-            <div class=col-md-6>
+            <div class=col-md-8>
                 <h2>Content</h2>
+                {{ render_admin_tabs() }}                
+            </div>
+        </div>
+        <div class=row>
+            <div class="col-md-12">
+                <form method=post action="/">
+                    <button type="submit" class="btn btn-sm btn-default">Layout Mode</button>
+                </form>
             </div>
         </div>
     </div>
 {% endblock content %}
+{% block footer_js %}
+    <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+    {{super()}}
+    <script type="text/javascript">
+        $(".tab-content").addClass("hidden");
+        $(".tab-content").eq(0).removeClass("hidden");
+        $(".tab-button").on("click",function(e){
+                e.preventDefault();
+                $(".tab-content").addClass("hidden");
+                $("#" + $(this).attr("tab")).removeClass("hidden");
+        });
+    </script>
+{% endblock footer_js %}

@@ -152,6 +152,7 @@ border-color: rgb(153, 126, 189);
                                             <div class="col-md-3">
                                                 {% if form.category %}
                                                     {{ form.category.label }}
+                                                    <a class="pull-right" data-toggle="modal" href="#myModal">{{ get_icon('plus') }}</a>
                                                     {{ form.category(class_="form-control", id="category") }}
                                                 {% else %}
                                                 <label for="category">Category</label>
@@ -244,6 +245,39 @@ border-color: rgb(153, 126, 189);
         </div>
     </div>
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">{{get_icon('remove')}}</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add a Category</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{{url_for('admin.add_category',last_url=request.base_url)}}">
+                {% if cat_form %}
+                    {{ cat_form.hidden_tag() }}
+                    {{ cat_form.name(class_='form-control',placeholder='category name') }}
+                    {{ cat_form.description(class_='form-control',placeholder='category description') }}
+                {% else %}
+                    <input type=text id=cat_name name=cat_name class=form-control placeholder="category name" />
+                    <textarea class=form-control name=cat_desc id=cat_desc placeholder="category description"></textarea>
+                {% endif %}
+                    <button type="submit" class="btn btn-primary" id=save_cat >Save changes</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<pre>
+    <code>
+        {#{{ '\n'.join(map(str,dir(request))) }}#}
+        {{request.endpoint}}
+    </code>
+</pre>
 {% endblock body %}
     {% block footer_js %}
         {{ super() }}
@@ -302,6 +336,11 @@ border-color: rgb(153, 126, 189);
                 $(data.content).appendTo($('.col-md-4'));
                 });
             });
+        </script>
+        <script>
+            $(function(){
+                editor_for_content.setOption('mode','jinja2');
+                    });
         </script>
     {% endblock footer_js %}
         

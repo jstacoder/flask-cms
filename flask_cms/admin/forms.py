@@ -7,8 +7,21 @@ from blog.fields import TagField
 from flask.ext.pagedown.fields import PageDownField
 from flask.ext.codemirror.fields import CodeMirrorField
 from page.fields import CKTextEditorField
-from blog.models import Category
+#from blog.models import Category
 from wtforms.widgets.html5 import DateInput as DateWidget
+#from icons import el_icon as icons
+import admin.icons as admin_icons
+from .fields import AceEditorField
+from flask import Markup
+from settings import BaseConfig
+
+
+lib = BaseConfig.DEFAULT_ICON_LIBRARY
+icons = __import__('admin.icons',[],[],'icons').__dict__[lib]
+icon_fmt = '<span class="{1} {1}-{0}"></span>&nbsp;{0}'
+icon_choices = {str(x):icon_fmt.format(x,lib) for x in icons}
+
+#icons = [(icon_format.format(x,lib),x) for x,lib in icon_libs.items()]
 
 #factory = Type.query.all()
 
@@ -23,8 +36,9 @@ class AddSettingTypeForm(Form):
     widget = fields.StringField('Input Widget')
 
 class TestForm(Form):
-    title = fields.StringField('Title')
-    content = PageDownField('content')
+    title = fields.StringField('Test')
+    content = AceEditorField('content')
+    submit = fields.SubmitField()
 
 class BaseTemplateForm(Form):
     template = fields.SelectField('base template',validators=[validators.InputRequired()])#,choices=[('a','a'),('b','b'),('c','c')])
@@ -32,19 +46,28 @@ class BaseTemplateForm(Form):
 class TemplateBodyFieldForm(Form):
     body = CKTextEditorField('body')
 
+class TextEditorFieldForm(Form):
+    content = CKTextEditorField('content')
+    
+class TextEditorContentForm(Form):
+    content = fields.FormField(TextEditorFieldForm,label="Content",separator="_")
+    submit = fields.SubmitField('save')
+
+
 
 class AddBlogForm(Form):
     name = fields.StringField('Blog Name',validators=[validators.InputRequired()])
     title = fields.StringField('Blog Title',validators=[validators.InputRequired()])
     slug = fields.StringField('Url Slug')
-    category = QuerySelectField('category',query_factory=lambda: Category.query.all())
+    #category = QuerySelectField('category',query_factory=lambda: Category.query.all())
     author_id = fields.HiddenField()
     date_added = fields.HiddenField()
 
 class AddMacroForm(Form):
     name = fields.StringField('Macro Name',validators=[validators.InputRequired()])
     content = CKTextEditorField('Body')
-    args = fields.HiddenField()
+    arg = fields.StringField('argument')
+    default = fields.StringField('arg default')
     
 
 
@@ -68,3 +91,39 @@ class AddPageForm(Form):
     use_base_template = fields.BooleanField('Use Base Template')
     base_template =  fields.SelectField('base template',validators=[validators.InputRequired()])
     submit = fields.SubmitField('Save')
+
+
+class AddButtonForm(Form):
+    name = fields.StringField('button id',validators=[validators.InputRequired()])
+    size = fields.SelectField('button size',choices=(
+                                        ('xs','x-sm'),('s','small'),
+                                        ('m','med'),('l','lrg'),('xl','x-lg')
+                                        ))
+    color = fields.SelectField('Button color',choices=(
+                                        ('blue','blue'),('red','red'),('grey','grey'),
+                                        ('green','green'),('yellow','yellow'),('light-blue','light-blue')
+                                        ))
+    text = fields.StringField('Button text',validators=[validators.InputRequired()])
+    icon = fields.SelectField('Button icon',choices=icon_choices.items())
+    icon_library = fields.HiddenField('icon_library')
+    type = fields.RadioField('Button type',choices=(('submit','submit'),('button','button'),('link','link')))
+    link_href = fields.StringField('link url, can be endpoint or uri')
+
+
+
+class AddStaticBlockForm(Form):
+    name = fields.StringField('Block Name',validators=[validators.InputRequired()])
+    block_id = fields.StringField('Block Identifer(for templates)',validators=[validators.InputRequired()])
+    content = CKTextEditorField('content')
+
+class AddAdminTabForm(Form):
+    name = fields.StringField('Tab Name',description='displayed on tab',validators=[validators.InputRequired()])
+    tab_id = fields.StringField('tab identifer',description='for calling in templates',validators=[validators.InputRequired()])
+    tab_title = fields.StringField('tab title',description='title on tabbed on content',validators=[validators.InputRequired()])
+    content = CKTextEditorField()
+
+
+class AdminEditFileForm(Form):
+    content = CKTextEditorField('content')
+    file_name = fields.HiddenField()
+

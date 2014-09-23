@@ -68,7 +68,7 @@ class AuthLogoutView(BaseView):
         return self.redirect('core.index')
 
 
-@auth.app_errorhandler(404)
-def not_found(e):
-    return render_template('error.html',error_code=404)
+#@auth.app_errorhandler(404)
+#def not_found(e):
+#    return render_template('error.html',error_code=404)
 

@@ -1,20 +1,37 @@
 from main.basemodels import BaseMixin
+import jinja2 
 import datetime
+import os
 from ext import db
-from flask import url_for
+from flask import url_for, Markup
 from flask.templating import render_template_string as render_str
 import pickle
 from sqlalchemy.ext.hybrid import hybrid_property
-from jinja_tools import Block as BlockBase
+from flask.ext.xxl.main import AppFactory
+from settings import DevelopmentConfig
+app = AppFactory(DevelopmentConfig).get_app(__name__)
+
+root = DevelopmentConfig.ROOT_PATH
 
 for attr in dir(db):
     globals()[attr] = getattr(db,attr)
+
+
+class Super(super):
+    def __getattr__(self,attr):
+        return self.__self__.__getattr__(attr)
 
 
 pages_macros = Table('pages_macros',
     Column('page_id',Integer,ForeignKey('pages.id')),
     Column('macro_id',Integer,ForeignKey('macros.id'))
 )
+
+pages_template_blocks = Table('pages_template_blocks',
+    Column('page_id',Integer,ForeignKey('pages.id')),
+    Column('template_block_id',Integer,ForeignKey('template_blocks.id'))
+)
+
 
 class Page(BaseMixin,Model):
     __tablename__ = 'pages'
@@ -39,6 +56,10 @@ class Page(BaseMixin,Model):
     macros = relationship('Macro',secondary='pages_macros',
                             backref=backref('pages',lazy='dynamic'),
                             lazy='dynamic')
+    _blocks = relationship('TemplateBlock',secondary='pages_template_blocks',
+                            backref=backref('pages'),lazy='dynamic')
+
+    content = Column(Text)
 
     def __repr__(self):
         if self.name is None:
@@ -46,6 +67,10 @@ class Page(BaseMixin,Model):
         else:
             rtn = '<Page: {} | {} lines'.format(self.name,self.line_count)
         return rtn
+
+    @property
+    def use_base_template(self):
+        return bool(self.template)
 
     def _get_page_url(self):
         return url_for('page.pages',slug=self.slug)
@@ -81,11 +106,25 @@ class Page(BaseMixin,Model):
 
     @property
     def block_count(self):
-        return self.template.blocks.count()
+        return self._template.blocks.count()
 
     @property
     def blocks(self):
-        return self.template.blocks.keys()
+        return self._template.blocks.keys()
+
+
+    def get_block(self,block):
+        return self._template.blocks[block]
+        return str(self._blocks.get_by_name(block))
+    
+    @property
+    def _template(self):
+        class template(object):
+            def __init__(self):
+                self.blocks = {'blocka':'','blockb':'','blockc':'x','blockd':''}
+        return template()
+
+
 
 
 class Template(BaseMixin,Model):
@@ -125,11 +164,12 @@ class Template(BaseMixin,Model):
 
     @property
     def block_count(self):
-        return len(self._raw_template.blocks)
+        return len( Template(self._head + self.body[:]).blocks)
 
     @property
     def blocks(self):
         return self._raw_template.blocks.keys()
+
 
     def set_body(self,data):
         self.body = data
@@ -247,6 +287,8 @@ class Block(BaseMixin,Model):
         return rtn
 
 class Macro(BaseMixin,Model):
+    MACRO_FILE = os.path.join(os.path.abspath(root),'macros.html')
+
     __tablename__ = 'macros'
 
     name = Column(String(255),nullable=False)
@@ -289,6 +331,135 @@ class Macro(BaseMixin,Model):
         return self.head +'\n'+\
                self.content +'\n'+\
                self.foot + '\n'
+
+    @property
+    def import_statement(self):
+        return self._generate_import()
+
+    def _generate_import(self):
+        start = '{% from "'
+        end = ' %}'
+        mid = '%s" import %s' % (self.MACRO_FILE,self.name)
+        return start + mid + end
+
+    @staticmethod
+    def _generate_macro_file(names=None):
+        res = ''
+        if names is None:
+            macros = Macro.query.all()
+        else:
+            macros = [Macro.query.filter(Macro.name==x).all()[0] for x in names]
+        for macro in macros:
+            res += str(macro)
+            res += '\n'
+        try:
+            with open(Macro.MACRO_FILE,'w') as fp:
+                fp.write(res)
+        except IOError, e:
+            return False
+        return True
+                
+
+class Button(BaseMixin,Model):
+    __tablename__ = 'buttons'
+
+    name = Column(String(255),nullable=False,unique=True)
+    type = Column(String(255),nullable=False,default='button')
+    color = Column(Enum('blue','grey','light-blue','yellow','green','red'),default='grey',nullable=False)
+    size = Column(Enum('XL','L','M','S','XS'),default='M',nullable=False)
+    text = Column(String(255))
+    icon = Column(String(255))
+    icon_library = Column(String(255))
+    _endpoint = Column(String(255))
+    is_link = Column(Boolean,default=False) 
+    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
+    _icon = db.relationship('FontIcon',backref='buttons')
+
+    @hybrid_property
+    def endpoint(self):
+        return self._endpoint
+
+    @endpoint.setter
+    def endpoint(self,endpoint):
+        self._endpoint = endpoint
+        if endpoint:
+            self.is_link = True
+        else:
+            self.is_link = False
+
+    def _get_absolute_url(self):
+        return url_for('admin.view_button',item_id=self.id)
+
+    def _get_edit_url(self):
+        return url_for('admin.view_button',item_id=self.id)
+
+    @classmethod
+    def get_id_by_name(cls,name):
+        b = cls.query.filter(cls.name==name).first()
+        if b:
+            rtn = b.id
+        else:
+            rtn = 0
+        return rtn
+        
+
+class StaticBlock(BaseMixin,Model):
+    __tablename__ = 'static_blocks'
+
+    name = Column(String(255),nullable=False)
+    block_id = Column(String(255),nullable=False,unique=True,default=name)
+    content = Column(Text)
+
+    @hybrid_property
+    def _blocks(self):
+        blocks = lambda: db.session.query(self).all()
+        return {x.block_id:x for x in blocks}
+
+    @hybrid_property
+    def _block_names(self):
+        blocks = lambda: db.session.query(self).all()
+        return {x.name:x for x in blocks}
+    
+    @property
+    def title(self):
+        return self.name
+
+    @staticmethod
+    def get_by_block_id(block_id):
+        return StaticBlock.query.filter(StaticBlock.block_id==block_id).first()
+    
+    def render(self,**kwargs):
+        return Markup(render_str(self._get_macro_header() + '\n' + self.content,**kwargs))
+
+    def __str__(self):
+        return 'static_block: {}<{}>'.format(
+                self.name,self.block_id)
+    
+    def __call__(self,**kwargs):
+        return self.render(**kwargs)
+
+    def __repr__(self):
+        return self.content
+
+    def _get_macro_header(self):
+        return open(Macro.MACRO_FILE,'r').read()
+
+
+class TemplateBlock(BaseMixin,Model):
+    __tablename__ = 'template_blocks'
+
+    block_id = Column(String(255),unique=True,nullable=False)
+    content = Column(Text,default='')
+
+    @property
+    def name(self):
+        return self.block_id
+
+    def __str__(self):
+        return self.render()
+
+    def render(self):
+        return self.content
 
 
 

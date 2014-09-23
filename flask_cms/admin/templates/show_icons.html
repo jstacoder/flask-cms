@@ -1,0 +1,123 @@
+{% extends base %}
+{%  macro icon_list(icon,lib) %}
+     <div class=col-md-1>
+          <dl>
+               <dt>{{icon}}</dt>
+               <dd>{{get_icon(icon,lib)}}</dd>
+          </dl>
+     </div>
+{% endmacro %}
+{% macro render_icons(icons,lib='glyphicon') %}
+     <div class="row icons">          
+               {% for icon in icons %}
+                    {% if loop.first %}
+                     <div class="col-md-12 col-sm-3">
+                         <div class=row>
+                              {{ icon_list(icon,lib) }}                         
+                    {% elif loop.index % 12 == 0 %}
+                                  {{ icon_list(icon,lib) }}
+                              </div>
+                         </div>                     
+                         <div class="col-md-12 col-sm-3">           
+                              <div class=row>
+                    {% elif loop.last %}
+                                   {{ icon_list(icon,lib) }}                                                                 
+                    {% else %} 
+                              {{ icon_list(icon,lib) }}               
+                    {% endif %}        
+               {% endfor %}
+            </div>
+         </div>
+      </div>
+{% endmacro %}
+    {% block body %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/show_icons.css') }}" />
+   <div class=container>
+       <div class=page-header>
+           <h2>Icon Libraries</h2>
+           <h1>{{ get_icon('paperplane_black',lib='mfg_labs')}}</h1>
+        </div>
+        {% if icons %}
+            {% if lib %}
+                <h2 class="lib-name">{{lib}}</h2>
+                {{ render_icons(icons,lib) }}
+            {% else %}
+               {{ render_icons(icons) }}
+            {% endif %}
+       {% elif libs %}
+            {% for lib,icons in libs.items() %}
+            <h2 class="lib-name">{{lib}} <small>{{ icons|count }} Icons</small><span class="pull-right">{{get_icon('chevron_down','mfg_labs')}}</span></h2>
+                {{ render_icons(icons,lib) }}
+                <hr />
+            {% endfor %}
+       {% endif %}
+   </div>    
+    {% endblock %}
+    {% block footer_js %}       
+         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                     <h2 class="modal-title" id="myModalLabel">Modal title</h2>
+                  </div>
+                  <div class="modal-body">
+                   ...
+                  </div>
+                  <span class="modal-arrow pull-left">{{get_icon('chevron-left',lib='elusive')}}</span><span class="modal-arrow pull-right">{{get_icon('chevron-right',lib='elusive')}}</span>
+                  <div class="modal-footer">
+                     {#<button class="btn btn-lg btn-success" id="add-list-btn" type=button>Add to List</button>#}
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         {{ super() }}
+         <script type="text/javascript" src="{{ url_for('static',filename='js/icons.js')}}">
+        </script>
+    {% endblock %}
+
+    {#
+                         /*
+                     function addIconToList(lst,iconName) {
+                           var lib = iconName.split("-")[0];
+                           lst.append($("<span>").addClass(lib).addClass(iconName));
+                     }       
+                      function getModalBody() {
+                      var b = $("<div>")
+                                .addClass("modal-body")
+                                .clone($(".modal-body")
+                                        .eq(0)
+                                ).insertAfter(
+                                       $(".modal-footer")
+                                );
+                      return b;
+                     }                                 
+                    $("#add-list-btn").on("click",function(){
+                        var iconName = $(".modal-body")
+                                            .children()
+                                            .attr("class")
+                                            .split(" ")
+                                            [1];
+                        if(!$(".icon-list").length){
+                                var listContainer = getModalBody();
+                                var lst = $("<div>")
+                                                .addClass("icon-list")
+                                                .appendTo(listContainer);
+                        }else{
+                                var lst = $(".icon-list");
+                        }
+                        addIconToList(lst,iconName);
+                    });
+                    */
+    
+            <div class="modal-body">
+                <h4>Text in a modal</h4>
+                <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
+                <h4>Popover in a modal</h4>
+                <p>This <a href="#" role="button" class="btn btn-default popover-test" title="" data-content="And here's some amazing content. It's very engaging. right?" data-original-title="A Title" aria-describedby="popover323568">button</a><div class="popover fade right in" role="tooltip" id="popover323568" style="top: 81.5px; left: 112px; display: block;"><div class="arrow"></div><h3 class="popover-title">A Title</h3><div class="popover-content">And here's some amazing content. It's very engaging. right?</div></div> should trigger a popover on click.</p>
+                <h4>Tooltips in a modal</h4>
+                <p><a href="#" class="tooltip-test" title="" data-original-title="Tooltip">This link</a> and <a href="#" class="tooltip-test" title="" data-original-title="Tooltip">that link</a> should have tooltips on hover.</p>
+                <hr>
+                <h4>Overflowing text to show scroll behavior</h4>
+            </div>#}

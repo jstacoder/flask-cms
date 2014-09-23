@@ -1,0 +1,174 @@
+{% extends base %}
+{% from '_macros.html' import modal_form with context  %}
+{% macro render_container(fluid=true) %}
+    <div class="container{% if fluid %}-fluid{% endif %}">
+        {{ caller() }}
+    </div>
+{% endmacro %}
+
+{% macro render_row() %}
+    <div class=row>
+        {{ caller() }}
+    </div>
+{% endmacro %}
+
+{% macro render_offset(num) %}
+    col-md-offset-{{num}}
+{% endmacro %}
+
+{% macro render_push(num) %}
+    col-md-push-{{num}}
+{% endmacro %}
+
+{% macro render_pull(num) %}
+    col-md-pull-{{num}}
+{% endmacro %}
+
+{% macro render_column(num,offset=false,push=false,pull=false) %}
+    {% set class = "col-md-%s" % num %}
+    {% if offset %}
+        {% set class = "%s %s" % (class,render_offset(offset)) %}
+    {% endif %}
+    {% if push %}
+        {% set class = "%s %s" % (class,render_push(push)) %}
+    {% endif %}
+    {% if pull %}
+        {% set class = "%s %s" % (class,render_pull(pull)) %}
+    {% endif %}
+    <div class="{{class}}">
+        {{ caller() }}
+    </div>
+{% endmacro %}
+
+
+    
+
+{% macro get_columns(cols=[]) %}
+    {% call render_row() %}
+        {% for col in cols %}
+            {% call render_column(col) %}
+                {{ col.content }}
+            {% endcall %}
+        {% endfor %}
+    {% endcall %}
+        {#
+    {% endcall %}
+    {% set count = 0 %}
+            {% for col in cols %}
+                {% call render_row() %}
+                    {% set cc = count + col.number %}
+                    {% if 12 >= cc %}
+                        {% call render_column(col.css) %}
+                           {{ col.content }}
+                        {% endcall %}
+                        {% set count = count + col.number %}
+                    {% else %}
+                        {% set count = 0 %}
+                    {% endif %}
+                {% endcall %}
+            {% endfor %}
+    
+    {% set rows = {} %}
+    {% set col_count = 0 %}
+    {% set row_num = 1 %}
+        {% for col in cols %}
+            {% set test_num = col.column_num + col_count %}
+            {% if test_num > 12 %}
+                {% set row_num = row_num + 1 %}
+                {% set col_count = 0 %}
+            {% endif %}
+            {% if rows[row_num] %}
+                {% set rows[row_num] = rows[row_num] + ' %d'  % col.column_num %}
+            {% else %}
+                {% set rows[row_num] = '%d' % col.column_num %}
+            {% endif %} 
+            {% set col_count = col_count + col.column_num %}
+        {% endfor %}
+        {% for row in rows.keys %}
+            {% call render_row() %}
+                {% for col_num in row.split(' ') %}
+                    {% for col in cols %}
+                        {% if col.id == (col_num*
+                    {% set css = 'col-md-%d' % col_num %}
+                    {% call render_column(css) %}
+                        {{ col.content }}
+                    {% endcall %}
+                {% endfor %}
+            {% endcall %}
+        {% endfor %}
+    #}
+{% endmacro %}
+
+{% block body %}
+<style>
+    div { text-align:center;}
+    .row > div { border: 1px solid darkgrey;height:100%}
+        
+    .row {height:200px;}
+</style>
+    <a class="btn btn-default" data-toggle=modal href="#{{form_id}}">click me</a>
+    {% call render_container(fluid=false) %}
+        {% call render_row() %} {# ROW 1 #}
+            {% call render_column(12) %}
+                {% call render_row() %}
+                    {% call render_column(4) %}
+                        <p>md-col-4</p>
+                    {% endcall %}
+                    {% call render_column(8) %}
+                        <p>col-md-8</p>
+                        {{ modal_form(form,form_id)}}
+                    {% endcall %}
+                {% endcall %}
+            {% endcall %}        
+            {% call render_row() %} {# ROW 2 #}
+                {% call render_column(12) %}
+                    {% call render_row() %}
+                        {% call render_column(8,offset=2) %}
+                            <p>col-md-10</p>
+                        {% endcall %}
+                        {% call render_column(2) %}
+                            <p>col-md-2</p>
+                        {% endcall %}                                
+                    {% endcall %}
+                {% endcall %}
+            {% endcall %}
+            {% call render_row() %} {# ROW 3 #}
+                {% call render_column(12) %}
+                    {% call render_row() %}
+                        {% call render_column(3) %}
+                            <p>md-col-3</p>
+                        {% endcall %}
+                        {% call render_column(3) %}
+                            <p>col-md-3</p>                    
+                        {% endcall %}
+                        {% call render_column(3) %}
+                            <p>col-md-3</p>                    
+                        {% endcall %}
+                        {% call render_column(3) %}
+                            <p>col-md-3</p>                        
+                        {% endcall %}
+                    {% endcall %}
+                {% endcall %}
+            {% endcall %}
+            {% call render_row() %} {# ROW 4 #}
+                {% call render_column(12) %}
+                    {% call render_row() %}
+                        {% call render_column(2) %}
+                            <p>md-col-2</p>
+                        {% endcall %}
+                        {% call render_column(2,push=7) %}
+                            <p>col-md-5</p>                    
+                        {% endcall %}
+                        {% call render_column(3) %}
+                            <p>col-md-3</p>                    
+                        {% endcall %}
+                        {% call render_column(2) %}
+                            <p>col-md-2</p>                        
+                        {% endcall %}
+                    {% endcall %}
+                {% endcall %}
+            {% endcall %}
+        {% endcall %}
+    {% endcall %}
+{% endblock %}
+

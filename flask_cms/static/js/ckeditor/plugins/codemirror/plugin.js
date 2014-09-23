@@ -548,8 +548,9 @@
 
             function getCodeMirrorScripts() {
                 var scriptFiles = [rootPath + 'js/codemirror.addons.min.js'];
+                scriptFiles.push(rootPath + 'js/' + 'mode/' + config.mode['name'] + '/' + config.mode['name'] + '.js'); //codemirror.mode.bbcode.min.js');
 
-                switch (config.mode) {
+                /*switch (config.mode) {
                 case "bbcode":
                     {
                         scriptFiles.push(rootPath + 'js/codemirror.mode.bbcode.min.js');
@@ -588,7 +589,7 @@
                     break;
                 default:
                     scriptFiles.push(rootPath + 'js/codemirror.mode.htmlmixed.min.js');
-                }
+                }*/
 
                 if (config.useBeautify) {
                     scriptFiles.push(rootPath + 'js/beautify.min.js');
