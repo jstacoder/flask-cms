@@ -44,8 +44,10 @@ class BaseTemplateForm(Form):
     template = fields.SelectField('base template',validators=[validators.InputRequired()])#,choices=[('a','a'),('b','b'),('c','c')])
 
 class TemplateBodyFieldForm(Form):
+    name = fields.HiddenField()
     body = CKTextEditorField('body')
 
+<<<<<<< HEAD
 class TextEditorFieldForm(Form):
     content = CKTextEditorField('content')
     
@@ -53,6 +55,7 @@ class TextEditorContentForm(Form):
     content = fields.FormField(TextEditorFieldForm,label="Content",separator="_")
     submit = fields.SubmitField('save')
 
+AddTemplateForm = TemplateBodyFieldForm
 
 
 class AddBlogForm(Form):

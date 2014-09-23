@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from .views import (
         AdminDashboardView,AdminPageView,
         AdminTemplateView,AdminBlockView,
@@ -20,7 +21,14 @@ from .delete_views import (
         DeleteStaticBlockView
 )
 
+=======
+>>>>>>> 225d248a86fe97dc22d37130f312da4de950cae6
 from admin import admin
+from .views2 import AdminTemplateView as AddAdminTemplateView
+from .views import (AdminDashboardView,AdminPageView,AdminTemplateView,AdminBlockView,
+                    AdminCMSListView,AdminListPageView,AdminDetailView,AdminEditView,
+                    PageListView,AdminBlogView,AdminAddCategoryView,AdminAddBlogView)
+
 
 routes = [
         ((admin),
@@ -29,6 +37,8 @@ routes = [
             ('/test',TestView.as_view('test')),
             ('/button/<item_id>',AdminShowButtonView.as_view('view_button')),
             ('/settings',AdminSiteSettingsView.as_view('settings')),
+            ('/template/add',AddAdminTemplateView.as_view('template_add')),
+            ('/template/add/item_id',AddAdminTemplateView.as_view('template_edit')),
             ('/add/category',AdminAddCategoryView.as_view('add_category')),
             ('/add/page',AdminPageView.as_view('add_page')),
             ('/add/admin_tab',AdminTabView.as_view('add_tab')),
@@ -67,7 +77,7 @@ routes = [
             ('/list/code',AdminCodeView.as_view('list_code')),
             ('/edit/file/<path:file_path>',AdminCodeView.as_view('edit_file')),
             ('/get/template',AdminTemplateAjaxView.as_view('get_base')),
-            ('modal',AdminModalView.as_view('modal')),
+            ('/modal',AdminModalView.as_view('modal')),
             ('/save/success/static_block',SaveSuccessStaticBlockView.as_view('save_static_block_success')),
             ('/save/error/static_block',SaveErrorStaticBlockView.as_view('save_static_block_error')),
             ('/save/static_block',SaveStaticBlockView.as_view('save_static_block')),

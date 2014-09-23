@@ -18,11 +18,12 @@ def is_list(lst):
 def add_is_list():
     return {'is_list': is_list}
 
-
 def _get_name():
     factory = Factory()
     faker = factory.create()
     return faker.name()
+    
+#return 'kyle'
 
 
 def is_dir(name):

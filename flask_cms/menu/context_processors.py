@@ -41,12 +41,37 @@ def frontend_nav():
 
 def admin_nav():
     return {'admin_nav_links':
-                        (
-                            ('AdminDashBoard', 'admin.index'),
-                        ),
-                        
-            'admin_nav_title': 'Admin',
-
+            (
+                ('AdminDashBoard','admin.index'),
+            ),
+            'admin_nav_title':'Admin',
+            'admin_dropdowns':(
+                dict(
+                    Manage=dict(
+                                    Users='admin.users',
+                                    Blogs='admin.blogs',
+                                    Settings='admin.settings',
+                              )
+                    ),
+                dict(
+                    List=dict(
+                                    Blogs='admin.blocks',
+                                    Pages='admin.pages',
+                                    Templates='admin.templates',
+                                    #Macros='admin.macros',
+                              )
+                    ),
+                dict(
+                    Add=dict(
+                                    Template='admin.add_template',
+                                    Page='page.add_page',
+                                    Macro='admin.add_block',
+                                    Blog='admin.add_blog',
+                              )
+                    ),
+                ),
+        }
+'''
             'admin_dropdowns':((
                     ('Manage',[
                         ('Users','admin.users',),
@@ -78,7 +103,7 @@ def admin_nav():
                     ]),
                 ),)                            
             }
-
+'''
 
 def sidebar():
     get_sidebar_tabs = [x.tab_id for x in get_model('admin_tab','admin').query.all()]

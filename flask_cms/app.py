@@ -6,7 +6,7 @@
 
     app initalization
 """
-from flask.ext.xxl.main import AppFactory
+from main.factory import AppFactory
 from settings import DevelopmentConfig
 
 app = AppFactory(DevelopmentConfig).get_app(__name__)
