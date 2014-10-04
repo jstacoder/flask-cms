@@ -672,12 +672,12 @@ class AdminStaticBlockView(BaseView):
                 'remove_jquery':True}                  
 
     def get(self,item_id=None):
-        from page.models import StaticBlock
+        from page.models import Block
         from .forms import AddStaticBlockForm
         form = AddStaticBlockForm #model_form(StaticBlock,db.session,base_class=Form,exclude=['content'])
         if 'list' in request.endpoint:
             self._template = 'sort_list.html'
-            self._context['list_items'] = StaticBlock.query.all() or []
+            self._context['list_items'] = Block.query.all() or ['Fail']
         elif 'add' in request.endpoint:            
             class StaticBlockForm(form):
                 content = FormField(TextEditorFieldForm,'_')
@@ -854,8 +854,9 @@ class IconView(BaseView):
                 }
         else:
             icons = __import__('admin.icons',[],[],'icons').__dict__[lib]
-            lib = IconView._fix_lib_name(lib)
+            display_lib = IconView._fix_lib_name(lib)
             self._context = {
+                'display_lib':display_lib,
                 'lib':lib,
                 'icons':icons,
             }
@@ -867,3 +868,30 @@ class IconView(BaseView):
         if len(tmp) > 1:
             name = '-'.join(map(str,tmp))
         return name
+
+class TemplateWizardView(BaseView):
+    _template = 'wizard.html'
+    _context = {}
+
+    def get(self):
+        from .forms import TemplateWizardRowCountForm
+        self._form = TemplateWizardRowCountForm 
+        return self.render()
+
+    def post(self):
+        args = request.args.copy()
+        if 'row_count' in args:
+            from .forms import TemplateWizardSingleRowForm
+            self._form = TemplateWizardSingleRowForm 
+                        
+        elif 'row_height' in args:
+            from .forms import TemplateWizardSingleColumnForm
+            self._form =  TemplateWizardSingleColumnForm
+            
+        elif 'col_width' in args:
+            #process data
+            pass
+        else:
+            pass
+        return self.render()
+

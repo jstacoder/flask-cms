@@ -77,6 +77,7 @@ class BaseConfig(LocalConfig):
             'make_base.base',
             'auth.context_processors.auth_context',
             'blog.context_processors.add_admin_head',
+            'core.context_processors.add_size_converters',
 
     ]
 
@@ -113,7 +114,7 @@ class BaseConfig(LocalConfig):
         'ZIP':'92804',
     },
     'COMPANY_PHONE':'714-783-6369',
-    'CONTACT_NAME':'Kyle Roux',
+    'CONTACT_NAME':'Roux',
     'CONTACT_EMAIL':'kyle@level2designs.com',
     }
 
@@ -130,7 +131,7 @@ class BaseConfig(LocalConfig):
     DEFAULT_NAVBAR = 'clean'
 
     LAYOUT_FILES = {
-            'blog':'layouts/2col_leftsidebar.html',
+            'blog':'layouts/1col_leftsidebar.html',
             'post_form':'layouts/1col_rightsidebar.html',
             'one_col_left':'layouts/1col_leftsidebar.html',
             'one_col_right':'layouts/1col_rightsidebar.html',

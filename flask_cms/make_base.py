@@ -79,18 +79,23 @@ def get_head(css_files=[],bootstrap_cdn=True,**kwargs):
     rtn += end_head() + '\n'
     return rtn
 
-def get_body():
-    return '''
+def get_body(jquery_version=''):
+    rtn = '''
     <body id=body {% block body_style %} style="{% if body_style %}{{ body_style }}{% else %}padding-top:60px;{% endif %}"{% endblock body_style %}>
         {% block body %}{% endblock body %}
         {% if layout_mode %}{{ layout_menu()|safe }}{% endif %}
         {% if logged_in %}{{ admin_head() }}{% endif %}
-        <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
-        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery.'''
+    rtn = rtn + jquery_version
+    if jquery_version != '':
+        rtn = rtn + '.'
+    rtn = rtn + '''js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.js"></script>
         {% block footer_js %}{% endblock footer_js %}
     </body>
 </html>
     '''
+    return rtn
 
 def get_base(*args,**kwargs):
     rtn = get_head(*args,**kwargs)

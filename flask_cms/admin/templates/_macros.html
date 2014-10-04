@@ -9,7 +9,12 @@
 {% macro render_nav_dropdown(label,link_list) %}
     <a class=dropdown-toggle data-toggle=dropdown>{{ label }}<b class=caret></b></a>
     <ul class=dropdown-menu>
-        {% for action,endpoint in link_list %}
+        {% if type(link_list) == type({}) %}
+            {% set items = link_list.items() %}
+        {% else %}
+            {% set items = link_list %}
+        {% endif %}
+        {% for action,endpoint in items %}
             {% if not endpoint  is none %}
                 {% if type(endpoint) == type('') %}
                     <li><a href="{{ url_for(endpoint) }}">{{ action }}</a></li>
@@ -50,11 +55,11 @@
 #}
 {% macro render_navbar(brand,nav_links,dropdowns,inverse=false,auth=false) %}
     {% if inverse %}
-        {% set type = 'inverse' %}
+        {% set nav_type = 'inverse' %}
     {% else %}
-        {% set type = 'default' %}
+        {% set nav_type = 'default' %}
     {% endif %}
-    <div class="navbar navbar-{{ type }} navbar-fixed-top" role=navigation>
+    <div class="navbar navbar-{{ nav_type }} navbar-fixed-top" role=navigation>
         <div class=container-fluid>
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -71,11 +76,16 @@
                     {% endfor %}
                     {% if dropdowns %}
                         {% for dropdown in dropdowns %}
-                            {% for label,link_list in dropdown %}
-                                <li class=dropdown>
-                                    {{ render_nav_dropdown(label,link_list) }}
-                                </li>
-                            {% endfor %}
+                            {% if type(dropdown) == type({}) %}
+                                {% set drop_items = dropdown.items() %}
+                            {% else %}
+                                {% set drop_items = dropdown %}
+                            {% endif %}
+                                {% for label,link_list in drop_items %}
+                                    <li class=dropdown>
+                                        {{ render_nav_dropdown(label,link_list) }}
+                                    </li>
+                                {% endfor %}
                         {% endfor %}
                     {% endif %}
                 </ul>
@@ -177,6 +187,9 @@
         {% if caller %}
             {{ caller() }}
         {% else %}
+            {% if kwargs.get('modal_id') %}
+                {{ form.col_id(value=kwargs.pop('modal_id')) }}
+            {% endif %}
             {% set c = 0 %}
             {% for f in form %}
                 {% set c = 1  + 1 %}
@@ -342,9 +355,16 @@
         <p>{{tab.content}}</p>
     </div>
 {% endmacro %}
-{% macro render_modal(modal_id,fade=true,title='',slider=false) %}
+{% macro render_modal(modal_id,fade=true,title='',size='md',slider=false) %}
+    {% if size == 'lg' %}
+        {% set size_class = 'modal-lg' %}
+    {% elif size == 'sm' %}
+        {% set size_class = 'modal-sm' %}
+    {% else %}
+        {% set size_class = false %}
+    {% endif %}
 <div class="modal{% if fade %} fade{% endif %}" id="{{modal_id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal-dialog{% if size_class %} {{size_class}}{% endif %}">
                <div class="modal-content">
                   <div class="modal-header">
                       <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">{{get_icon('close',lib='genericon')}}</span><span class="sr-only">Close</span></button>
@@ -363,8 +383,8 @@
             </div>
          </div>
 {% endmacro %}
-{% macro modal_form(form,modal_id) %}
-    {% call render_modal(modal_id=modal_id,title=form._name) %}
-        {{ render_form(form) }}
+{% macro modal_form(form,modal_id,title='') %}
+    {% call render_modal(modal_id=modal_id,title=title) %}
+        {{ render_form(form,modal_id=id) }}
     {% endcall %}
 {% endmacro %}

@@ -114,7 +114,7 @@ class MemberArticleView(BaseView):
     _form = None
     _context = {
             'body_style':'margin-top:0px;',
-            'wide':False,
+            'wide':True,
 
     }
 

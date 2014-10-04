@@ -47,7 +47,6 @@ class TemplateBodyFieldForm(Form):
     name = fields.HiddenField()
     body = CKTextEditorField('body')
 
-<<<<<<< HEAD
 class TextEditorFieldForm(Form):
     content = CKTextEditorField('content')
     
@@ -129,4 +128,21 @@ class AddAdminTabForm(Form):
 class AdminEditFileForm(Form):
     content = CKTextEditorField('content')
     file_name = fields.HiddenField()
+
+
+
+class TemplateWizardRowCountForm(Form):
+    row_count = fields.RadioField('row count',choices=((1,1),(2,2),(3,3)),validators=[validators.InputRequired()])
+
+
+
+class TemplateWizardSingleRowForm(Form):
+    row_height = fields.IntegerField('row height',default='100')
+    column_count = fields.RadioField('Row columns',choices=((1,1),(2,2),(3,3),(4,4),(5,5)))
+    row_count = fields.HiddenField()
+    current_row = fields.HiddenField()
+
+class TemplateWizardSingleColumnForm(Form):
+    block_name = fields.StringField('block name',validators=[validators.InputRequired()])
+    column_width = fields.IntegerField('Column Width',description='per bootstrap grid',validators=[validators.InputRequired()])
 

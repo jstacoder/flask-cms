@@ -4,7 +4,7 @@
     {% endblock header %}
     {% block column_one %}
         <div class=row>
-            <div class="blog-main col-md-8 col-md-push-2">
+            <div class="blog-main col-md-12">
         {% if post %}
             <h2>{{post.name}}</h2>
             <p>{{post.content|markdown|safe}}</p>

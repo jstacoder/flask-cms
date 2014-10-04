@@ -1,0 +1,57 @@
+{% extends base %}
+    {% macro render_small_field(field) %}
+        <div class=row>
+            <div class=col-lg-1>
+                {{field(class_='form-control')}}
+            </div>
+        </div>
+    {% endmacro %}
+    {% macro small_row(fields) %}
+        <div class="form-group inline-form">
+            {% for f in fields %}
+                {{ render_small_field(f) }}
+            {% endfor %}
+        </div>
+    {% endmacro %}
+    {% macro render_radio(field) %}
+    <div class=radio>
+        <label>
+            {{field(type=radio)}}
+        </label>
+    </div>
+    {% endmacro %}
+    {% macro sized_input(field,size,placeholder) %}
+    <div class="col-lg-{{size}}">
+        {{field(placeholder=placeholder,class_='form-control')}}
+    </div>
+    {% endmacro %}
+    {% macro render_form(form) %}
+        <form>
+            {{ caller() }}
+        </form>
+    {% endmacro %}
+
+
+    {% block body %}
+        {% if form %}
+            {% call render_form(form) %}
+                {{render_radio(form.row_count)}}
+                {% for f in [form.h1,form.h2,form.h3] %}    
+                    {{ sized_input(f,3,'height') }}
+                {% endfor %}
+                {% set v = '%s ' %}
+                {% set t = ' ' %}
+                {% set rtn = '' %}
+                {% for itm in form.cols %}                
+                    {% for x in range(5) %}
+                        {% set t = v % x %}
+                        {% set rtn = rtn + t %}                        
+                    {% endfor %}
+                    {% for num in rtn.split(' ') %}
+                        {{ small_row(form.cols[num]) }}
+                    {% endfor %}
+                {% endfor %}
+            {% endcall %}
+        {% endif %}
+    {% endblock %}
+

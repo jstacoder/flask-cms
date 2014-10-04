@@ -10,72 +10,84 @@ from main.baseviews import BaseView
 from flask import flash, redirect, request, url_for
 from admin.forms import AddPageForm
 from blog.models import Category,Tag    
-from .forms import MarkdownEditor
+from .forms import MarkdownEditor,ColumnForm
 from settings import BaseConfig
+from test_jinja import main,row,col
+from jinja2 import Template
+
+'''
+class AddRowView(BaseView):
+    # ajax only view, no template
+
+    def get(self):
+        cols = request.args.get('cols',None)
+        rows = request.args.get('rows',None)
+'''
 
 
-class Column(object):
-    _css = ''
-    _content = ''
-    _base_css = 'col-md-%d'
-    _number = None
 
-    def __init__(self,css=None,num=None):
-        self.css = css
-        if num is not None:
-            self._number = num
-            self.css = self._base_css % num
 
-    @property
-    def content(self):
-        return self._content
-
-    @content.setter
-    def content(self,content):
-        self._content = content
-
-    @property
-    def number(self):
-        return self._number
     
 
         
 
 class IndexView(BaseView):
-    _template = 'test2.html'
-    _context = {'count':0,
+    _template = Template(main())
+    _context = {
+            'add_buttons':True,
+            'count':0,
             'l_count':0,
-            }
 
-    def get(self):
+    }
+    _row = (
+                row('660',cols=[
+                    col(2),col(8),col(2)
+                ]),
+        ),        
+
+    _form = ColumnForm
+
+
+
+
+    def get(self,layout_name=None):
+        self._layouts = {
+            'one_col_empty':(col(12),),
+            'one_col_leftbar':(col(2),col(10)),
+            'one_col_rightbar':(col(10),col(2)),
+            'one_col_both':(col(2),col(8),col(2)),
+            'two_col_empty':(col(6),col(6)),
+            'two_col_leftbar':(col(2),col(5),col(5)),
+            'two_col_rightbar':(col(5),col(5),col(2)),
+            'two_col_both':(col(2),col(4),col(4),col(2)),
+            'three_col_empty':(col(4),col(4),col(4)),
+            'three_col_leftbar':(col(2),col(3),col(3),col(4)),
+            'three_col_rightbar':(col(4),col(3),col(3),col(2)),
+        }
         from .forms import TestForm
-        self._form = TestForm
         self._context['form'] = self._form()
         self._context['form_id'] = 'myForm'
         self._context['form']._name = 'myForm'
 
-        self._context['cols'] = []
-        self._context['rows'] = []
-        count = 0
-        for c in [2,1,4,1,10,2,10,2,5,5,2,2,4,4]:
-            row = []
-            col = Column(num=c)
-            col.content = 'column ' + str(c) + '\njyvbuhkhvdliud bulz rvglzrglrvhgvl rhvrjkevg jhfgckzmj zhv\ndvavbeb'
-            count = count + c
-            if count <= 12:
-                row.append(col)
-            else:
-                count = c
-                self._context['rows'].append(row)
-                row = []
-                row.append(col)
+        content = (row('660',cols=(col(2),col(8),col(2))),)
+        footer = (row('140',cols=(col(3),col(6),col(3))),)
+        
+        if layout_name is not None:
+            self._context['rows'] = (row('660',cols=list(self._layouts[layout_name.replace('-','_')])),) + footer
+        else:
+            self._context['rows'] = content + footer
 
-            self._context['cols'].append(col)
+        self._context['layouts'] = self._layouts.keys()
         x = self.render()
         return x
 
     def post(self):
-        self._context['layout_mode'] = True
+        if ColumnForm(request.form).validate():
+            self._context['offset'] = request.form.get('offset',None)
+            self._context['push'] = request.form.get('push',None)
+            self._context['pull'] = request.form.get('pull',None)
+            self._context['width'] = request.form.get('col_width',None)
+        #self._context['layout_mode'] = True
         return self.render()
 
 class BlockView(BaseView):

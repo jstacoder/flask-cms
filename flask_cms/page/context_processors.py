@@ -13,16 +13,39 @@ class IconLibNameConverter:
             font_awesome='fa',
             elusive='el-icon',)
 
+    _icon_sizes = dict(
+        
+        lg='fa-2x',
+        xl='fa-3x',
+        xxl='fa-4x',
+        xxxl='fa-5x',
+    )
+    
+    @staticmethod
+    def parse_icon_size(size):
+        if size in IconLibNameConverter._icon_sizes:
+            return IconLibNameConverter._icon_sizes.get(size)
+        return False
+
     @staticmethod
     def parse_icon_lib(lib_name):
         if lib_name in IconLibNameConverter._icon_librarys:
             return IconLibNameConverter._icon_librarys[lib_name]
         return False
+    
+    
 
 
 def get_icon(icon,lib='glyphicon',fw=False,size=None):
     lib = IconLibNameConverter.parse_icon_lib(lib)
-    html = '<span class="{0} {0}-{1}-fw"></span>' if fw else '<span class="{0} {0}-{1}"></span>'
+    if fw:
+        html = '<span class="{0} {0}-{1}-fw'
+    else:
+        html = '<span class="{0} {0}-{1}'
+    if size is not None:
+        html = html + ' ' + IconLibNameConverter.parse_icon_size(size) + '"></span>'
+    else:
+        html = html + '"></span>'
     return Markup(html.format(lib,icon))
 
 def add_get_icon():

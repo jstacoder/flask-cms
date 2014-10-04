@@ -117,3 +117,39 @@ def layout_menu():
 
 def add_layout_mode():
     return dict(layout_menu=layout_menu)
+
+
+def convert_size(base,size):
+    size_map = {
+        'md': {
+            '12':'14',
+            '10':'10',
+            '9':'9',
+            '8':'8',
+            '6':'6',
+            '5':'5',
+            '4':'4',
+            '3':'3',
+            '2':'2',
+            '1':'2',
+        },
+        'xs': {
+            '16':'12',
+            '14':'9',
+            '12':'8',
+            '10':'7',
+            '8':'6',
+            '6':'4',
+            '3':'2',
+            '2':'1',
+        }
+    }
+    return size_map[base][str(size)]
+        
+
+def get_alt_base(base):
+    return 'md' if base == 'xs' else 'xs'
+
+def add_size_converters():
+    return dict(convert_size=convert_size,get_alt_base=get_alt_base)
+

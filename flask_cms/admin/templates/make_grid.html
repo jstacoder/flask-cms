@@ -1,0 +1,93 @@
+{{% macro render_container(fluid=true) %}}
+<div class="container{{% if fluid %}}-fluid{{% endif %}}{{% if wide %}} wide{{% endif %}}">
+        {{{ caller() }}}
+    </div>
+{{% endmacro %}}
+
+{{% macro render_row(row_height=false) %}}
+    {{% if row_height %}}
+        {{% if not row_height.endswith('px') %}}
+            {{% set row_height = '%spx' % row_height %}}
+        {{% endif %}}
+    {{% endif %}}
+    <div class=row{{% if row_height %}} style="height:{{{row_height}}}"{{% endif %}}>
+        {{{ caller() }}}
+    </div>
+{{% endmacro %}}
+
+{{% macro _render_offset(num) %}}
+    col-md-offset-{{{num}}}
+{{% endmacro %}}
+
+{{% macro _render_push(num) %}}
+    col-md-push-{{{num}}}
+{{% endmacro %}}
+
+{{% macro _render_pull(num) %}}
+    col-md-pull-{{{num}}}
+{{% endmacro %}}
+
+{{% macro render_column(num,offset=false,push=false,pull=false,debug=false,debug_id='',base_viewport='md',height=false) %}}
+    {{% set class = "col-%s-%s" % (base_viewport,num) %}}
+    {{% if offset %}}
+        {{% set class = "%s %s" % (class,_render_offset(offset)) %}}
+    {{% endif %}}
+    {{% if push %}}
+        {{% set class = "%s %s" % (class,_render_push(push)) %}}
+    {{% endif %}}
+    {{% if pull %}}
+        {{% set class = "%s %s" % (class,_render_pull(pull)) %}}
+    {{% endif %}}
+    {{% if height %}}
+        {{% if not height.endswith('px') %}}
+            {{% set height = '%spx' % height %}}
+        {{% endif %}}
+    {{% endif %}}
+    <div class="{{{class}}}" {{% if height -%}}
+        style="height:{{{ height }}}"
+        {{%- endif %}}>
+        {{{ caller() }}}        
+    </div>
+{{% endmacro %}}
+
+{{% macro get_columns(cols=[]) %}}
+    {{% call render_row() %}}
+        {{% for col in cols %}}
+            {{% call render_column(col) %}}
+                {{{ col.content }}}
+            {{% endcall %}}
+        {{% endfor %}}
+    {{% endcall %}}    
+{{% endmacro %}}
+{% extends base or 'layout.hmtl' %}
+    {% block body %}
+    {{% call render_container(fluid=fluid) %}}
+        {{% call render_row() %}}
+            {{% call render_column('12') %}}
+                {{% if rows %}}
+                    {{% for row in rows %}}
+                        {{% call render_row(row_height=row.height) %}}
+                            {{% for col in row.cols %}}
+                                {{% call render_column(**col.args) %}}
+                                     {% block {{{ col.blockname }}} %}
+                                     {% endblock {{{ col.blockname }}} %}
+                                {{% endcall %}}
+                            {{% endfor %}}
+                        {{% endcall %}}
+                    {{% endfor %}}
+                {{% endif %}}
+            {{% endcall %}}
+        {{% endcall %}}
+    {{% endcall %}}
+    {% endblock %}
+    {% block extra_head %}
+    <style>
+    div { text-align:center;}
+    .row > div { border: 1px solid darkgrey;height:100;}        
+.row { {{% if height %}}height:{{{height}}}{{% else %}}min-height:100px{{% endif %}};}    
+    div.row > div  { {{% if height %}}height:{{{height}}}{{% else %}}min-height:100px{{% endif %}};}
+    @media (min-width: 600px)  {.container { width: 900px; }}
+    @media (min-width: 1700px)  {.container {width: 1750px;}}
+    .container-fluid.wide {width: 95%}
+    </style>
+    {% endblock %}

@@ -63,6 +63,27 @@ function toggleChevron(elem) {
     }
 }
 
+
+function addSpin(elem) {
+    $(elem).addClass("fa-spin");
+}
+
+function removeSpin(elem) {
+    $(elem).removeClass("fa-spin");
+}
+
+function checkSpin(elem){
+    return $(elem).hasClass("fa-spin");
+}
+
+function toggleSpin(elem){
+    if(!checkSpin(elem)){
+        addSpin(elem);
+    } else {
+        removeSpin(elem);
+    }
+}
+
 function toggleOpen(elem) {
     var e = $(elem);
     if (elem.hasClass("open")){        
@@ -92,6 +113,10 @@ $(function(){
                 .index($(this))
             )
         );
+    });
+
+    $(".spin-btn").on("click",function(){
+        toggleSpin($(".modal-body > span"));
     });
                      
     $("dd").on("click",function(){                 

@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+from admin import admin
 from .views import (
         AdminDashboardView,AdminPageView,
         AdminTemplateView,AdminBlockView,
@@ -21,13 +21,10 @@ from .delete_views import (
         DeleteStaticBlockView
 )
 
-=======
->>>>>>> 225d248a86fe97dc22d37130f312da4de950cae6
-from admin import admin
 from .views2 import AdminTemplateView as AddAdminTemplateView
-from .views import (AdminDashboardView,AdminPageView,AdminTemplateView,AdminBlockView,
+'''from .views import (AdminDashboardView,AdminPageView,AdminTemplateView,AdminBlockView,
                     AdminCMSListView,AdminListPageView,AdminDetailView,AdminEditView,
-                    PageListView,AdminBlogView,AdminAddCategoryView,AdminAddBlogView)
+                    PageListView,AdminBlogView,AdminAddCategoryView,AdminAddBlogView)'''
 
 
 routes = [
