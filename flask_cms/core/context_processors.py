@@ -5,7 +5,7 @@
 import os
 from settings import BaseConfig
 from flask.helpers import url_for
-from faker.factory import Factory
+#from faker.factory import Factory
 from page.context_processors import add_get_button, add_get_icon,get_context, add_get_block,add_urlfor
 
 ROOT_PATH = BaseConfig.ROOT_PATH
@@ -19,9 +19,9 @@ def add_is_list():
     return {'is_list': is_list}
 
 def _get_name():
-    factory = Factory()
-    faker = factory.create()
-    return faker.name()
+    #factory = Factory()
+    #faker = factory.create()
+    return ''#faker.name()
     
 #return 'kyle'
 

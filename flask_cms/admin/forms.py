@@ -1,7 +1,6 @@
 from flask.ext.wtf import Form
-from wtalchemy.fields import QuerySelectField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import fields, validators,widgets
-from ext import db
 #from admin.models import Type
 from blog.fields import TagField
 from flask.ext.pagedown.fields import PageDownField
@@ -146,3 +145,21 @@ class TemplateWizardSingleColumnForm(Form):
     block_name = fields.StringField('block name',validators=[validators.InputRequired()])
     column_width = fields.IntegerField('Column Width',description='per bootstrap grid',validators=[validators.InputRequired()])
 
+
+class HeightFields(Form):
+    height_a = fields.IntegerField('height a')
+    height_b = fields.IntegerField('height b')
+    height_c = fields.IntegerField('height c')
+
+
+class ColumnFields(Form):
+    left_bar  = fields.IntegerField()
+    col_1 = fields.IntegerField()
+    col_2 = fields.IntegerField()
+    col_3 = fields.IntegerField()
+    right_bar = fields.IntegerField()
+
+
+class CreateGridForm(Form):
+    row_count = fields.RadioField('row count',choices=((1,1),(2,2),(3,3)),validators=[validators.InputRequired()])
+    row_heights = fields.FormField(HeightFields)
