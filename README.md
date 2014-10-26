@@ -25,6 +25,6 @@ you should see:
 ```
 
 then just connect to your ip address: ie
-192.168.1.155 
+192.168.1.155 or 127.0.0.1
 or w/e yours is 
 ---
