@@ -5,9 +5,9 @@
     ~~~~~~~~~~
 """
 
-from core import core
+from . import core
 from main.baseviews import BaseView
-from flask import flash, redirect, request, url_for
+from flask import flash, redirect, request, url_for,jsonify
 from admin.forms import AddPageForm
 from blog.models import Category,Tag    
 from .forms import MarkdownEditor,ColumnForm
@@ -24,15 +24,8 @@ class AddRowView(BaseView):
         rows = request.args.get('rows',None)
 '''
 
-
-
-
-    
-
-        
-
 class IndexView(BaseView):
-    _template = Template(main())
+    _template = 'layouts/1col_leftsidebar.html'
     _context = {
             'add_buttons':True,
             'count':0,
@@ -51,6 +44,11 @@ class IndexView(BaseView):
 
 
     def get(self,layout_name=None):
+        self._args = request.args.get('layout',False)
+        #if self._args:
+        #    self._template = Template(main(self._args))
+        #else:
+        #    self._template = Template(main())
         self._layouts = {
             'one_col_empty':(col(12),),
             'one_col_leftbar':(col(2),col(10)),
@@ -64,18 +62,17 @@ class IndexView(BaseView):
             'three_col_leftbar':(col(2),col(3),col(3),col(4)),
             'three_col_rightbar':(col(4),col(3),col(3),col(2)),
         }
-        from .forms import TestForm
-        self._context['form'] = self._form()
+        from admin.forms import CreateGridForm
+        self._form = CreateGridForm
         self._context['form_id'] = 'myForm'
-        self._context['form']._name = 'myForm'
 
         content = (row('660',cols=(col(2),col(8),col(2))),)
         footer = (row('140',cols=(col(3),col(6),col(3))),)
         
-        if layout_name is not None:
-            self._context['rows'] = (row('660',cols=list(self._layouts[layout_name.replace('-','_')])),) + footer
-        else:
-            self._context['rows'] = content + footer
+        #if layout_name is not None:
+        #    self._context['rows'] = (row('660',cols=list(self._layouts[layout_name.replace('-','_')])),) + footer
+        #else:
+        #    self._context['rows'] = content + footer
 
         self._context['layouts'] = self._layouts.keys()
         x = self.render()
@@ -127,6 +124,7 @@ class AboutView(BaseView):
         self._context['cat_form'] = AddCategoryForm()
         self._form.tags.query_factory = lambda: Tag.query.all()
         self._form.category.query_factory = lambda: Category.query.all()
+        self._context['editor_mode'] = 'python'
         
         return self.render()
 
@@ -200,3 +198,52 @@ class MarkDownView(BaseView):
 
         
         
+class GridView(BaseView):
+
+    _grid_file = 'admin/templates/make_grid.html'
+
+    def __init__(self,*args,**kwargs):
+        self._setup_jinja()
+        super(GridView,self).__init__(*args,**kwargs)
+    
+    def _setup_jinja():
+        from jinja2 import Environment, BaseLoader
+        self.jinja2_env = Environment(
+            block_start_string="{{%",
+            block_end_string="%}}",
+            variable_start_string="{{{",
+            variable_end_string="}}}",
+            trim_blocks=True,
+        )
+
+    def _get_grid(self):
+        from flask import request
+
+        args = request.args.copy()
+        row_count = 0
+        col_count = 0
+        for k,v in args.items:
+            if 'row' == k:
+                pass
+
+
+
+
+#return jinja2_env.from_string(open('admin/templates/make_grid.html','r').read()).render(dict(rows=content+footer,fluid=True,wide=True,body_style=''))
+
+
+class JsonRequestView(BaseView):
+
+    def get(self):
+        import json
+        args = request.args.copy()
+        step = args.pop('step')
+        if int(step) == 1:
+            self._template = 'step1-' +  args.get('rows') + '.html'
+        else:
+            self._template = 'step' + step + '.html'
+            self._context['args'] = args
+        x = self.render()
+        return jsonify(dict(html=x))
+
+
