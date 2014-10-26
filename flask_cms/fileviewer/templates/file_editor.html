@@ -1,0 +1,87 @@
+{% extends base or 'layout.html' %}
+{% macro render_filename(name,link) %}
+<li><a href="{{url_for('fileviewer.view_files',item_name=link)}}"><span class="badge badge-default">{{name}}</span></a></li>
+{% endmacro %}
+{% macro render_files(files) %}
+    <ul class=list-unstyled>
+        {% for name,link in files %}
+            {{ render_filename(name,link) }}
+        {% endfor %}
+    </ul>
+{% endmacro %}
+{% macro make_parent_path(names) %}
+    {% for name in names -%}
+        {{ name }}
+        {%- if not loop.last and not name == '' -%}
+            /
+        {%- endif -%}
+    {%- endfor %}
+{% endmacro %}
+{% macro get_parent_link() %}
+    {% set name = make_parent_path(request.args.get('item_name','/').split('/')[:-1]).strip() %}
+        {% if name == 'files' %}
+            {% set name = '' %}
+        {% endif %}
+        {% if name != '' %}
+        <a class="btn btn-success" href="{{ url_for('fileviewer.view_files',item_name=name) }}">back</a>
+        {% else %}
+        <a class="btn btn-success" href="{{ url_for('fileviewer.view_files') }}">back</a>
+        {% endif %}
+{% endmacro %}
+{% macro get_link(name) %}
+    {% set dname = name.split('/')[-1] %}
+    <a class="list-group-item" href="{{url_for('fileviewer.view_files',item_name=name)}}">{{dname}}</a>
+{% endmacro %}
+{% macro render_dirs(names) %}
+    <div class="list-group">
+        {% set parent = request.args.get('item_name','') %} {# make_parent_path(request.args.get('item_name'))#} 
+        {% for name in names %}
+            {% set path = '%s/%s' % (parent.strip(),name.strip()) %}
+            {{ get_link(path.strip())|safe }}
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% block body %}
+{% if codemirror %}
+    {{ codemirror.include_codemirror() }}
+{% endif %}
+<style>
+    .list-group-item {
+        width:20%;
+        padding:0px 20px;
+    }
+    div.CodeMirror { height:100%; }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+    {% if file_content %}
+        <div class="text" style="display:none;">
+            {{ file_content }}
+        </div>
+        <form method="post" action="{{ url_for('.view_files') }}">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">{{file_name}}</h3></div>
+                <div class="panel-body">
+            {{ form.content(value=file_content) }}
+                </div>
+                <div class="panel-footer">
+            {{ form.submit(class_='btn btn-default')}}
+            {{ form.hidden_tag() }}
+            {{ get_parent_link()|safe }}
+                </div>
+            </div>
+        </form>
+    {% else %}
+        {{ get_parent_link()|safe }}
+    {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script>
+    editor_for_content.setValue($(".text").text().trim());
+    editor_for_content.setOption("mode","{{editor_mode}}");
+</script>
+{% endblock %}

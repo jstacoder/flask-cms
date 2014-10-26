@@ -32,6 +32,7 @@ class BaseConfig(LocalConfig):
             'blog.urls.routes',
             'member.urls.routes',
             'page.urls.routes',
+            'fileviewer.urls.routes',
     ]
 
     BLUEPRINTS = [
@@ -43,6 +44,7 @@ class BaseConfig(LocalConfig):
             'page.page',
             'flask.ext.xxl.apps.auth.auth',
             #'auth.auth',
+            'fileviewer.fileviewer',
 
     ]
 

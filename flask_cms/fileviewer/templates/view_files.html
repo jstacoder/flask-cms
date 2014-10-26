@@ -1,0 +1,85 @@
+{% extends base or 'layout.html' %}
+{% macro render_filename(name,link) %}
+<li><a href="{{url_for('fileviewer.view_files',item_name=link)}}"><span class="badge badge-default">{{name}}</span></a></li>
+{% endmacro %}
+{% macro render_files(files) %}
+    <ul class=list-unstyled>
+        {% for name,link in files %}
+            {{ render_filename(name,link) }}
+        {% endfor %}
+    </ul>
+{% endmacro %}
+{% macro make_parent_path(names) %}
+    {% for name in names -%}
+        {{ name }}
+        {%- if not loop.last and not name == '' -%}
+            /
+        {%- endif -%}
+    {%- endfor %}
+{% endmacro %}
+{% macro get_parent_link() %}
+    {% set name = make_parent_path(request.args.get('item_name','/').split('/')[:-1]).strip() %}
+        {% if name == 'files' %}
+            {% set name = '' %}
+        {% endif %}
+        {% if name != '' %}
+        <a href="{{ url_for('fileviewer.view_files',item_name=name) }}">back</a>
+        {% else %}
+        <a href="{{ url_for('fileviewer.view_files') }}">back</a>
+        {% endif %}
+{% endmacro %}
+{% macro get_link(name) %}
+    {% set dname = name.split('/')[-1] %}
+    <a class="list-group-item" href="{{url_for('fileviewer.view_files',item_name=name)}}">{{dname}}</a>
+{% endmacro %}
+{% macro render_dirs(names) %}
+    <div class="list-group">
+        {% set parent = request.args.get('item_name','') %} {# make_parent_path(request.args.get('item_name'))#} 
+        {% for name in names %}
+            {% if not parent == '' %}
+                {% set path = '%s/%s' % (parent.strip(),name.strip()) %}
+            {% else %}
+                {% set path = name %}
+            {% endif %}
+            {{ get_link(path.strip())|safe }}
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% block body %}
+{% if codemirror %}
+    {{ codemirror.include_codemirror() }}
+{% endif %}
+<style>
+    .list-group-item {
+        width:30%;
+        padding:0px 20px;
+    }
+</style>
+<div class="container">
+{% include 'includes/_messages.html' with context %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class=row>
+    {% if files %}
+            <div class=col-md-4>
+                {{ render_files(files) }}
+            </div>
+    {% endif %}
+    {% if dirs %}
+        <div class=col-md-8>
+        {{ render_dirs(dirs) }}
+        </div>
+    {% endif %}
+        {{ get_parent_link()|safe }}
+        {{ request.args }}
+    </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script>
+    editor_for_content.setValue($(".text").text().trim());
+    editor_for_content.setOption("mode","{{editor_mode}}");
+</script>
+{% endblock %}

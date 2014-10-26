@@ -38,6 +38,7 @@ def extract_settings(config):
 
 def common_context():
     return {
+        'getattr':getattr,
         'extract_settings':extract_settings,
         'str':str,
         'zip':zip,
