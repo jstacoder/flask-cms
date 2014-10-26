@@ -9,7 +9,7 @@ from main.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify
 from admin.forms import AddPageForm
 from blog.models import Category,Tag    
-from .forms import MarkdownEditor,ColumnForm
+from .forms import MarkdownEditor
 from settings import BaseConfig
 from test_jinja import main,row,col
 from jinja2 import Template
