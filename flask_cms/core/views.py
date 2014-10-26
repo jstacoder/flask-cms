@@ -5,7 +5,6 @@
     ~~~~~~~~~~
 """
 
-from . import core
 from main.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify
 from admin.forms import AddPageForm
