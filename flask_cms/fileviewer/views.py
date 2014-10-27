@@ -54,7 +54,7 @@ def split_files_and_dirs(dirname):
 
 class FileView(BaseView):
     _template = 'view_files.html'
-    _context = {'files':[],'dirs':[],'file_content':''}
+    _context = {'files':[],'dirs':[],'file_content':'','body_style':'margin-top:100px;'}
 
     def get(self):
         item_name = request.args.get('item_name',None)
@@ -70,7 +70,7 @@ class FileView(BaseView):
             if not is_file:
                 # is dir, list files
                 self._context['files'],self._context['dirs'] = split_files_and_dirs(item_name)            
-                self._context['current_dir'] = item_name
+                self._context['current_dir'] = item_name or '/'
             else:
                 # is file, edit
                 self._template = 'file_editor.html'

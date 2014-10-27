@@ -22,11 +22,13 @@
         {% if name == 'files' %}
             {% set name = '' %}
         {% endif %}
-        {% if name != '' %}
-        <a href="{{ url_for('fileviewer.view_files',item_name=name) }}">back</a>
-        {% else %}
-        <a href="{{ url_for('fileviewer.view_files') }}">back</a>
-        {% endif %}
+        <a class="btn btn-default{%- if not request.args.get('item_name',false) %} disabled
+        {%- endif -%}" href="{%- if name != '' -%}
+        			{{ url_for('fileviewer.view_files',item_name=name) }}
+        		{%- else -%}
+        			{{ url_for('fileviewer.view_files') }}
+        		{%- endif -%}">back
+        </a>
 {% endmacro %}
 {% macro get_link(name) %}
     {% set dname = name.split('/')[-1] %}
@@ -34,7 +36,7 @@
 {% endmacro %}
 {% macro render_dirs(names) %}
     <div class="list-group">
-        {% set parent = request.args.get('item_name','') %} {# make_parent_path(request.args.get('item_name'))#} 
+        {% set parent = request.args.get('item_name','') %} 
         {% for name in names %}
             {% if not parent == '' %}
                 {% set path = '%s/%s' % (parent.strip(),name.strip()) %}
@@ -51,27 +53,64 @@
 {% endif %}
 <style>
     .list-group-item {
-        width:30%;
         padding:0px 20px;
+        margin:4px;
     }
+    .col-md-4,
+    .col-md-8 {
+        border:1px solid grey;
+        border-radius: 7px;
+    }
+    .col-md-8 {
+        width: 164px;
+        height: 500px;
+        padding-top: 39px;
+        padding-left: 30px;
+        padding-right: 36px;
+    }
+    .col-md-4 {
+        padding:40px;
+    }
+    .lead { font-size:16px;}
 </style>
+{% block header %}
+    {% set navbar = _get_navbar('bootstrap-inverse') %}
+    {% include navbar with context %}    
+{% endblock %}
 <div class="container">
 {% include 'includes/_messages.html' with context %}
+<div class="page-header">
+<h2><small>FileViewer</small></h2>
+</div>
+<div class="page-header">
+	{% if request.args.get('item_name',false) %}
+    	<h2>{{current_dir|default('/') }}:</h2>
+    {% else %}
+    <h2>Cms Base Dir:</h2>
+    {% endif %}
+</div>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <div class=row>
     {% if files %}
             <div class=col-md-4>
+                <p class="lead">
+                    Files {{get_icon('file')}}
+                </p>
+                <hr />
                 {{ render_files(files) }}
             </div>
     {% endif %}
     {% if dirs %}
         <div class=col-md-8>
+                <p class="lead">
+                    Directorys {{get_icon('folder-open')}}
+                </p>
+                <hr />
         {{ render_dirs(dirs) }}
         </div>
     {% endif %}
         {{ get_parent_link()|safe }}
-        {{ request.args }}
     </div>
         </div>
     </div>
