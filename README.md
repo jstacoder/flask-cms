@@ -10,21 +10,31 @@ __tags__
 __Comments__
 
 
-just put your system and database info in the settings.py file
-and:
+just put your settings in settings.py
 
-```python
-./start.sh
-```
+then system and database info in the local\_settings.py file
 
-you should see:
+for a quick db setup just add <code>SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'</code>
 
-```
+to local\_settings.py and the in the shell type
+
+
+<kbd>python manage.py db upgrade</kbd>
+
+after a few seconds:
+
+
+
+<kbd>./start.sh</kbd>
+
+then you should see:
+
+```shell
  * Running on http://0.0.0.0:8080/
  * Restarting with reloader
 ```
 
 then just connect to your ip address: ie
-192.168.1.155 or 127.0.0.1
+192.168.1.155:8080 or 127.0.0.1:8080
 or w/e yours is 
 ---
