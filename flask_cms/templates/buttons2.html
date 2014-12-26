@@ -1,0 +1,44 @@
+{% macro get_size(size) %}
+    {% if size|lower == 'xl'-%}
+        {% set result = 'btn-block' %}
+    {% elif size|lower == 'l' %}
+        {% set result = 'btn-lg' %}
+    {% elif size|lower == 'm' %}
+        {% set result = 'btn-default' %}
+    {% elif size|lower == 's' %}
+        {% set result = 'btn-sm' %}
+    {% else %}
+        {% set result = 'btn-%s' % size|lower %}
+    {%- endif %}
+    {{ result }}
+{% endmacro %}
+{% macro get_color(color) %}
+{# because bootstrap uses context for colors #}
+    {% if color == 'blue' -%}
+        {% set result = 'btn-primary' %}
+    {% elif color == 'green' %}
+        {% set result = 'btn-success' %}
+    {% elif color == 'red' %}
+        {% set result = 'btn-danger' %}
+    {% elif color == 'yellow' %}
+        {% set result = 'btn-warning' %}
+    {% elif color == 'light-blue' %}
+        {% set result = 'btn-info' %}
+    {% elif color == 'grey' %}
+        {% set result = 'btn-default' %}
+    {%- endif %}
+    {{ result }}
+{% endmacro %}
+{% macro get_icon(icon,lib='glyphicon') %}
+    {% if not icon == '' -%}
+        <span class="{{lib}} {{lib}}-{{icon}}"></span>
+    {%- endif %}
+{% endmacro %}
+{% macro get_button(text,color='grey',size='m',icon='hand-left',type='button') %}
+    <button type="{{type}}" class="btn {{get_color(color)}} {{get_size(size)}}">
+        {{get_icon(icon)}}{% if not icon == '' -%}&nbsp;{%- endif %}{{text}}</button>
+{% endmacro %}
+{% macro get_link_button(endpoint,text,color='grey',size='m',icon='hand-right',type='link') %}
+    <a href="{{url_for(endpoint)}}" type="{{type}}" class="btn {{get_color(color)}} {{get_size(size)}}">{{get_icon(icon)}}{% if not icon == '' -%}&nbsp;{%- endif %}{{text}}</a>
+{% endmacro %}
+
