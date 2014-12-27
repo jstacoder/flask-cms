@@ -16,11 +16,12 @@ from flask.ext.xxl.baseviews import BaseView,ModelView
 from admin import admin
 from flask import request,session,flash,jsonify
 from .forms import (
-        AddBlogForm, AddButtonForm,
+        AddButtonForm,
         TextEditorFieldForm,AddMacroForm,
         TextEditorContentForm,AddAdminTabForm,
         AdminEditFileForm
 )
+from ..blog.forms import AddBlogForm
 from .utils import get_files_of_type
 from ext import db
 from settings import BaseConfig
