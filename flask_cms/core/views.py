@@ -7,7 +7,6 @@
 
 from main.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify
-from admin.forms import AddPageForm
 from blog.models import Category,Tag    
 from .forms import MarkdownEditor, ColumnForm
 from settings import BaseConfig
@@ -119,7 +118,7 @@ class AboutView(BaseView):
 
     def get(self):
         from blog.forms import AddCategoryForm
-        self._form = AddPageForm(last_url=request.endpoint)
+        #self._form = AddPageForm(last_url=request.endpoint)
         self._context['cat_form'] = AddCategoryForm()
         self._form.tags.query_factory = lambda: Tag.query.all()
         self._form.category.query_factory = lambda: Category.query.all()

@@ -21,7 +21,7 @@ from .forms import (
         TextEditorContentForm,AddAdminTabForm,
         AdminEditFileForm
 )
-from ..blog.forms import AddBlogForm
+from .forms import AddBlogForm
 from .utils import get_files_of_type
 from ext import db
 from settings import BaseConfig
@@ -214,7 +214,7 @@ class AdminTemplateView(BaseView):
         return self.render()
 
     @staticmethod
-    @admin.before_app_request
+    #@admin.before_app_request
     def check_templates():
         from page.models import Template
         from auth.models import User
