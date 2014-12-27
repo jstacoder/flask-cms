@@ -77,19 +77,28 @@ def is_page(obj):
 def add_is_page():
     return {'is_page': is_page}
 
+_BUTTON_DEFAULTS = dict(
+    text='',
+    color='grey',
+    size='sm',
+    type="button",
+)
 
 def get_button(name):
     from jinja2 import Template
     from .models import Button
     button = Button.query.get(Button.get_id_by_name(name))
-    btn_args = dict(
-        text=button.text,
-        color=button.color,
-        size=button.size.lower(),
-        icon=button.icon,
-        lib=button.icon_library,
-        type=button.type
-    )
+    if button is None:
+        return Markup('<a class="btn btn-default">{}</a>'.format(name))
+    else:
+        btn_args = dict(
+            text=button.text,
+            color=button.color,
+            size=button.size.lower(),
+            icon=button.icon,
+            lib=button.icon_library,
+            type=button.type
+        )
     template = Template(open(os.path.join(current_app.config['ROOT_PATH'], 'templates', 'buttons.html'), 'r').read())
     def url_for(*args,**kwargs):
         return '/admin'
