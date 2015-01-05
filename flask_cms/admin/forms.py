@@ -55,12 +55,15 @@ class TextEditorContentForm(Form):
 
 AddTemplateForm = TemplateBodyFieldForm
 
+def cat_factory():
+    from blog.models import Category
+    return Category.query.all()
 
 class AddBlogForm(Form):
     name = fields.StringField('Blog Name',validators=[validators.InputRequired()])
     title = fields.StringField('Blog Title',validators=[validators.InputRequired()])
     slug = fields.StringField('Url Slug')
-    #category = QuerySelectField('category',query_factory=lambda: Category.query.all())
+    category = QuerySelectField('category',query_factory=cat_factory)
     author_id = fields.HiddenField()
     date_added = fields.HiddenField()
 
