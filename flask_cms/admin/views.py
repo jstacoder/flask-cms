@@ -161,7 +161,9 @@ class AdminTemplateAjaxView(BaseView):
 
 class AdminTemplateView(BaseView):
     _template = 'add.html'
-    _context = {'use_ck':False,
+    _context = {
+            'use_editor':True,
+            'use_ck':False,
                     'form_args':
             {
                 'heading':'Add a Template',
@@ -213,12 +215,13 @@ class AdminTemplateView(BaseView):
         return self.render()
 
     @staticmethod
-    @admin.before_app_request
+    #@admin.before_app_request
     def check_templates():
         from page.models import Template
         from auth.models import User
         from app import app
         from blog.models import Article
+        from .utils import fix_unicode
         templates = Template.query.all()
         template_dir = app.config['ROOT_PATH'] + '/' + 'templates'
         if not os.path.exists(template_dir):
@@ -228,8 +231,7 @@ class AdminTemplateView(BaseView):
             if not t in names:
                 temp = Template()
                 temp.name = t
-                temp.filename = os.path.join(template_dir,t)
-                temp.body = open(os.path.join(template_dir,t),'r').read()
+                temp.location = os.path.join(template_dir,t)
                 temp.save()
 
 class AdminBlockView(BaseView):
@@ -275,7 +277,7 @@ class AdminBlockView(BaseView):
             flash('Successfully created cms block: {}'.format(block.name))
             return self.redirect('admin.blocks')
         return self.render()
-    @staticmethod
+    '''@staticmethod
     @admin.before_app_request
     def check_blocks():
         from page.models import Block as model
@@ -293,6 +295,7 @@ class AdminBlockView(BaseView):
                     temp.name = o
                     temp.content = ''.join(map(str,open(os.path.join(block_dir,o),'r').readlines()))
                     temp.save()
+    '''
 
 class AdminCMSListView(BaseView):
     _template = 'list.html'
@@ -551,10 +554,26 @@ class AdminAddCategoryView(BaseView):
     decorators = [login_required]
 
     def get(self):
+        args = request.args.copy()
+        if 'icon' in args:
+            icon = args.get('icon')
+            desc = args.get('description')
+            cat = args.get('name')
+            self._form_args = {'name':cat,'description':desc,'icon':icon}
+            self._context['category_launch'] = True
+        self._context['args'] = args
         self._context['form_args'] = {'heading':self._form_heading}
         return self.render()
 
     def post(self):
+        from .models import FontIcon,FontIconLibrary
+        iconclass = None
+        i = request.form.get('icon',None) 
+        if i is not None:
+
+            lib,icon = i.split('-')[0],i.split('-')[1:]
+            iconclass = FontIcon.query.filter(FontIcon.name==''.join(map(str,icon)),FontIconLibrary.name==lib).first()
+
         self._context['form_args'] = {'heading':self._form_heading}
         self._form = self._form(request.form)
         if self._form.validate():
@@ -562,6 +581,8 @@ class AdminAddCategoryView(BaseView):
             c = Category.query.filter(Category.name==self._form.name.data).first()
             if c is None:
                 c = Category()
+                if iconclass is not None:
+                    c.icon_id = iconclass.id
                 c.name = self._form.name.data
                 c.description = self._form.description.data
                 c.save()
@@ -601,7 +622,7 @@ class AdminAddBlogView(BaseView):
             blog.title = self._form.title.data
             blog.slug = self._form.slug.data
             author_id = self._form.author_id.data
-            category = self._form.category.data
+            #category = self._form.category.data
             blog.save()
         return self.redirect('blog.list')
 
@@ -763,7 +784,7 @@ class AdminBlogListView(BaseView):
 
 class AdminTabView(BaseView):
     _template = 'add.html'
-    _context = {'use_ck':True}
+    _context = {'use_editor':True}
     _form = AddAdminTabForm
 
     def get(self):
@@ -894,4 +915,3 @@ class TemplateWizardView(BaseView):
         else:
             pass
         return self.render()
-

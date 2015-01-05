@@ -4,12 +4,12 @@
     core.views
     ~~~~~~~~~~
 """
-
+from recaptcha.client import captcha
 from main.baseviews import BaseView
-from flask import flash, redirect, request, url_for,jsonify
-from admin.forms import AddPageForm
+from flask import flash, redirect, request, url_for,jsonify,session
+from .forms import AddPageForm
 from blog.models import Category,Tag    
-from .forms import MarkdownEditor, ColumnForm
+from .forms import MarkdownEditor, ColumnForm,AceForm
 from settings import BaseConfig
 from test_jinja import main,row,col
 from jinja2 import Template
@@ -24,11 +24,12 @@ class AddRowView(BaseView):
 '''
 
 class IndexView(BaseView):
-    _template = 'layouts/1col_leftsidebar.html'
+    _template = 'test_grid.html'#'new22.html'#'blog3.html'#'layouts/1col_leftsidebar.html'
     _context = {
             'add_buttons':True,
             'count':0,
             'l_count':0,
+            'body_style':'padding-top:75px;',
 
     }
     _row = (
@@ -37,7 +38,7 @@ class IndexView(BaseView):
                 ]),
         ),        
 
-    _form = ColumnForm
+    _form = AceForm#ColumnForm
 
 
 
@@ -61,23 +62,24 @@ class IndexView(BaseView):
             'three_col_leftbar':(col(2),col(3),col(3),col(4)),
             'three_col_rightbar':(col(4),col(3),col(3),col(2)),
         }
-        from admin.forms import CreateGridForm
-        self._form = CreateGridForm
-        self._context['form_id'] = 'myForm'
+        #from admin.forms import CreateGridForm
+        #self._form = CreateGridForm
+        #self._context['form_id'] = 'myForm'
 
-        content = (row('660',cols=(col(2),col(8),col(2))),)
-        footer = (row('140',cols=(col(3),col(6),col(3))),)
+        #content = (row('660',cols=(col(2),col(8),col(2))),)
+        #footer = (row('140',cols=(col(3),col(6),col(3))),)
         
         #if layout_name is not None:
         #    self._context['rows'] = (row('660',cols=list(self._layouts[layout_name.replace('-','_')])),) + footer
         #else:
         #    self._context['rows'] = content + footer
 
-        self._context['layouts'] = self._layouts.keys()
+        #self._context['layouts'] = self._layouts.keys()
         x = self.render()
         return x
 
     def post(self):
+        self._context['f'] = request.files.copy()
         if ColumnForm(request.form).validate():
             self._context['offset'] = request.form.get('offset',None)
             self._context['push'] = request.form.get('push',None)
@@ -120,7 +122,16 @@ class AboutView(BaseView):
     def get(self):
         from blog.forms import AddCategoryForm
         self._form = AddPageForm(last_url=request.endpoint)
-        self._context['cat_form'] = AddCategoryForm()
+        args = request.args.copy()
+        if 'icon' in args:
+            icon = args.get('icon')
+            desc = args.get('description')
+            cat = args.get('name')
+            self._context['cat_form'] = AddCategoryForm(name=cat,description=desc,icon=icon)
+            self._context['category_launch'] = True
+            self._context['args'] = args
+        else:
+            self._context['cat_form'] = AddCategoryForm()
         self._form.tags.query_factory = lambda: Tag.query.all()
         self._form.category.query_factory = lambda: Category.query.all()
         self._context['editor_mode'] = 'python'
@@ -146,32 +157,75 @@ class ContactView(BaseView):
     _context = {}
 
     def get(self):
+        error = False
+
         import datetime
         from .models import ContactMessage
         if len(request.args) > 0:
-            message = ContactMessage()
-            message.name = request.args['name']
-            message.email = request.args['email']
-            message.subject = request.args['subject']
-            message.message = request.args['message']
-            message.ip_address = request.environ['REMOTE_ADDR']
-            message.save()
-            self.flash("Thanks {} for sending us a message".format(request.args['name']))
+            captcha_challenge = request.args.get('recaptcha_challenge_field',None)
+            captcha_response = request.args.get('recaptcha_response_field',None)
+            if captcha_challenge and captcha_response:
+                captcha_result = captcha.submit(
+                    captcha_challenge,
+                    captcha_response,
+                    BaseConfig.RECAPTCHA_PRIVATE_KEY,
+                    request.environ['REMOTE_ADDR']
+                )
+                if captcha_result.is_valid:
+                    message = ContactMessage()
+                    message.name = request.args['name']
+                    message.email = request.args['email']
+                    message.subject = request.args['subject']
+                    message.message = request.args['message']
+                    message.ip_address = request.environ['REMOTE_ADDR']
+                    message.save()
+                    self.flash("Thanks {} for sending us a message".format(request.args['name']),'info')
+                else:
+                    flash('bad captcha response try again','danger')
+                    error = True
+
+            else:
+                flash('please enter captcha value','warning')
+                error = True
+        if error:
+            session['has_message_data'] = True
+            session['message.name'] = request.args.get('name','')
+            session['message.email'] = request.args.get('email','')
+            session['message.subject'] = request.args.get('subject','')
+            session['message.message'] = request.args.get('message','')
+
         from page.forms import ContactUsForm
         from app import app
         self._context['CONTACT_FORM_SETTINGS'] = app.config.get('CONTACT_FORM_SETTINGS',None)
         ContactUsForm.subject.choices =  self._context['CONTACT_FORM_SETTINGS']['OPTIONS']
         self._form = ContactUsForm
         self._form_args = {'ip_address':request.environ['REMOTE_ADDR']}
+        if session.get('has_message_data',False):
+            session['has_message_data'] = False
+            self._form_args.update(dict(
+                name=session.get('message.name',''),
+                email=session.get('message.email',''),
+                subject=session.get('message.subject',''),
+                message=session.get('message.message',''),
+            )
+        )
         if self._context.get('mce'):
             self._context.pop('mce')
         return self.render()
 
 class TestView(BaseView):
-    _template = 'test.html'
+    _template = 'utest.html'
 
     def get(self):
+        from flask import request
+        self._context['f'] = request
         return self.render()
+
+    def post(self):
+        from flask import request
+        self._context['f'] = request
+        return self.render()
+
 
 
 class NewView(BaseView):
@@ -246,3 +300,35 @@ class JsonRequestView(BaseView):
         return jsonify(dict(html=x))
 
 
+from .forms import TaskForm
+class TaskView(BaseView):
+    _tasks = None
+    _template = 'task.html'
+    _format = '''
+                <a class="list-group-item">
+                    <div class="checkbox">
+                        <label>
+                           <input type="checkbox" class="checkbox" {} />{}
+                        </label>
+                     </div>
+                 </a>
+                '''
+
+    def get(self):
+        if request.args.get('tasks',None) is not None:
+            self._context['tasks'] = request.args.get('tasks')
+        self._form = TaskForm
+        return self.render()
+
+    def post(self):
+        session['title'],session['tasks'] = self._render_task_list(request.form.get('text',''))        
+        return redirect(url_for('.tasks'))
+
+
+    def _render_task_list(self,text):
+        rtn = ''
+        lines = text.splitlines()
+        title = lines.pop(0).title()
+        for line in lines:
+            rtn += self._format.format('',line)
+        return (title,'<div class=list-group>'+rtn+'</div>')

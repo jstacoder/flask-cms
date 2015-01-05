@@ -1,8 +1,9 @@
 from flask.ext.wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import fields, validators,widgets
+from wtforms.widgets.core import Option
 #from admin.models import Type
-from blog.fields import TagField
+from .fields import TagField
 from flask.ext.pagedown.fields import PageDownField
 from flask.ext.codemirror.fields import CodeMirrorField
 from page.fields import CKTextEditorField
@@ -10,14 +11,16 @@ from page.fields import CKTextEditorField
 from wtforms.widgets.html5 import DateInput as DateWidget
 #from icons import el_icon as icons
 import admin.icons as admin_icons
-from .fields import AceEditorField
+#from .fields import AceEditorField
 from flask import Markup
 from settings import BaseConfig
 
 
+from page.utils import get_page_templates
+
 lib = BaseConfig.DEFAULT_ICON_LIBRARY
 icons = __import__('admin.icons',[],[],'icons').__dict__[lib]
-icon_fmt = '<span class="{1} {1}-{0}"></span>&nbsp;{0}'
+icon_fmt = '<i class="{1} {1}-{0}"></i>'
 icon_choices = {str(x):icon_fmt.format(x,lib) for x in icons}
 
 #icons = [(icon_format.format(x,lib),x) for x,lib in icon_libs.items()]
@@ -36,7 +39,7 @@ class AddSettingTypeForm(Form):
 
 class TestForm(Form):
     title = fields.StringField('Test')
-    content = AceEditorField('content')
+    #content = AceEditorField('content')
     submit = fields.SubmitField()
 
 class BaseTemplateForm(Form):
@@ -90,7 +93,15 @@ class AddPageForm(Form):
     category = QuerySelectField('category')
     tags = TagField('Tags')
     use_base_template = fields.BooleanField('Use Base Template')
-    base_template =  fields.SelectField('base template',validators=[validators.InputRequired()])
+    base_template =  fields.SelectField(
+                        'base template',validators=[
+                            validators.InputRequired()
+                        ],choices=[
+                            (x,x) for x in sorted(get_page_templates()) \
+                            if not x.startswith('_') and not \
+                            x.startswith('.') and x.endswith('.html')
+                        ]
+    )
     submit = fields.SubmitField('Save')
 
 
@@ -121,7 +132,7 @@ class AddAdminTabForm(Form):
     name = fields.StringField('Tab Name',description='displayed on tab',validators=[validators.InputRequired()])
     tab_id = fields.StringField('tab identifer',description='for calling in templates',validators=[validators.InputRequired()])
     tab_title = fields.StringField('tab title',description='title on tabbed on content',validators=[validators.InputRequired()])
-    content = CKTextEditorField()
+    content = fields.TextAreaField()#CKTextEditorField()
 
 
 class AdminEditFileForm(Form):
