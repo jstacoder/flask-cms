@@ -6,22 +6,40 @@
 
     Global settings for project.
 """
+#testing
 import os
 from local_settings import LocalConfig
+import json
 
 class BaseConfig(LocalConfig):
-    SYSTEM_MESSAGE_CATEGORIES = [
+    _SYSTEM_MESSAGE_CATEGORIES = [
             'success'           # 0 - GREEN
             'info',             # 1 - BLUE
             'warning',          # 2 - YELLOW
             'danger',           # 3 - RED
     ]
+    
+    SQLALCHEMY_TRACK_MODIFICATIONS = False   
 
     ADMIN_PER_PAGE = 5
-    CODEMIRROR_LANGUAGES = ['python','python2','python3','php','javascript','xml','jinja2']
-    CODEMIRROR_THEME = 'blackboard'#'vivid-chalk'#'3024-night'
+    mixedmode = {"name":"htmlmixed"}
+    CODEMIRROR_ADDONS = (
+      ('display','fullscreen'),
+	  ('display','placeholder'),            
+      ('edit','matchbrackets'),
+      ('edit','matchtags'),
+      ('edit','closetag'),
+      ('comment','comment'),
+      ('comment','continuecomment'),
+      ('fold','xml-fold'),
+    )
+      
+      
+    CODEMIRROR_LANGUAGES = ['css','python','php','javascript','xml','jinja2','htmlmixed','clike','django']
+    CODEMIRROR_THEME = 'vibrant-ink'#'blackboard'#'3024-night''vivid-chalk'
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    DEBUG_TB_TEMPLATE_EDITOR_ENABLED = True
     CSRF_ENABLED = True
     ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -33,6 +51,7 @@ class BaseConfig(LocalConfig):
             'member.urls.routes',
             'page.urls.routes',
             'fileviewer.urls.routes',
+            'facebook.urls.routes',
     ]
 
     BLUEPRINTS = [
@@ -45,11 +64,12 @@ class BaseConfig(LocalConfig):
             'flask.ext.xxl.apps.auth.auth',
             #'auth.auth',
             'fileviewer.fileviewer',
+            'facebook.facebook',
 
     ]
 
     EXTENSIONS = [
-            'ext.db',
+            #'ext.db',
             'ext.toolbar',
             'ext.pagedown',
             'ext.codemirror',
@@ -69,13 +89,14 @@ class BaseConfig(LocalConfig):
             'core.context_processors.add_get_icon',
             'core.context_processors.get_context',
             'core.context_processors.add_get_block',
+            'facebook.context_processors.add_fb_ctx',
             'core.context_processors.add_urlfor',
             'core.context_processors.add_layouts',
             'core.context_processors.add_layout_mode',
             #'page.context_processors.add_page_self_context',
             'menu.context_processors.get_navbar',
             'menu.context_processors._add_navbar',
-            'menu.context_processors.sidebar',
+            #'menu.context_processors.sidebar',
             'make_base.base',
             'auth.context_processors.auth_context',
             'blog.context_processors.add_admin_head',
@@ -92,6 +113,9 @@ class BaseConfig(LocalConfig):
             'flask.ext.xxl.filters.markdown',
             'core.context_processors.fix_body',
             'core.filters.split',
+      		'core.filters.size',
+      		'core.filters._sorted',
+			'core.filters.page',
             'blog.filters.markdown',
     ]
 
@@ -116,7 +140,7 @@ class BaseConfig(LocalConfig):
         'ZIP':'92804',
     },
     'COMPANY_PHONE':'714-783-6369',
-    'CONTACT_NAME':'Roux',
+    'CONTACT_NAME':'Kyle Roux',
     'CONTACT_EMAIL':'kyle@level2designs.com',
     }
 
@@ -130,6 +154,7 @@ class BaseConfig(LocalConfig):
             ('clean','navbars/clean.html')
     )
 
+
     DEFAULT_NAVBAR = 'clean'
 
     LAYOUT_FILES = {
@@ -140,7 +165,6 @@ class BaseConfig(LocalConfig):
             'two_col_left':'layouts/2col_leftsidebar.html',
             'two_col_right':'layouts/2col_rightsidebar.html',
             'three_col_left':'layouts/3col_leftsidebar.html',
-
     }
 
     BASE_TEMPLATE_FILES = [
@@ -160,6 +184,9 @@ class BaseConfig(LocalConfig):
 
     DEFAULT_ICON_LIBRARY = 'octicon'
 
+    SQLALCHEMY_NATIVE_UNICODE = True
+    PRESERVE_CONTEXT_ON_EXCEPTION = False
+
 def get_choices():
     return BaseConfig.CONTACT_FORM_SETTINGS['OPTIONS']
 
@@ -172,6 +199,5 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_ECHO = False
-    SQLALCHEMY_DATABASE_URI = 'mysql://test:test@174.140.227.137:3306/test_test5'
-
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing2.db' # 'mysql://test:test@174.140.227.137:3306/test_test5'
