@@ -6,8 +6,7 @@
 """
 from recaptcha.client import captcha
 from main.baseviews import BaseView
-from flask import flash, redirect, request, url_for,jsonify,session
-from .forms import AddPageForm
+from flask import flash, redirect, request, url_for,jsonify
 from blog.models import Category,Tag    
 from .forms import MarkdownEditor, ColumnForm,AceForm
 from settings import BaseConfig
@@ -131,7 +130,7 @@ class AboutView(BaseView):
             self._context['category_launch'] = True
             self._context['args'] = args
         else:
-            self._context['cat_form'] = AddCategoryForm()
+        self._context['cat_form'] = AddCategoryForm()
         self._form.tags.query_factory = lambda: Tag.query.all()
         self._form.category.query_factory = lambda: Category.query.all()
         self._context['editor_mode'] = 'python'
