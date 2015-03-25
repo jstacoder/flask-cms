@@ -38,3 +38,7 @@ then just connect to your ip address: ie
 192.168.1.155:8080 or 127.0.0.1:8080
 or w/e yours is 
 ---
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-cms/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
