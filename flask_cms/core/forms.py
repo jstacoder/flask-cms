@@ -20,6 +20,9 @@ class MarkdownEditor(Form):
 
 class TestForm(Form):
     name = fields.StringField('name')
+
+AceForm = TestForm
+TaskForm = TestForm
     
 
 class ColumnForm(Form):

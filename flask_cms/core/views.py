@@ -130,7 +130,7 @@ class AboutView(BaseView):
             self._context['category_launch'] = True
             self._context['args'] = args
         else:
-        self._context['cat_form'] = AddCategoryForm()
+            self._context['cat_form'] = AddCategoryForm()
         self._form.tags.query_factory = lambda: Tag.query.all()
         self._form.category.query_factory = lambda: Category.query.all()
         self._context['editor_mode'] = 'python'
