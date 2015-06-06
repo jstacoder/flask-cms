@@ -1,4 +1,5 @@
 from wtforms import widgets, fields
+from blog.fields import TagField
 from flask import url_for
 
 class AceEditorWidget(object):

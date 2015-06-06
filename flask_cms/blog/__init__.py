@@ -5,7 +5,7 @@ blog = Blueprint('blog',__name__,
                 url_prefix='/blog')
 
 try:
-    from blog.views import *
+    from flask_cms.blog.views import *
 except ImportError:
     pass
 

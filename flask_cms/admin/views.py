@@ -6,25 +6,22 @@
     Administrative Views
 """
 import os
-from .utils import login_required
 from datetime import datetime
 from flask.ext.wtf import Form
 from wtforms.fields import FormField,SelectField
 from wtforms.ext.sqlalchemy.orm import model_form
 #from wtalchemy.orm import model_form
-from flask.ext.xxl.baseviews import BaseView,ModelView
-from admin import admin
+from flask_xxl.baseviews import BaseView
+from flask_cms.admin import admin
 from flask import request,session,flash,jsonify
-from .forms import (
+from flask_cms.admin.forms import (
         AddButtonForm,
         TextEditorFieldForm,AddMacroForm,
         TextEditorContentForm,AddAdminTabForm,
-        AdminEditFileForm
+        AdminEditFileForm,AddBlogForm
 )
-from .forms import AddBlogForm
-from .utils import get_files_of_type
-from ext import db
-from settings import BaseConfig
+from flask_cms.admin.utils import get_files_of_type,login_required
+from flask_cms.settings import BaseConfig
 
 root = BaseConfig.ROOT_PATH
 
@@ -81,8 +78,7 @@ class AdminPageView(BaseView):
             from auth.models import User
             from page.models import Template
             self._context['choices'] = [(x,x.name) for x in Template.query.all()]
-            from ext import db
-            form = model_form(Page,db.session,base_class=Form,exclude=['date_added','added_by'])
+            form = model_form(Page,Page.session,base_class=Form,exclude=['date_added','added_by'])
             class PageForm(form):
                 template = FormField(BaseTemplateForm)
                 def __init__(self,*args,**kwargs):
@@ -107,9 +103,8 @@ class AdminPageView(BaseView):
             from page.models import Template
             from page.models import Page
             from wtforms import FormField
-            from ext import db
             self._context['choices'] = [(x,x.name) for x in Template.query.all()]
-            form = model_form(Page,db.session,base_class=Form,exclude=['date_added','added_by'])
+            form = model_form(Page,Page.session,base_class=Form,exclude=['date_added','added_by'])
             class PageForm(form):
                 template = FormField(BaseTemplateForm)
 
@@ -178,9 +173,8 @@ class AdminTemplateView(BaseView):
         from page.models import Template
         from wtforms import FormField
         from admin.forms import TemplateBodyFieldForm
-        from ext import db
         from settings import BaseConfig
-        AddTemplateForm = model_form(Template,db.session,base_class=Form,exclude=['blocks','pages','body','base_template'])
+        AddTemplateForm = model_form(Template,Template.session,base_class=Form,exclude=['blocks','pages','body','base_template'])
         class TemplateForm(AddTemplateForm):
             body = FormField(TemplateBodyFieldForm)
             base_template = SelectField('Base Template',choices=fix_choices(BaseConfig.BASE_TEMPLATE_FILES))
@@ -191,8 +185,7 @@ class AdminTemplateView(BaseView):
     def post(self):
         from page.models import Template
         from auth.models import User
-        from ext import db
-        self._form = model_form(Template,db.session,base_class=Form,exclude=['blocks','pages','body'])(request.form)
+        self._form = model_form(Template,Template.session,base_class=Form,exclude=['blocks','pages','body'])(request.form)
         if self._form.validate():
             template = Template()
             self._form.populate_obj(template)
@@ -250,8 +243,7 @@ class AdminBlockView(BaseView):
         if not 'content' in request.endpoint:
             from auth.models import User
             from page.models import Block
-            from ext import db
-            AddBlockForm = model_form(Block,db.session,base_class=Form)
+            AddBlockForm = model_form(Block,Block.session,base_class=Form)
             self._form = AddBlockForm
         else:
             content = session.pop('content','')
@@ -267,8 +259,8 @@ class AdminBlockView(BaseView):
         else:
             content = session.pop('content',None)
             from page.models import Block
-            from ext import db
-            AddBlockForm = model_form(Block,db.session,base_class=Form)
+            
+            AddBlockForm = model_form(Block,Block.session,base_class=Form)
             self._form = AddBlockForm(request.form)
             block = Block()
             self._form.populate_obj(block)
@@ -436,12 +428,11 @@ class AdminEditView(BaseView):
 
     def get(self,item_id=None):
         from auth.models import User
-        from ext import db
         if 'page' in request.endpoint:
             from page.models import Page
             page = Page.get_by_id(item_id)
             if not 'content' in request.endpoint:
-                self._form = model_form(Page,db.session,base_class=Form,exclude=['added_by','date_added'])
+                self._form = model_form(Page,Page.session,base_class=Form,exclude=['added_by','date_added'])
                 self._context['obj'] = page
             else:
                 from page.forms import EditContentForm
@@ -451,7 +442,7 @@ class AdminEditView(BaseView):
             from page.models import Block
             block = Block.get_by_id(item_id)
             if not 'content' in request.endpoint:
-                self._form = model_form(Block,db.session,base_class=Form,exclude=['templates','pages'])
+                self._form = model_form(Block,Block.session,base_class=Form,exclude=['templates','pages'])
                 self._context['obj'] = block
             else:
                 from page.forms import EditContentForm
@@ -462,7 +453,7 @@ class AdminEditView(BaseView):
             from wtforms import FormField
             from page.models import Template
             template = Template.get_by_id(item_id)
-            form = model_form(Template,db.session,base_class=Form,exclude=['pages','blocks','filename','body'])
+            form = model_form(Template,Template.session,base_class=Form,exclude=['pages','blocks','filename','body'])
 
             class TemplateForm(form):
                 body = FormField(TemplateBodyFieldForm,separator='_')
@@ -472,7 +463,6 @@ class AdminEditView(BaseView):
         return self.render()
 
     def post(self,item_id=None):
-        from ext import db
         from auth.models import User
         if 'content' in request.endpoint:
             session['content'] = request.form['content'][:]
@@ -496,7 +486,7 @@ class AdminEditView(BaseView):
                 msg = 'template'
                 redirect = 'templates'
                 exclude = ['pages','blocks']
-            self._form = model_form(model,db.session,base_class=Form,exclude=exclude)(request.form)
+            self._form = model_form(model,model.session,base_class=Form,exclude=exclude)(request.form)
             obj = model.query.filter(model.id==item_id).first()
             self._form.populate_obj(obj)
             if needs_content:
@@ -546,7 +536,7 @@ class AdminSettingsView(BaseView):
 
 
 class AdminAddCategoryView(BaseView):
-    from blog.forms import AddCategoryForm
+    from flask_cms.blog.forms import AddCategoryForm
     _template = 'add.html'
     _form = AddCategoryForm
     _context = {}
@@ -716,7 +706,7 @@ class AdminStaticBlockView(BaseView):
     
     def post(self,item_id=None):
         from page.models import StaticBlock
-        form = model_form(StaticBlock,db.session,base_class=Form,exclude=['content'])
+        form = model_form(StaticBlock,StaticBlock.session,base_class=Form,exclude=['content'])
         class StaticBlockForm(form):
             content = FormField(TextEditorFieldForm,'_')
         self._form = StaticBlockForm

@@ -1,5 +1,5 @@
-from admin import admin
-from .views import (
+from flask_cms.admin import admin
+from flask_cms.admin.views import (
         AdminDashboardView,AdminPageView,
         AdminTemplateView,AdminBlockView,
         AdminCMSListView,AdminListPageView,
@@ -11,17 +11,17 @@ from .views import (
         AdminBlogListView,AdminListedView,AdminModalView,TestView,
         AdminTabView,AdminFilesystemView,AdminSiteSettingsView,IconView,
 )
-from .save_views import (
+from flask_cms.admin.save_views import (
         SaveStaticBlockView,SaveSuccessStaticBlockView,
         SaveErrorStaticBlockView,SaveSuccessAdminTabView,
         SaveErrorAdminTabView,
 )
 
-from .delete_views import (
+from flask_cms.admin.delete_views import (
         DeleteStaticBlockView
 )
 
-from .views2 import AdminTemplateView as AddAdminTemplateView
+from flask_cms.admin.views2 import AdminTemplateView as AddAdminTemplateView
 '''from .views import (AdminDashboardView,AdminPageView,AdminTemplateView,AdminBlockView,
                     AdminCMSListView,AdminListPageView,AdminDetailView,AdminEditView,
                     PageListView,AdminBlogView,AdminAddCategoryView,AdminAddBlogView)'''

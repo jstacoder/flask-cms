@@ -1,6 +1,6 @@
-from . import fileviewer
-from .views import FileView
-from .json import JsonCodeView
+from flask_cms.fileviewer import fileviewer
+from flask_cms.fileviewer.views import FileView
+from flask_cms.fileviewer.json_tools import JsonCodeView
 
 routes = [
         ((fileviewer),

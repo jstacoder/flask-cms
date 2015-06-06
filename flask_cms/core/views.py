@@ -4,12 +4,12 @@
     core.views
     ~~~~~~~~~~
 """
-from recaptcha.client import captcha
-from main.baseviews import BaseView
+#from recaptcha.client import captcha
+from flask_xxl.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify
-from blog.models import Category,Tag    
-from .forms import MarkdownEditor, ColumnForm,AceForm
-from settings import BaseConfig
+from flask_cms.blog.models import Category,Tag    
+from .forms import MarkdownEditor, ColumnForm
+from flask_cms.settings import BaseConfig
 from test_jinja import main,row,col
 from jinja2 import Template
 
@@ -37,7 +37,7 @@ class IndexView(BaseView):
                 ]),
         ),        
 
-    _form = AceForm#ColumnForm
+    _form = ColumnForm
 
 
 
@@ -161,6 +161,8 @@ class ContactView(BaseView):
         import datetime
         from .models import ContactMessage
         if len(request.args) > 0:
+            pass
+            '''
             captcha_challenge = request.args.get('recaptcha_challenge_field',None)
             captcha_response = request.args.get('recaptcha_response_field',None)
             if captcha_challenge and captcha_response:
@@ -186,6 +188,7 @@ class ContactView(BaseView):
             else:
                 flash('please enter captcha value','warning')
                 error = True
+        '''
         if error:
             session['has_message_data'] = True
             session['message.name'] = request.args.get('name','')
@@ -299,7 +302,6 @@ class JsonRequestView(BaseView):
         return jsonify(dict(html=x))
 
 
-from .forms import TaskForm
 class TaskView(BaseView):
     _tasks = None
     _template = 'task.html'
@@ -316,7 +318,6 @@ class TaskView(BaseView):
     def get(self):
         if request.args.get('tasks',None) is not None:
             self._context['tasks'] = request.args.get('tasks')
-        self._form = TaskForm
         return self.render()
 
     def post(self):

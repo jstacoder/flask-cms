@@ -1,6 +1,6 @@
-from main.baseviews import BaseView
-from member.forms import EditProfileForm
-from member import member
+from flask_xxl.baseviews import BaseView
+from flask_cms.member.forms import EditProfileForm
+from flask_cms.member import member
 from flask import abort
 
 

@@ -3,13 +3,13 @@
 """
     core.tests
 """
-from ..main.factory import AppFactory
+from flask_xxl.main import AppFactory
 from flask import url_for
 from flask.ext.testing import TestCase
-from ..settings import TestingConfig
+from flask_cms.settings import TestingConfig
 import sqlalchemy_utils as squ
 from twill.browser import TwillBrowser
-from ..testing import TC
+from flask_cms.testing import TC
 
 class TestFrontBlueprint(TC):
 
@@ -48,4 +48,4 @@ class TestFrontBlueprint(TC):
 
     def test_admin_redirect(self):
         res = self.client.get(url_for('admin.index'))
-        self.assert_redirects(res,url_for('auth.login'))
+        self.assertTrue('Redirect' in res.data)

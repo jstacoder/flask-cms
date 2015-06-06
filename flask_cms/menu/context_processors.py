@@ -1,6 +1,7 @@
-from settings import BaseConfig
+from flask_cms.settings import BaseConfig
 from flask import g
-from core.context_processors import get_model
+from flask_cms.core.context_processors import get_model
+
 # define blueprint specific context processors
 
 

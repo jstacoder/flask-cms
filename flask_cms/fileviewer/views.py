@@ -1,7 +1,7 @@
-from main.baseviews import BaseView
+from flask_xxl.baseviews import BaseView
 from flask import request
 from forms import CodeForm
-from settings import DevelopmentConfig
+from flask_cms.settings import DevelopmentConfig
 import os.path as op
 import os
 

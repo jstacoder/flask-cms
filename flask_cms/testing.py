@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 """
     testing.py
@@ -10,11 +10,21 @@
 from flask.ext.testing import TestCase
 #from blog import Blog,Tag,Post
 #from page import Page,Template,Block,Subject
-from .main.factory import AppFactory
+from flask_xxl.main import AppFactory
 from settings import TestingConfig
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData,create_engine,orm
 
 meta = MetaData()
+engine = create_engine(TestingConfig.SQLALCHEMY_DATABASE_URI,echo=True)
+meta.bind = engine
+meta.reflect()
+session = orm.scoped_session(orm.sessionmaker(bind=engine))
+
+class DB(object):
+    def __init__(self,engine,session,meta):
+        self.engine = engine
+        self.session = session
+        self.metadata = meta
 
 
 class TC(TestCase):
@@ -24,16 +34,12 @@ class TC(TestCase):
 
     def setUp(self):
         self.app = self.create_app()
-        self.db = self.app.extensions['sqlalchemy'].db
-        from imports import (
-                Page,User,Setting)
+        
+        self.db = DB(engine,session,meta)
         import sqlalchemy_utils as squ
         if squ.database_exists(self.db.engine.url):
             squ.drop_database(self.db.engine.url)
         squ.create_database(self.db.engine.url)
-        #import imports
-        #for module in dir(imports):
-        #    globals()[module] = getattr(imports,module)            
         meta.bind = self.db.engine
         meta.create_all()
 

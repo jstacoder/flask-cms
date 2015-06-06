@@ -1,5 +1,5 @@
-from flask import jsonify,request,flash
-from flask.json import loads
+from flask import make_response,request,flash
+from flask.json import loads,dumps
 from flask.views import MethodView
 import os.path as op
 
@@ -19,6 +19,8 @@ class JsonCodeView(MethodView):
             flash(self._SUCCESS_MESSAGE.format(file_name),'success')
         else:
             flash(self._ERROR_MESSAGE.format(file_name),'danger')
-        return jsonify(dict(success=success))
+        res = make_response(dumps(dict(success=success)))
+        res.headers['Content-Type'] = 'application/json'
+        return res
 
 

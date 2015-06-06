@@ -1,4 +1,4 @@
-from main.baseviews import BaseView
+from flask_xxl.baseviews import BaseView
 
 
 class MenuView(BaseView):

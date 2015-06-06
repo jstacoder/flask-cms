@@ -1,29 +1,28 @@
-from sqlalchemy import desc
+from sqlalchemy import desc,Column,String,DateTime,Integer,ForeignKey,Text,Boolean,func
+from sqlalchemy.orm import backref,relationship
 from flask import url_for
 from LoginUtils import encrypt_password as generate_password_hash,check_password as  check_password_hash
-from ext import db
 import datetime
 from webhelpers.date import time_ago_in_words
 from webhelpers.text import urlify
 #from flask.ext.xxl.basemodels import BaseMixin
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 
 
-class Blog(BaseMixin, db.Model):
-    __tablename__ = 'blogs'
+class Blog(BaseMixin):
 
-    name = db.Column(db.String(255),nullable=False)
-    title = db.Column(db.String(255),nullable=False)
-    slug = db.Column(db.String(255),nullable=False)
-    category_id = db.Column(db.Integer,db.ForeignKey('categories.id'))
-    category = db.relationship('Category',backref=db.backref(
+    name = Column(String(255),nullable=False)
+    title = Column(String(255),nullable=False)
+    slug = Column(String(255),nullable=False)
+    category_id = Column(Integer,ForeignKey('categories.id'))
+    category = relationship('Category',backref=backref(
                         'blogs',lazy='dynamic'))
-    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    #author = db.relationship('User',backref=db.backref(
+    author_id = Column(Integer,ForeignKey('users.id'))
+    #author = relationship('User',backref=backref(
     #                    'blogs',lazy='dynamic'))
 
-    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
-    icon = db.relationship('FontIcon',backref='blogs')
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    icon = relationship('FontIcon',backref='blogs')
 
 
     @property
@@ -45,13 +44,12 @@ class Blog(BaseMixin, db.Model):
         return url_for('admin.add_blog')
 
 
-class Tag(BaseMixin, db.Model):
-    __tablename__ = 'tags'
+class Tag(BaseMixin):
 
-    name = db.Column(db.String(100), unique=True)
-    description = db.Column(db.Text)
-    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
-    icon = db.relationship('FontIcon',backref='tags')
+    name = Column(String(100), unique=True)
+    description = Column(Text)
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    icon = relationship('FontIcon',backref='tags')
     
 
     def __unicode__(self):
@@ -71,13 +69,11 @@ class Tag(BaseMixin, db.Model):
         return url_for('blog.tag_list',tag_id=self.id)
 
 
-class Category(BaseMixin, db.Model):
-    __tablename__ = 'categories'
-
-    name = db.Column(db.String(100), unique=True)
-    description = db.Column(db.Text)
-    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
-    icon = db.relationship('FontIcon',backref='categories')
+class Category(BaseMixin):
+    name = Column(String(100), unique=True)
+    description = Column(Text)
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    icon = relationship('FontIcon',backref='categories')
 
     def __unicode__(self):
         return self.name
@@ -87,27 +83,25 @@ class Category(BaseMixin, db.Model):
         return cls.query.filter(cls.name==name).first()
 
 
-class Article(BaseMixin, db.Model):
-    __tablename__ = 'articles'
-
-    name = db.Column(db.String(255))
-    title = db.Column(db.String(100))
-    content = db.Column(db.Text)
-    date_added = db.Column(db.DateTime, default=datetime.datetime.now)
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
-    category = db.relationship('Category',backref=db.backref(
+class Article(BaseMixin):
+    name = Column(String(255))
+    title = Column(String(100))
+    content = Column(Text)
+    date_added = Column(DateTime, default=datetime.datetime.now)
+    category_id = Column(Integer, ForeignKey('categories.id'))
+    category = relationship('Category',backref=backref(
         'articles',lazy='dynamic'))
-    author_id = db.Column(db.Integer,db.ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
-    blog_id = db.Column(db.Integer,db.ForeignKey('blogs.id'))
-    blog = db.relationship('Blog',backref=db.backref(
+    author_id = Column(Integer,ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
+    blog_id = Column(Integer,ForeignKey('blogs.id'))
+    blog = relationship('Blog',backref=backref(
                         'articles',lazy='dynamic'),lazy='select')
-    #author = db.relationship('User',backref="articles",lazy="dynamic")
-    visible = db.Column(db.Boolean,default=False)
-    description = db.Column(db.Text)
-    slug = db.Column(db.String(255))
-    url =  db.Column(db.String(255))
-    meta_title =  db.Column(db.String(255))
-    tags =  db.Column(db.String(255))
+    #author = relationship('User',backref="articles",lazy="dynamic")
+    visible = Column(Boolean,default=False)
+    description = Column(Text)
+    slug = Column(String(255))
+    url =  Column(String(255))
+    meta_title =  Column(String(255))
+    tags =  Column(String(255))
 
 
     @classmethod
@@ -152,20 +146,19 @@ def create_article(**kwargs):
 
 
 
-class Comment(BaseMixin,db.Model):
-    __tablename__ = 'comments'
+class Comment(BaseMixin):
 
-    slug = db.Column(db.String(255),nullable=False,unique=True)
-    content = db.Column(db.Text,nullable=False)
-    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    author = db.relationship('User',backref=db.backref(
+    slug = Column(String(255),nullable=False,unique=True)
+    content = Column(Text,nullable=False)
+    author_id = Column(Integer,ForeignKey('users.id'))
+    author = relationship('User',backref=backref(
                 'comments',lazy="dynamic"))
-    article_id = db.Column(db.Integer,db.ForeignKey('articles.id'))
-    article = db.relationship('Article',backref=db.backref(
+    article_id = Column(Integer,ForeignKey('articles.id'))
+    article = relationship('Article',backref=backref(
                 'comments',lazy='dynamic'))
 
-    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
-    post = db.relationship('Post',backref=db.backref(
+    post_id = Column(Integer,ForeignKey('posts.id'))
+    post = relationship('Post',backref=backref(
                 'comments',lazy='dynamic'))
 
     def __init__(self,*args,**kwargs):
@@ -192,28 +185,27 @@ class Comment(BaseMixin,db.Model):
 
 
 
-class Post(BaseMixin,db.Model):
-    __tablename__ = 'posts'
+class Post(BaseMixin):
 
-    name = db.Column(db.String(255),nullable=False)
-    content = db.Column(db.Text)
-    blog_id = db.Column(db.Integer,db.ForeignKey('blogs.id'))
-    blog = db.relationship('Blog',backref=db.backref(
+    name = Column(String(255),nullable=False)
+    content = Column(Text)
+    blog_id = Column(Integer,ForeignKey('blogs.id'))
+    blog = relationship('Blog',backref=backref(
                     'posts'),uselist=False)
-    category_id = db.Column(db.Integer,db.ForeignKey('categories.id'))
-    category = db.relationship('Category',backref=db.backref(
+    category_id = Column(Integer,ForeignKey('categories.id'))
+    category = relationship('Category',backref=backref(
                     'posts'),uselist=False)
-    #tags = db.relationship('Tag',secondary='posts_tags',backref=db.backref(
+    #tags = relationship('Tag',secondary='posts_tags',backref=backref(
     #                'posts',lazy='dynamic'),lazy='dynamic')
-    author_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    author = db.relationship('User',backref=db.backref(
+    author_id = Column(Integer,ForeignKey('users.id'))
+    author = relationship('User',backref=backref(
                     'posts'),uselist=False)
-    date_added = db.Column(db.DateTime,default=db.func.now())
-    date_modified = db.Column(db.DateTime,default=db.func.now(),onupdate=db.func.now())
-    excerpt_length = db.Column(db.Integer,default=55,nullable=False)
-    slug = db.Column(db.String(255),unique=True)
-    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
-    icon = db.relationship('FontIcon',backref='posts')
+    date_added = Column(DateTime,default=func.now())
+    date_modified = Column(DateTime,default=func.now(),onupdate=func.now())
+    excerpt_length = Column(Integer,default=55,nullable=False)
+    slug = Column(String(255),unique=True)
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    icon = relationship('FontIcon',backref='posts')
 
     @property
     def comment_count(self):
@@ -231,7 +223,7 @@ class Post(BaseMixin,db.Model):
     def excerpt(self):
         return self.content[:self.excerpt_length]
 
-'''posts_tags = db.Table('posts_tags',db.metadata,
+'''posts_tags = Table('posts_tags',db.metadata,
         db.Column('post_id',db.Integer,db.ForeignKey('posts.id')),
         db.Column('tag_id',db.Integer,db.ForeignKey('tags.id')),
 )

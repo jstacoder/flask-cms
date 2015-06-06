@@ -2,14 +2,10 @@ from flask.ext.wtf import Form,RecaptchaField
 from .fields import TagField
 from wtforms import StringField, validators, PasswordField, TextAreaField, HiddenField,SubmitField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from ext import db
 from flask.ext.pagedown.fields import PageDownField
 
 strip_filter = lambda x: x.strip() if x else None
 
-#def tag_choice():
-#    from blog.models import User,Category,Tag
-#    return Tag.query.order_by(db.desc(Tag.name)).all()
 
 def category_choice():
     from blog.models import Category
@@ -70,7 +66,7 @@ class AddCategoryForm(Form):
 
 
 class AddPostForm(Form):
-    from blog.models import Category
+    from models import Category
     name = StringField('post name',[validators.InputRequired()])
     content = PageDownField()
     excerpt_length = StringField('excerpt Length')

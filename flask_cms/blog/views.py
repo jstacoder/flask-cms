@@ -1,10 +1,9 @@
-from main.baseviews import BaseView
+from flask_xxl.baseviews import BaseView
 from slugify import slugify
-from member.forms import EditProfileForm
-from member import member
+from flask_cms.member.forms import EditProfileForm
+from flask_cms.member import member
 from flask import request, g,url_for,session
-from blog import blog
-from ext import db
+from flask_cms.blog import blog
 
 admin_required = ''
 
@@ -34,11 +33,11 @@ class BlogAdminView(BaseView):
         return self.render()
 
 
-def get_modal_forms(objs,db,**kwargs):
+def get_modal_forms(objs,**kwargs):
     from wtforms.ext.sqlalchemy.orm import model_form
     res = []
     for o in objs:
-        res.append((o.id,model_form(o,db.session)))
+        res.append((o.id,model_form(o,o.session)))
     return res
 
 class ModalEditView(BaseView):

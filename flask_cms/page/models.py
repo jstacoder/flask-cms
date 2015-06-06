@@ -1,40 +1,38 @@
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 import jinja2 
 import datetime
 import os
-from ext import db
 from flask import url_for, Markup
 from flask.templating import render_template_string as render_str
 import pickle
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask.ext.xxl.main import AppFactory
-from settings import DevelopmentConfig
+from flask_xxl.main import AppFactory
+from flask_cms.settings import DevelopmentConfig
+from sqlalchemy import Integer,Column,Table,ForeignKey,Boolean,DateTime,Text,String,Enum
+from sqlalchemy.orm import relationship,backref
 app = AppFactory(DevelopmentConfig).get_app(__name__)
 
 root = DevelopmentConfig.ROOT_PATH
-
-for attr in dir(db):
-    globals()[attr] = getattr(db,attr)
-
 
 class Super(super):
     def __getattr__(self,attr):
         return self.__self__.__getattr__(attr)
 
 
-pages_macros = Table('pages_macros',
+pages_macros = Table('pages_macros',BaseMixin.metadata,
     Column('page_id',Integer,ForeignKey('pages.id')),
-    Column('macro_id',Integer,ForeignKey('macros.id'))
+    Column('macro_id',Integer,ForeignKey('macros.id')),
+    extend_existing=True
 )
 
-pages_template_blocks = Table('pages_template_blocks',
+pages_template_blocks = Table('pages_template_blocks',BaseMixin.metadata,
     Column('page_id',Integer,ForeignKey('pages.id')),
-    Column('template_block_id',Integer,ForeignKey('template_blocks.id'))
+    Column('template_block_id',Integer,ForeignKey('template_blocks.id')),
+    extend_existing=True
 )
 
 
-class Page(BaseMixin,Model):
-    __tablename__ = 'pages'
+class Page(BaseMixin):
 
     name = Column(String(255))
     description = Column(Text)
@@ -127,8 +125,7 @@ class Page(BaseMixin,Model):
 
 
 
-class Template(BaseMixin,Model):
-    __tablename__ = 'templates'
+class Template(BaseMixin):
 
     name = Column(String(255),nullable=False,unique=True)
     description = Column(Text)
@@ -219,8 +216,7 @@ class Template(BaseMixin,Model):
     def get_base_templates():
         return []
 
-class Block(BaseMixin,Model):
-    __tablename__ = 'blocks'
+class Block(BaseMixin):
 
     name = Column(String(255))
     content = Column(Text)
@@ -286,10 +282,8 @@ class Block(BaseMixin,Model):
             rtn = 0
         return rtn
 
-class Macro(BaseMixin,Model):
+class Macro(BaseMixin):
     MACRO_FILE = os.path.join(os.path.abspath(root),'macros.html')
-
-    __tablename__ = 'macros'
 
     name = Column(String(255),nullable=False)
     content = Column(Text)
@@ -360,20 +354,19 @@ class Macro(BaseMixin,Model):
         return True
                 
 
-class Button(BaseMixin,Model):
-    __tablename__ = 'buttons'
+class Button(BaseMixin):
 
     name = Column(String(255),nullable=False,unique=True)
     type = Column(String(255),nullable=False,default='button')
-    color = Column(Enum('blue','grey','light-blue','yellow','green','red'),default='grey',nullable=False)
-    size = Column(Enum('XL','L','M','S','XS'),default='M',nullable=False)
+    color = Column(Enum('blue','grey','light-blue','yellow','green','red',name='color'),default='grey',nullable=False)
+    size = Column(Enum('XL','L','M','S','XS',name='size'),default='M',nullable=False)
     text = Column(String(255))
     icon = Column(String(255))
     icon_library = Column(String(255))
     _endpoint = Column(String(255))
     is_link = Column(Boolean,default=False) 
-    icon_id = db.Column(db.Integer,db.ForeignKey('font_icons.id'))
-    _icon = db.relationship('FontIcon',backref='buttons')
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    _icon = relationship('FontIcon',backref='buttons')
 
     @hybrid_property
     def endpoint(self):
@@ -403,8 +396,7 @@ class Button(BaseMixin,Model):
         return rtn
         
 
-class StaticBlock(BaseMixin,Model):
-    __tablename__ = 'static_blocks'
+class StaticBlock(BaseMixin):
 
     name = Column(String(255),nullable=False)
     block_id = Column(String(255),nullable=False,unique=True,default=name)
@@ -412,12 +404,12 @@ class StaticBlock(BaseMixin,Model):
 
     @hybrid_property
     def _blocks(self):
-        blocks = lambda: db.session.query(self).all()
+        blocks = lambda: self.session.query(self).all()
         return {x.block_id:x for x in blocks}
 
     @hybrid_property
     def _block_names(self):
-        blocks = lambda: db.session.query(self).all()
+        blocks = lambda: self.session.query(self).all()
         return {x.name:x for x in blocks}
     
     @property
@@ -445,9 +437,7 @@ class StaticBlock(BaseMixin,Model):
         return open(Macro.MACRO_FILE,'r').read()
 
 
-class TemplateBlock(BaseMixin,Model):
-    __tablename__ = 'template_blocks'
-
+class TemplateBlock(BaseMixin):
     block_id = Column(String(255),unique=True,nullable=False)
     content = Column(Text,default='')
 

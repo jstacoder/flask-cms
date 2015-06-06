@@ -26,13 +26,13 @@ class BaseConfig(LocalConfig):
     ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
     URL_MODULES = [
-            'core.urls.routes',
-            'admin.urls.routes',
-            'flask.ext.xxl.apps.auth.urls.routes',
-            'blog.urls.routes',
-            'member.urls.routes',
-            'page.urls.routes',
-            'fileviewer.urls.routes',
+            'flask_cms.core.urls.routes',
+            'flask_cms.admin.urls.routes',
+            'flask_cms.auth.urls.routes',
+            'flask_cms.blog.urls.routes',
+            'flask_cms.member.urls.routes',
+            'flask_cms.page.urls.routes',
+            'flask_cms.fileviewer.urls.routes',
     ]
 
     BLUEPRINTS = [
@@ -42,18 +42,17 @@ class BaseConfig(LocalConfig):
             'menu.menu',
             'blog.blog',
             'page.page',
-            'flask.ext.xxl.apps.auth.auth',
-            #'auth.auth',
+            #'flask.ext.xxl.apps.auth.auth',
+            'auth.auth',
             'fileviewer.fileviewer',
 
     ]
 
     EXTENSIONS = [
-            'ext.db',
-            'ext.toolbar',
-            'ext.pagedown',
-            'ext.codemirror',
-            'ext.alembic',
+            #'ext.toolbar',
+            #'ext.pagedown',
+            #'ext.codemirror',
+            #'ext.alembic',
     ]
 
     CONTEXT_PROCESSORS = [
@@ -75,7 +74,7 @@ class BaseConfig(LocalConfig):
             #'page.context_processors.add_page_self_context',
             'menu.context_processors.get_navbar',
             'menu.context_processors._add_navbar',
-            'menu.context_processors.sidebar',
+            #'menu.context_processors.sidebar',
             'make_base.base',
             'auth.context_processors.auth_context',
             'blog.context_processors.add_admin_head',

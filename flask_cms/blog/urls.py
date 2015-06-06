@@ -1,5 +1,5 @@
-from blog import blog
-from .views import (
+from flask_cms.blog import blog
+from flask_cms.blog.views import (
         BlogIndexView,BlogAdminView,ModalEditView,
         AddView,MemberArticleView,TagListView,
         SinglePostView,PostListView,BlogListView,

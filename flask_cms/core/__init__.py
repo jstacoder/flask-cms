@@ -10,4 +10,3 @@ core = Blueprint('core', __name__,
 
 
 from views import *
-from errors import *

@@ -1,19 +1,14 @@
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 from flask import url_for
-from ext import db
 from LoginUtils import encrypt_password, check_password
-
-#import sqlalchemy to global namespace
-for attr in dir(db):
-    if not attr.startswith('_'):
-        globals()[attr] = getattr(db,attr)
+from sqlalchemy import Column,String,Integer,Boolean,ForeignKey,DateTime,func,UnicodeText
+from sqlalchemy.orm import relationship,backref
 
 
 class UnknownUser(object):
     is_unknown = True
 
-class Role(BaseMixin,Model):
-    __tablename__ = 'roles'
+class Role(BaseMixin):
 
     name = Column(String(255))
     can_view = Column(Boolean,default=True,nullable=False)
@@ -21,8 +16,7 @@ class Role(BaseMixin,Model):
     can_edit = Column(Boolean,default=False,nullable=False)
     can_delete = Column(Boolean,default=False,nullable=False)
 
-class User(BaseMixin,Model):
-    __tablename__ = 'users'
+class User(BaseMixin):
 
     first_name = Column(String(255),default="")
     last_name = Column(String(255),default="")

@@ -54,7 +54,7 @@ class AppFactory(object):
         if self.app.config.get('VERBOSE',False):
             print 'binding extensions'
         for ext_path in self.app.config.get('EXTENSIONS', []):
-            module, e_name = self._get_imported_stuff_by_path(ext_path)
+            module, e_name = self._get_imported_stuff_by_path('ext.{}'.format(ext_path))
             if not hasattr(module, e_name):
                 raise NoExtensionException('No {e_name} extension found'.format(e_name=e_name))
             ext = getattr(module, e_name)

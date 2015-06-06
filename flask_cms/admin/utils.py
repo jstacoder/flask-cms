@@ -1,9 +1,9 @@
 import os
-from ext import db
+from sqlalchemy import desc
 from flask import session, g, flash, redirect, url_for, request
 from functools import wraps
 from flask import url_for
-from settings import BaseConfig
+from flask_cms.settings import BaseConfig
 
 def get_files_of_type(ext):
     root = BaseConfig.ROOT_PATH
@@ -37,7 +37,7 @@ class Pagination(object):
 
     def __init__(self,model,page_num=None,query=None):
         if query is None:
-            self._query = model.query.order_by(db.desc(model.id))
+            self._query = model.query.order_by(desc(model.id))
         else:
             self._query = query
         self._model = model

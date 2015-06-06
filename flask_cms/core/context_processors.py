@@ -3,10 +3,11 @@
     core.context_processors
 """
 import os
-from settings import BaseConfig
+from flask_cms.settings import BaseConfig
 from flask.helpers import url_for
 #from faker.factory import Factory
-from page.context_processors import add_get_button, add_get_icon,get_context, add_get_block,add_urlfor
+from flask_cms.page.context_processors import add_get_button, add_get_icon,get_context, add_get_block,add_urlfor
+from inflection import camelize
 
 ROOT_PATH = BaseConfig.ROOT_PATH
 
@@ -70,11 +71,14 @@ def add_is_page():
 
 
 def get_model(model, blueprint=None):
+    '''
     if '_' in model:
         start, end = model.split('_')
         cls = start.title() + end.title()
     else:
         cls = model.title()
+    '''
+    cls = camelize(model)
     return __import__(blueprint or model.lower() +
                       '.models', globals(), locals(),
                       fromlist=[]).models.__dict__[cls]

@@ -1,9 +1,9 @@
-from main.baseviews import BaseView
+from flask_xxl.baseviews import BaseView
 from flask.templating import render_template_string
 from flask import jsonify
-from menu import context_processors
+from flask_cms.menu import context_processors
 from flask import request
-from page import page
+from flask_cms.page import page
 
 admin_required = ''
 
@@ -150,10 +150,10 @@ class AddPageView(BaseView):
             res = 1
         return jsonify(result=res,content=data['content'])
 
-@page.before_app_first_request
-def make_macro_file():
-    from page.models import Macro
-    from auth.models import User
-    Macro._generate_macro_file()
+#@page.before_app_first_request
+#def make_macro_file():
+    #from page.models import Macro
+    #from auth.models import User
+    #Macro._generate_macro_file()
 
     
