@@ -5,16 +5,13 @@
 """
 
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy import Column,Text,String,DateTime,func,Text
 from LoginUtils import encrypt_password as generate_password_hash
 from LoginUtils import check_password as check_password_hash
-from ext import db
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 
-for attr in dir(db):
-    globals()[attr] = getattr(db,attr)
 
-class ContactMessage(BaseMixin,db.Model):
-    __tablename__ = 'contact_messages'
+class ContactMessage(BaseMixin):
 
     name = Column(String(255),nullable=False)
     email = Column(String(255),nullable=False)

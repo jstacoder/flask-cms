@@ -6,10 +6,11 @@
 """
 #from recaptcha.client import captcha
 from flask_xxl.baseviews import BaseView
-from flask import flash, redirect, request, url_for,jsonify
-from flask_cms.blog.models import Category,Tag    
+from flask import flash, redirect, request, url_for,jsonify,session
+from flask_cms.blog.models import Category,Tag
 from .forms import MarkdownEditor, ColumnForm
 from flask_cms.settings import BaseConfig
+from flask_cms.admin.forms import AddPageForm
 from test_jinja import main,row,col
 from jinja2 import Template
 

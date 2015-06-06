@@ -1,15 +1,9 @@
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 import datetime
-from ext import db
+from sqlalchemy import Column,String,Date,Integer,ForeignKey
+from sqlalchemy.orm import relationship,backref
 
-#import sqlalchemy to global namespace
-for attr in dir(db):
-    if not attr.startswith('_'):
-        globals()[attr] = getattr(db,attr)
-
-
-class Profile(BaseMixin,Model):
-    __tablename__ = 'profiles'
+class Profile(BaseMixin):
 
     first_name = Column(String(255))
     last_name = Column(String(255))

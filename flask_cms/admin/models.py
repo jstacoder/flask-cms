@@ -1,13 +1,10 @@
-from main.basemodels import BaseMixin
+from flask_xxl.basemodels import BaseMixin
 from LoginUtils import check_password, encrypt_password
-from ext import db
-
-for attr in dir(db):
-    globals()[attr] = getattr(db,attr)
+from sqlalchemy import Column,String,Integer,ForeignKey,Boolean,Text
+from sqlalchemy.orm import relationship,backref
 
 
-class Setting(BaseMixin,Model):
-    __tablename__ = 'settings'
+class Setting(BaseMixin):
 
     name = Column(String(255),nullable=False,unique=True)
     setting_type_id = Column(Integer,ForeignKey('types.id'))
@@ -23,8 +20,7 @@ class Setting(BaseMixin,Model):
         else:
             return ''
 
-class Type(BaseMixin,Model):
-    __tablename__ = 'types'
+class Type(BaseMixin):
 
     name = Column(String(255),nullable=False)
     widgets = relationship('Widget',backref=backref(
@@ -37,8 +33,8 @@ class Type(BaseMixin,Model):
     def __repr__(self):
         return self.name or ''
 
-class Widget(BaseMixin,Model):
-    __tablename__ = 'widgets'
+class Widget(BaseMixin):
+   
 
     name = Column(String(255),nullable=False)
     title = Column(String(255))
@@ -49,8 +45,8 @@ class Widget(BaseMixin,Model):
         return self.name
 
 
-class AdminTab(BaseMixin,Model):
-    __tablename__ = 'admin_tabs'
+class AdminTab(BaseMixin):
+    
 
     name = Column(String(255),nullable=False)
     tab_id = Column(String(50),nullable=False)
@@ -68,8 +64,8 @@ class AdminTab(BaseMixin,Model):
         return rtn
     
     
-class FontIcon(BaseMixin,Model):
-    __tablename__ = 'font_icons'
+class FontIcon(BaseMixin):
+   
 
     name = Column(String(255),nullable=False)
     library_id = Column(Integer,ForeignKey('font_icon_librarys.id'))
@@ -85,12 +81,7 @@ class FontIcon(BaseMixin,Model):
     def __repr__(self):
         return '<span class="{0} {0}-{1}"></span>'.format(self.library.name,self.name)
 
-
-
-
-
-class FontIconLibrary(BaseMixin,Model):
-    __tablename__ = 'font_icon_librarys'
+class FontIconLibrary(BaseMixin):   
 
     name = Column(String(255),unique=True)
     call_string = Column(String(255),unique=True)

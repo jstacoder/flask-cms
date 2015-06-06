@@ -9,11 +9,11 @@ from flask import url_for
 from flask.ext.script import Shell, Manager, prompt_bool
 from flask.ext.script.commands import Clean,ShowUrls
 from app import app
-from ext import db
 import urllib
 import sqlalchemy_utils as squ
 from flask.ext.alembic.cli.script import manager as alembic_manager
 from get_files import get_templates, get_pyfiles
+from flask_xxl.basemodels import BaseMixin as db
 manager = Manager(app)
 
 
@@ -45,12 +45,12 @@ def init_data():
         if squ.database_exists(db.engine.url):
             squ.drop_database(db.engine.url)
     try:
-        db.drop_all()
+        db.metadata.drop_all()
     except:
         pass
     try:
         squ.create_database(db.engine.url)
-        db.create_all()
+        db.metadata.create_all()
     except:
         pass
 
@@ -60,7 +60,7 @@ def init_data():
     user.save()
 
 
-manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': db}))
+manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': BaseMixin}))
 
 
 if __name__ == '__main__':
