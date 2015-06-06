@@ -13,7 +13,10 @@ from ext import db
 import urllib
 import sqlalchemy_utils as squ
 from flask.ext.alembic.cli.script import manager as alembic_manager
+from get_files import get_templates, get_pyfiles
 manager = Manager(app)
+
+
 
 @manager.command
 def show_routes():
@@ -64,6 +67,8 @@ if __name__ == '__main__':
     manager.add_command('clean',Clean())
     manager.add_command('show_urls',ShowUrls())
     manager.add_command('db',alembic_manager)
+    manager.add_command('show_templates',get_templates)
+    manager.add_command('show_pyfiles',get_pyfiles)
     app.test_request_context().push()
     from imports import (
                     
