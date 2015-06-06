@@ -35,7 +35,8 @@ class AppFactory(object):
     def get_app(self, app_module_name, **kwargs):
         self.app = Flask(app_module_name, **kwargs)
         self.app.config.from_object(self.app_config)
-        self.app.config.from_envvar(self.app_envvar, silent=True)
+        if self.app_envvar:
+            self.app.config.from_envvar(self.app_envvar, silent=True)
 
         self._bind_extensions()
         self._register_blueprints()
