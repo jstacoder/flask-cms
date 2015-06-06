@@ -67,8 +67,8 @@ if __name__ == '__main__':
     manager.add_command('clean',Clean())
     manager.add_command('show_urls',ShowUrls())
     manager.add_command('db',alembic_manager)
-    manager.add_command('show_templates',get_templates)
-    manager.add_command('show_pyfiles',get_pyfiles)
+    get_templates = manager.command(get_templates)
+    get_pyfiles = manager.command(get_pyfiles)
     app.test_request_context().push()
     from imports import (
                     

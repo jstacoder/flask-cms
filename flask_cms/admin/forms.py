@@ -11,7 +11,7 @@ from page.fields import CKTextEditorField
 #from blog.models import Category
 from wtforms.widgets.html5 import DateInput as DateWidget
 #from icons import el_icon as icons
-import admin.icons as admin_icons
+from . import icons as admin_icons
 #from .fields import AceEditorField
 from flask import Markup
 from settings import BaseConfig
