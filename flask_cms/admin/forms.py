@@ -3,7 +3,8 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import fields, validators,widgets
 from wtforms.widgets.core import Option
 #from admin.models import Type
-from .fields import TagField
+from blog.fields import TagField
+#from .fields import TagField
 from flask.ext.pagedown.fields import PageDownField
 from flask.ext.codemirror.fields import CodeMirrorField
 from page.fields import CKTextEditorField
