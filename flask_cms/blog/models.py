@@ -7,6 +7,7 @@ from webhelpers.date import time_ago_in_words
 from webhelpers.text import urlify
 from flask_xxl.basemodels import BaseMixin
 
+
 class Blog(BaseMixin):
 
     name = Column(String(255),nullable=False)

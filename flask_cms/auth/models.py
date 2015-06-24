@@ -5,6 +5,7 @@ from sqlalchemy import Column,String,Integer,Boolean,ForeignKey,DateTime,func,Un
 from sqlalchemy.orm import relationship,backref
 
 
+
 class UnknownUser(object):
     is_unknown = True
 

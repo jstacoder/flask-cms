@@ -8,7 +8,7 @@ strip_filter = lambda x: x.strip() if x else None
 
 
 def category_choice():
-    from blog.models import Category
+    from flask_cms.blog.models import Category
     return Category.query.all()
 tag_choice = category_choice
 
@@ -66,7 +66,7 @@ class AddCategoryForm(Form):
 
 
 class AddPostForm(Form):
-    from models import Category
+    from flask_cms.blog.models import Category
     name = StringField('post name',[validators.InputRequired()])
     content = PageDownField()
     excerpt_length = StringField('excerpt Length')

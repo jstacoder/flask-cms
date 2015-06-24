@@ -66,7 +66,6 @@ class AdminTab(BaseMixin):
     
 class FontIcon(BaseMixin):
    
-
     name = Column(String(255),nullable=False)
     library_id = Column(Integer,ForeignKey('font_icon_librarys.id'))
     library = relationship('FontIconLibrary',backref=backref(
@@ -82,6 +81,7 @@ class FontIcon(BaseMixin):
         return '<span class="{0} {0}-{1}"></span>'.format(self.library.name,self.name)
 
 class FontIconLibrary(BaseMixin):   
+    __tablename__ = 'font_icon_librarys'
 
     name = Column(String(255),unique=True)
     call_string = Column(String(255),unique=True)

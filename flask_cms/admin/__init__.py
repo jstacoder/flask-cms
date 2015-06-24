@@ -8,3 +8,4 @@ admin = Blueprint('admin', __name__,
 
 
 from views import *
+from models import *
