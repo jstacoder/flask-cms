@@ -34,12 +34,6 @@ def show_routes():
 
 @manager.command
 def init_data():
-    from imports import (
-            Widget,Article,Page,
-            User,Setting,Type,
-            Template,Tag,Role,
-            Category,Block,Profile,
-            ContactMessage)
     """Fish data for project"""
     if prompt_bool('Do you want to kill your db?'):
         if squ.database_exists(db.engine.url):
@@ -56,14 +50,19 @@ def init_data():
 
     user = User.query.filter(User.email=='kyle@level2designs.com').first()
     if user is None:
-       user = User(username='kyle', email='kyle@level2designs.com', password='14wp88')
+       user = User(username='kyle', email='kyle@level2designs.com', password='test')
     user.save()
 
 
-manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': BaseMixin}))
+manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': db}))
 
+class DBClass(object):
+    def __init__(self,cls):
+        self.db = cls
 
 if __name__ == '__main__':
+    app.extensions = app.extensions or {}
+    app.extensions['sqlalchemy'] = DBClass(db)
     manager.add_command('clean',Clean())
     manager.add_command('show_urls',ShowUrls())
     manager.add_command('db',alembic_manager)

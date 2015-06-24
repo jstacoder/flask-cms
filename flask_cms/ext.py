@@ -5,6 +5,7 @@
     ~~~
     :license: BSD, see LICENSE for more details
 """
+print 'imported as ',__name__
 
 from flask.ext.debugtoolbar import DebugToolbarExtension
 from flask.ext.wtf import Form

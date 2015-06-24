@@ -52,7 +52,7 @@ class BaseConfig(LocalConfig):
             #'ext.toolbar',
             #'ext.pagedown',
             #'ext.codemirror',
-            #'ext.alembic',
+            'ext.alembic',
     ]
 
     CONTEXT_PROCESSORS = [
