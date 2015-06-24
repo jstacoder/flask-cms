@@ -70,11 +70,4 @@ if __name__ == '__main__':
     get_templates = manager.command(get_templates)
     get_pyfiles = manager.command(get_pyfiles)
     app.test_request_context().push()
-    from imports import (
-                    
-                    Widget,Article,Page,
-                    User,Setting,Type,
-                    Template,Tag,Role,
-                    Category,Block,AdminTab,Blog,
-    )
     manager.run()

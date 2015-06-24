@@ -1,8 +1,8 @@
 from flask_xxl.basemodels import BaseMixin
 import sqlalchemy as sa
 
+
 class File:
-    __table_args__ = {'abstract':True}
     __abstract__ = True
 
     name = sa.Column(sa.String(255),nullable=False)

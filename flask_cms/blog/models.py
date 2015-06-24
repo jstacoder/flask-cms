@@ -5,9 +5,7 @@ from LoginUtils import encrypt_password as generate_password_hash,check_password
 import datetime
 from webhelpers.date import time_ago_in_words
 from webhelpers.text import urlify
-#from flask.ext.xxl.basemodels import BaseMixin
 from flask_xxl.basemodels import BaseMixin
-
 
 class Blog(BaseMixin):
 

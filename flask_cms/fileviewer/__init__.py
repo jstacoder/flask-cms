@@ -5,4 +5,4 @@ fileviewer = Blueprint('fileviewer',__name__,
                         url_prefix='/view_files')
 
 from views import *
-from models import *
+from flask_cms.fileviewer.models import *
