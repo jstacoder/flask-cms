@@ -1,6 +1,8 @@
 #Flask CMS
 
-##A full cms, implemented in python
+##A full cms, implemented in python, built on top of [Flask-XXL](https://github.com/jstacoder/flask-xxl)
+
+for documentation on layout, concepts etc.. see the [Flask-XXL wiki](https://github.com/jstacoder/flask-xxl/wiki)
 
 __Templates__
 __Blocks__
@@ -47,5 +49,5 @@ or w/e yours is
 ---
 
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jstacoder/flask-cms/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 
