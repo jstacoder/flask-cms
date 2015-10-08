@@ -18,7 +18,7 @@ to use:
 
 for a quick db setup just add 
 
-```
+```python
 class LocalConfig(object):
     SQLALCHEMY_DATABASE_URI = "sqlite:///tmp.db"
     SECRET_KEY = "your key"
