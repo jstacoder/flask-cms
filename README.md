@@ -4,17 +4,17 @@
 
 for documentation on layout, concepts etc.. see the [Flask-XXL wiki](https://github.com/jstacoder/flask-xxl/wiki)
 
-__Templates__
-__Blocks__
-__Pages__
-__Blogs__
-__tags__
-__Comments__
+__Templates__  
+__Blocks__  
+__Pages__  
+__Blogs__  
+__tags__  
+__Comments__  
 
 
-just put your settings in settings.py
-
-then system and database info in the local\_settings.py file
+to use:
+  - just put your settings in settings.py
+  - then system and database info in the local\_settings.py file
 
 for a quick db setup just add 
 
