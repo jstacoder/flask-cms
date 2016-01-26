@@ -1,8 +1,9 @@
-from setuptools import setup
+from setuptools import setup, findall
 
 setup(
     name='flask-cms',
     packages=['flask_cms'],
-    version='0.0.1',
+    package_data={'':findall('flask_cms')},
+    version='0.0.4',
     install_requires=open('flask_cms/requirements.txt','r').readlines(),
 )
