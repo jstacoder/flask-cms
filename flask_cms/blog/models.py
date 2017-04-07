@@ -14,14 +14,14 @@ class Blog(BaseMixin):
     title = Column(String(255),nullable=False)
     slug = Column(String(255),nullable=False)
     category_id = Column(Integer,ForeignKey('categories.id'))
-    category = relationship('Category',backref=backref(
-                        'blogs',lazy='dynamic'))
+    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    #                    'blogs',lazy='dynamic'))
     author_id = Column(Integer,ForeignKey('users.id'))
     #author = relationship('User',backref=backref(
     #                    'blogs',lazy='dynamic'))
 
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    icon = relationship('FontIcon',backref='blogs')
+    icon = relationship('flask_cms.admin.models.FontIcon')#,backref='blogs')
 
 
     @property
@@ -48,7 +48,7 @@ class Tag(BaseMixin):
     name = Column(String(100), unique=True)
     description = Column(Text)
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    icon = relationship('FontIcon',backref='tags')
+    icon = relationship('flask_cms.admin.models.FontIcon')
     
 
     def __unicode__(self):
@@ -72,7 +72,7 @@ class Category(BaseMixin):
     name = Column(String(100), unique=True)
     description = Column(Text)
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    icon = relationship('FontIcon',backref='categories')
+    icon = relationship('flask_cms.admin.models.FontIcon')
 
     def __unicode__(self):
         return self.name
@@ -88,12 +88,12 @@ class Article(BaseMixin):
     content = Column(Text)
     date_added = Column(DateTime, default=datetime.datetime.now)
     category_id = Column(Integer, ForeignKey('categories.id'))
-    category = relationship('Category',backref=backref(
-        'articles',lazy='dynamic'))
+    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    #    'articles',lazy='dynamic'))
     author_id = Column(Integer,ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
     blog_id = Column(Integer,ForeignKey('blogs.id'))
-    blog = relationship('Blog',backref=backref(
-                        'articles',lazy='dynamic'),lazy='select')
+    blog = relationship(Blog)#,backref=backref(
+    #                    'articles',lazy='dynamic'),lazy='select')
     #author = relationship('User',backref="articles",lazy="dynamic")
     visible = Column(Boolean,default=False)
     description = Column(Text)
@@ -150,15 +150,14 @@ class Comment(BaseMixin):
     slug = Column(String(255),nullable=False,unique=True)
     content = Column(Text,nullable=False)
     author_id = Column(Integer,ForeignKey('users.id'))
-    author = relationship('User',backref=backref(
-                'comments',lazy="dynamic"))
+    author = relationship('flask_cms.auth.models.User')
     article_id = Column(Integer,ForeignKey('articles.id'))
-    article = relationship('Article',backref=backref(
-                'comments',lazy='dynamic'))
+    article = relationship(Article)#,backref=backref(
+    #            'comments',lazy='dynamic'))
 
     post_id = Column(Integer,ForeignKey('posts.id'))
-    post = relationship('Post',backref=backref(
-                'comments',lazy='dynamic'))
+    post = relationship('flask_cms.blog.models.Post')#,backref=backref(
+    #            'comments',lazy='dynamic'))
 
     def __init__(self,*args,**kwargs):
         if kwargs.get('content',False):
@@ -189,22 +188,23 @@ class Post(BaseMixin):
     name = Column(String(255),nullable=False)
     content = Column(Text)
     blog_id = Column(Integer,ForeignKey('blogs.id'))
-    blog = relationship('Blog',backref=backref(
+    blog = relationship(Blog,backref=backref(
                     'posts'),uselist=False)
     category_id = Column(Integer,ForeignKey('categories.id'))
-    category = relationship('Category',backref=backref(
-                    'posts'),uselist=False)
+    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    #                'posts'),uselist=False)
     #tags = relationship('Tag',secondary='posts_tags',backref=backref(
     #                'posts',lazy='dynamic'),lazy='dynamic')
     author_id = Column(Integer,ForeignKey('users.id'))
-    author = relationship('User',backref=backref(
-                    'posts'),uselist=False)
+    author = relationship('flask_cms.auth.models.User',#backref=backref(
+                    #'posts'),
+		    uselist=False)
     date_added = Column(DateTime,default=func.now())
     date_modified = Column(DateTime,default=func.now(),onupdate=func.now())
     excerpt_length = Column(Integer,default=55,nullable=False)
     slug = Column(String(255),unique=True)
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    icon = relationship('FontIcon',backref='posts')
+    icon = relationship('flask_cms.admin.models.FontIcon')#,backref='posts')
 
     @property
     def comment_count(self):

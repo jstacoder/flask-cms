@@ -47,7 +47,7 @@ class Page(BaseMixin):
     date_added = Column(DateTime,default=datetime.datetime)
     visible = Column(Boolean,default=False)
     meta_title = Column(String(255))
-    added_by = relationship('User',backref=backref(
+    added_by = relationship('flask_cms.auth.models.User',backref=backref(
         'pages',lazy='dynamic'))
     user_id = Column(Integer,ForeignKey('users.id'))
     short_url = Column(String(255))
@@ -366,7 +366,7 @@ class Button(BaseMixin):
     _endpoint = Column(String(255))
     is_link = Column(Boolean,default=False) 
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    _icon = relationship('FontIcon',backref='buttons')
+    _icon = relationship('flask_cms.admin.models.FontIcon',backref='buttons')
 
     @hybrid_property
     def endpoint(self):

@@ -1,13 +1,8 @@
-from main.basemodels import BaseMixin
-from ext import db
-
-#import sqlalchemy to global namespace
-for attr in dir(db):
-    if not attr.startswith('_'):
-        globals()[attr] = getattr(db,attr)
+from flask_xxl.basemodels import BaseMixin
+import sqlalchemy as sa
 
 
-class Menu(BaseMixin,Model):
-    name = Column(String(255))
+class Menu(BaseMixin):
+    name = sa.Column(sa.String(255))
 
 

@@ -23,15 +23,13 @@ class User(BaseMixin):
     last_name = Column(String(255),default="")
     email = Column(String(255),nullable=False,unique=True)
     role_id = Column(Integer,ForeignKey('roles.id'))
-    role = relationship('Role',backref=backref(
+    role = relationship(Role,backref=backref(
                     'users',lazy='dynamic'))
     add_date = Column(DateTime,default=func.now())
     _pw_hash = Column(UnicodeText,nullable=False)
-    articles = relationship('Article',backref=backref(
-                    'author'),lazy='dynamic',passive_deletes='all')
+    articles = relationship('flask_cms.blog.models.Article',lazy='dynamic',passive_deletes='all')
     age = Column(Integer)
-    blogs = relationship('Blog',backref=backref(
-                    'author',lazy='select'),lazy='dynamic')
+    blogs = relationship('flask_cms.blog.models.Blog',lazy='dynamic')
 
 
     def __init__(self,*args,**kwargs):

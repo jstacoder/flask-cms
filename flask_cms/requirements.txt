@@ -23,7 +23,8 @@ argparse==1.2.1
 blinker==1.3
 #git+https://gitorious.org/flask-codemirror/flask-codemirror-latest.git
 flask-codemirror==0.0.3
-flask-xxl==0.7.11
+git+https://github.com/jstacoder/flask-xxl.git#egg=flask-xxl
+#flask-xxl==0.9.18
 itsdangerous==0.24
 jinja2-highlight==0.6.1
 six==1.8.0

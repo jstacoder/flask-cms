@@ -35,7 +35,7 @@ CONTACT_FORM_SETTINGS = {
     'CONTACT_EMAIL':'text,
 }
 #}
-{% macro render_contact_form(form,CONTACT_FORM_SETTINGS) %}
+{% macro render_contact_form(form,CONTACT_FORM_SETTINGS,use_recaptcha) %}
     <div class="jumbotron jumbotron-sm">
         <div class="container">
             <div class="row">
@@ -74,7 +74,9 @@ CONTACT_FORM_SETTINGS = {
                             {{form.subject.label}}
                             {{form.subject(class_="form-control",id="subject",options=CONTACT_FORM_SETTINGS['OPTIONS'])}}
                         </div>
-                        {{ form.recaptcha }}
+    			{% if use_recaptcha %}
+	                        {{ form.recaptcha }}
+			{% endif %}
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
@@ -114,7 +116,7 @@ CONTACT_FORM_SETTINGS = {
 
 {% block body %}
     {% if form and CONTACT_FORM_SETTINGS %}
-        {{render_contact_form(form,CONTACT_FORM_SETTINGS)}}
+        {{render_contact_form(form,CONTACT_FORM_SETTINGS,false)}}
     {% endif %}
     {% if args %}
             {{args}}

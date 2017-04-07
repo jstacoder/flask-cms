@@ -12,7 +12,7 @@ class Profile(BaseMixin):
     visits = Column(Integer,default=1)
     user_id = Column(Integer,ForeignKey('users.id'))
     birth_date = Column(Date)
-    user = relationship('User',backref=backref(
+    user = relationship('flask_cms.auth.models.User',backref=backref(
                 'profile',uselist=False))
 
 
