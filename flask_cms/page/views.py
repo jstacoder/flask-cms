@@ -106,7 +106,7 @@ class AddPageView(BaseView):
             content=request.args.get('content',None),
             template=request.args.get('template',None),
             category=request.args.get('category',None),
-            tags=request.args.get('tags',None),
+            tags=request.args.get('tags',[]),
             use_base_template=request.args.get('use_base_template',None),
         )
         p = Page.query.filter(Page.name==data['name']).first()
@@ -114,7 +114,7 @@ class AddPageView(BaseView):
             res = 0
         else:
             tags = [x.name for x in Tag.query.all()]
-            for tag in data['tags']:
+            for tag in data.get('tags',[]):
                 if not tag in tags:
                     t = Tag()
                     t.name = tag

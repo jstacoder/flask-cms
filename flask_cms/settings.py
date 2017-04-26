@@ -95,28 +95,28 @@ class BaseConfig(LocalConfig):
     ]
 
     CONTACT_FORM_SETTINGS = {
-    'HEADING':'Send Us a message',
-    'SUBHEADING':'Or a Comment',
-    'OPTIONS':(
-        ('test','opt1'),
-        ('test2','opt2'),
-        ('test3','opt3'),
-        ('test4','opt4'),
-        ('test5','opt5'),
-        ('test6','opt6'),
-    ),
-    'SUBMIT_TEXT':'Send to Us',
-    'COMPANY_TITLE':'Level2designs',
-    'COMPANY_ADDRESS':{
-        'NAME':'level2designs',
-        'STREET':'1045 w katella',
-        'CITY':'Orange',
-        'STATE':'CA',
-        'ZIP':'92804',
-    },
-    'COMPANY_PHONE':'714-783-6369',
-    'CONTACT_NAME':'Roux',
-    'CONTACT_EMAIL':'kyle@level2designs.com',
+        'HEADING':'Send Us a message',
+        'SUBHEADING':'Or a Comment',
+        'OPTIONS':(
+            ('test','opt1'),
+            ('test2','opt2'),
+            ('test3','opt3'),
+            ('test4','opt4'),
+            ('test5','opt5'),
+            ('test6','opt6'),
+        ),
+        'SUBMIT_TEXT':'Send to Us',
+        'COMPANY_TITLE':'jstacoders code shop',
+        'COMPANY_ADDRESS':{
+            'NAME':'level2designs',
+            'STREET':'1045 w katella',
+            'CITY':'Orange',
+            'STATE':'CA',
+            'ZIP':'92804',
+        },
+        'COMPANY_PHONE':'714-783-6369',
+        'CONTACT_NAME':'Roux',
+        'CONTACT_EMAIL':'kyle@level2designs.com',
     }
 
 

@@ -31,100 +31,6 @@ pages_template_blocks = Table('pages_template_blocks',BaseMixin.metadata,
     extend_existing=True
 )
 
-
-class Page(BaseMixin):
-
-    name = Column(String(255))
-    description = Column(Text)
-    template_id = Column(Integer,ForeignKey('templates.id'))
-    template = relationship('Template',backref=backref(
-                'pages',lazy='dynamic'))
-    slug = Column(String(255))
-    title = Column(String(255))
-    add_to_nav = Column(Boolean,default=False)
-    add_left_sidebar = Column(Boolean,default=False)
-    add_right_sidebar = Column(Boolean,default=False)
-    date_added = Column(DateTime,default=datetime.datetime)
-    visible = Column(Boolean,default=False)
-    meta_title = Column(String(255))
-    added_by = relationship('flask_cms.auth.models.User',backref=backref(
-        'pages',lazy='dynamic'))
-    user_id = Column(Integer,ForeignKey('users.id'))
-    short_url = Column(String(255))
-    macros = relationship('Macro',secondary='pages_macros',
-                            backref=backref('pages',lazy='dynamic'),
-                            lazy='dynamic')
-    _blocks = relationship('TemplateBlock',secondary='pages_template_blocks',
-                            backref=backref('pages'),lazy='dynamic')
-
-    content = Column(Text)
-
-    def __repr__(self):
-        if self.name is None:
-            rtn = '<Page: Unnamed | {}'.format(self.line_count)
-        else:
-            rtn = '<Page: {} | {} lines'.format(self.name,self.line_count)
-        return rtn
-
-    @property
-    def use_base_template(self):
-        return bool(self.template)
-
-    def _get_page_url(self):
-        return url_for('page.pages',slug=self.slug)
-
-    @staticmethod
-    def _get_create_url():
-        return url_for('admin.add_page')
-
-    @classmethod
-    def get_by_slug(cls,slug):
-        return cls.query.filter(cls.slug==slug).first()
-
-    def _get_absolute_url(self):
-        return url_for('admin.page_view',slug=self.slug)
-
-    def _get_edit_url(self):
-        return url_for('admin.edit_page',item_id=int(self.id))
-
-    def _get_edit_content_url(self):
-        return url_for('admin.edit_page_content',item_id=int(self.id))
-
-    @property
-    def line_count(self):
-        try:
-            rtn = len(self.content.split('\n'))
-        except:
-            rtn = 0
-        return rtn
-
-    @property
-    def template_name(self):
-        return self.template.name or ''
-
-    @property
-    def block_count(self):
-        return self._template.blocks.count()
-
-    @property
-    def blocks(self):
-        return self._template.blocks.keys()
-
-
-    def get_block(self,block):
-        return self._template.blocks[block]
-        return str(self._blocks.get_by_name(block))
-    
-    @property
-    def _template(self):
-        class template(object):
-            def __init__(self):
-                self.blocks = {'blocka':'','blockb':'','blockc':'x','blockd':''}
-        return template()
-
-
-
-
 class Template(BaseMixin):
 
     name = Column(String(255),nullable=False,unique=True)
@@ -215,6 +121,10 @@ class Template(BaseMixin):
     @staticmethod
     def get_base_templates():
         return []
+
+    @property
+    def filename(self):
+        return "{}.html".format(self.name if self.name else self.id)
 
 class Block(BaseMixin):
 
@@ -366,7 +276,7 @@ class Button(BaseMixin):
     _endpoint = Column(String(255))
     is_link = Column(Boolean,default=False) 
     icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    _icon = relationship('flask_cms.admin.models.FontIcon',backref='buttons')
+    _icon = relationship('flask_cms.admin.models.FontIcon')
 
     @hybrid_property
     def endpoint(self):
@@ -453,3 +363,96 @@ class TemplateBlock(BaseMixin):
 
 
 
+class Page(BaseMixin):
+    _use_base_template = None
+
+    name = Column(String(255))
+    description = Column(Text)
+    template_id = Column(Integer,ForeignKey('templates.id'))
+    template = relationship(Template,backref=backref(
+                'pages',lazy='dynamic'))
+    slug = Column(String(255))
+    title = Column(String(255))
+    add_to_nav = Column(Boolean,default=False)
+    add_left_sidebar = Column(Boolean,default=False)
+    add_right_sidebar = Column(Boolean,default=False)
+    date_added = Column(DateTime,default=datetime.datetime)
+    visible = Column(Boolean,default=False)
+    meta_title = Column(String(255))
+    added_by = relationship('flask_cms.auth.models.User')
+    user_id = Column(Integer,ForeignKey('users.id'))
+    short_url = Column(String(255))
+    macros = relationship(Macro,secondary='pages_macros',
+                            backref=backref('pages',lazy='dynamic'),
+                            lazy='dynamic')
+    _blocks = relationship(TemplateBlock,secondary='pages_template_blocks',
+                            backref=backref('pages'),lazy='dynamic')
+
+    content = Column(Text)
+
+    def __repr__(self):
+        if self.name is None:
+            rtn = '<Page: Unnamed | {}'.format(self.line_count)
+        else:
+            rtn = '<Page: {} | {} lines'.format(self.name,self.line_count)
+        return rtn
+
+    @property
+    def use_base_template(self):
+        return bool(self.template) if self._use_base_template is None else self._use_base_template
+
+    @use_base_template.setter
+    def use_base_template(self, val):
+         self._use_base_template = val
+
+    def _get_page_url(self):
+        return url_for('page.pages',slug=self.slug)
+
+    @staticmethod
+    def _get_create_url():
+        return url_for('admin.add_page')
+
+    @classmethod
+    def get_by_slug(cls,slug):
+        return cls.query.filter(cls.slug==slug).first()
+
+    def _get_absolute_url(self):
+        return url_for('admin.page_view',slug=self.slug)
+
+    def _get_edit_url(self):
+        return url_for('admin.edit_page',item_id=int(self.id))
+
+    def _get_edit_content_url(self):
+        return url_for('admin.edit_page_content',item_id=int(self.id))
+
+    @property
+    def line_count(self):
+        try:
+            rtn = len(self.content.split('\n'))
+        except:
+            rtn = 0
+        return rtn
+
+    @property
+    def template_name(self):
+        return self.template.name or ''
+
+    @property
+    def block_count(self):
+        return self._template.blocks.count()
+
+    @property
+    def blocks(self):
+        return self._template.blocks.keys()
+
+
+    def get_block(self,block):
+        return self._template.blocks[block]
+        return str(self._blocks.get_by_name(block))
+    
+    @property
+    def _template(self):
+        class template(object):
+            def __init__(self):
+                self.blocks = {'blocka':'','blockb':'','blockc':'x','blockd':''}
+        return template()

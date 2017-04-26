@@ -12,7 +12,7 @@ from flask_cms.page.fields import CKTextEditorField
 from wtforms.widgets.html5 import DateInput as DateWidget
 #from icons import el_icon as icons
 from . import icons as admin_icons
-#from .fields import AceEditorField
+from .fields import AceEditorField
 from flask import Markup
 from flask_cms.settings import BaseConfig
 
@@ -40,7 +40,7 @@ class AddSettingTypeForm(Form):
 
 class TestForm(Form):
     title = fields.StringField('Test')
-    #content = AceEditorField('content')
+    content = AceEditorField('content')
     submit = fields.SubmitField()
 
 class BaseTemplateForm(Form):
@@ -87,13 +87,14 @@ class AddPageForm(Form):
     slug = fields.StringField('Page Slug',validators=[validators.InputRequired()])
     short_url = fields.StringField('Url',validators=[validators.Optional()])
     title = fields.StringField('Page Title',validators=[validators.InputRequired()])
-    add_to_nav = fields.BooleanField('Add to Navbar')
-    add_sidebar = fields.BooleanField('Add Sidebar')
-    visible = fields.SelectField(choices=((1,'Publish'),(0,'Draft')))
-    meta_title = fields.StringField('Meta Title',validators=[validators.InputRequired()])
-    content = CodeMirrorField('Content',language='xml',config={'lineNumbers':'true'})
+    add_to_nav = fields.BooleanField('Add to Navbar', default=False)
+    add_sidebar = fields.BooleanField('Add Sidebar', default=False)
+    visible = fields.SelectField(choices=((1,'Published'),(0,'Draft')))
+    meta_title = fields.StringField('Meta Title',validators=[validators.InputRequired()], default="")
+    content = CodeMirrorField('Content',language='django',config={'lineNumbers':'true'})
     template = fields.FormField(BaseTemplateForm,label="Template",separator='_')
-    blocks = fields.SelectMultipleField(label="blocks",choices=[('a','a'),('b','b'),('c','c')])
+    #blocks = fields.SelectMultipleField(label="blocks",choices=[('a','a'),('b','b'),('c','c')])
+    blocks = QuerySelectField('blocks', query_factory=lambda: getattr(__import__("flask_cms.page.models", {}, {}, [""]), "Block").query.all())
     category = QuerySelectField('category')
     tags = TagField('Tags')
     use_base_template = fields.BooleanField('Use Base Template')
