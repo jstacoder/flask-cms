@@ -7,10 +7,10 @@
 #from recaptcha.client import captcha
 from flask_xxl.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify,session
-from flask_cms.blog.models import Category,Tag
+#from flask_cms.blog.models import Category,Tag
 from .forms import MarkdownEditor, ColumnForm
 from flask_cms.settings import BaseConfig
-from flask_cms.admin.forms import AddPageForm
+from admin.forms import AddPageForm
 from test_jinja import main,row,col
 from jinja2 import Template
 
@@ -132,8 +132,8 @@ class AboutView(BaseView):
             self._context['args'] = args
         else:
             self._context['cat_form'] = AddCategoryForm()
-        self._form.tags.query_factory = lambda: Tag.query.all()
-        self._form.category.query_factory = lambda: Category.query.all()
+        self._form.tags.query_factory = lambda: lazy_import('flask_cms.blog.models','Tag').query.all()
+        self._form.category.query_factory = lambda: lazy_import('flask_cms.blog.models','Category').query.all()
         self._context['editor_mode'] = 'python'
         
         return self.render()
@@ -141,7 +141,6 @@ class AboutView(BaseView):
     def post(self):
         self._context['content'] = request.form.get('content')
         return self.render()
-
 
 class MeetView(BaseView):
     _template = 'jumbo.html'
@@ -341,3 +340,11 @@ class TaskView(BaseView):
         for line in lines:
             rtn += self._format.format('',line)
         return (title,'<div class=list-group>'+rtn+'</div>')
+
+
+def lazy_import(module, *args):
+    rtn = []
+    module_parts = module.split('.')
+    for itm in args:
+        rtn.append(getattr(__import__(module,{},{},fromlist=[part for part in module_parts[1:]]), itm))
+    return rtn[0] if len(rtn) == 1 else rtn

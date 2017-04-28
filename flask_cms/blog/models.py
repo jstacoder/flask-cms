@@ -7,6 +7,18 @@ from webhelpers.date import time_ago_in_words
 from webhelpers.text import urlify
 from flask_xxl.basemodels import BaseMixin
 
+class Category(BaseMixin):
+    name = Column(String(100), unique=True)
+    description = Column(Text)
+    icon_id = Column(Integer,ForeignKey('font_icons.id'))
+    icon = relationship('flask_cms.admin.models.FontIcon')
+
+    def __unicode__(self):
+        return self.name
+    
+    @classmethod
+    def get_by_name(cls,name):
+        return cls.query.filter(cls.name==name).first()
 
 class Blog(BaseMixin):
 
@@ -14,7 +26,7 @@ class Blog(BaseMixin):
     title = Column(String(255),nullable=False)
     slug = Column(String(255),nullable=False)
     category_id = Column(Integer,ForeignKey('categories.id'))
-    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    category = relationship(Category)#,backref=backref(
     #                    'blogs',lazy='dynamic'))
     author_id = Column(Integer,ForeignKey('users.id'))
     #author = relationship('User',backref=backref(
@@ -68,18 +80,6 @@ class Tag(BaseMixin):
         return url_for('blog.tag_list',tag_id=self.id)
 
 
-class Category(BaseMixin):
-    name = Column(String(100), unique=True)
-    description = Column(Text)
-    icon_id = Column(Integer,ForeignKey('font_icons.id'))
-    icon = relationship('flask_cms.admin.models.FontIcon')
-
-    def __unicode__(self):
-        return self.name
-    
-    @classmethod
-    def get_by_name(cls,name):
-        return cls.query.filter(cls.name==name).first()
 
 
 class Article(BaseMixin):
@@ -88,7 +88,7 @@ class Article(BaseMixin):
     content = Column(Text)
     date_added = Column(DateTime, default=datetime.datetime.now)
     category_id = Column(Integer, ForeignKey('categories.id'))
-    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    category = relationship(Category)#,backref=backref(
     #    'articles',lazy='dynamic'))
     author_id = Column(Integer,ForeignKey('users.id', onupdate="CASCADE", ondelete="CASCADE"))
     blog_id = Column(Integer,ForeignKey('blogs.id'))
@@ -191,7 +191,7 @@ class Post(BaseMixin):
     blog = relationship(Blog,backref=backref(
                     'posts'),uselist=False)
     category_id = Column(Integer,ForeignKey('categories.id'))
-    category = relationship('flask_cms.blog.models.Category')#,backref=backref(
+    category = relationship(Category)#,backref=backref(
     #                'posts'),uselist=False)
     #tags = relationship('Tag',secondary='posts_tags',backref=backref(
     #                'posts',lazy='dynamic'),lazy='dynamic')

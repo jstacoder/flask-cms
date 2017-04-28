@@ -1,9 +1,11 @@
+import datetime as dt
+
 from flask_xxl.baseviews import BaseView
 from flask.templating import render_template_string
 from flask import jsonify
-from flask_cms.menu import context_processors
+from menu import context_processors
 from flask import request
-from flask_cms.page import page
+from . import page
 
 admin_required = ''
 
@@ -16,10 +18,10 @@ class BasePageView(BaseView):
     def render(self):
         return render_template_string(self._template,**self._context)
 
-    def get(self,slug):
+    def get(self,obj_id):
         from auth.models import User
         from page.models import Page
-        self._page = Page.get_by_slug(slug)
+        self._page = Page.get_by_id(obj_id)
         self.frontend_nav()
         self._context['content'] = self._page.content
         if self._page.use_base_template:
@@ -27,10 +29,10 @@ class BasePageView(BaseView):
                 self._base_template = self._page.body
             self._process_base_template()
 
-    def post(self,slug):
+    def post(self,obj_id):
         from auth.models import User
         from page.models import Page
-        self._page = Page.get_by_slug(slug)
+        self._page = Page.get_by_id(obj_id)
         self.frontend_nav()
         self._context['content'] = self._page.content
         if self._page.use_base_template:
@@ -71,14 +73,14 @@ class BasePageView(BaseView):
 
 class PagesView(BasePageView):
 
-    def get(self,slug):
-        super(PagesView,self).get(slug)
+    def get(self,obj_id=None):
+        super(PagesView,self).get(obj_id)
         #blocks = self._page.blocks.all()
         #self._page.template.process_blocks(blocks)
         return self.render()
 
     def post(self,slug):
-        super(PagesView,self).post(slug)
+        super(PagesView,self).post(obj_id)
         data = request.form.get('content')
         if data != self._page.content:
             self._page.content = data
@@ -106,7 +108,7 @@ class AddPageView(BaseView):
             content=request.args.get('content',None),
             template=request.args.get('template',None),
             category=request.args.get('category',None),
-            tags=request.args.get('tags',None),
+            tags=request.args.get('tags',[]),
             use_base_template=request.args.get('use_base_template',None),
         )
         p = Page.query.filter(Page.name==data['name']).first()
@@ -145,7 +147,8 @@ class AddPageView(BaseView):
             p.template = data.get('template',None)
             p.category = data.get('category',None)
             p.tags = data.get('tags',None)
-            p.use_base_template = data.get('use_base_template',None)
+            p.date_added = dt.datetime.now()
+            #p.use_base_template = data.get('use_base_template',None)
             p.save()
             res = 1
         return jsonify(result=res,content=data['content'])

@@ -12,15 +12,15 @@ from wtforms.fields import FormField,SelectField
 from wtforms.ext.sqlalchemy.orm import model_form
 #from wtalchemy.orm import model_form
 from flask_xxl.baseviews import BaseView
-from flask_cms.admin import admin
+from . import admin
 from flask import request,session,flash,jsonify
-from flask_cms.admin.forms import (
+from .forms import (
         AddButtonForm,
         TextEditorFieldForm,AddMacroForm,
         TextEditorContentForm,AddAdminTabForm,
         AdminEditFileForm,AddBlogForm
 )
-from flask_cms.admin.utils import get_files_of_type,login_required
+from .utils import get_files_of_type,login_required
 from flask_cms.settings import BaseConfig
 
 root = BaseConfig.ROOT_PATH
@@ -70,7 +70,7 @@ class AdminPageView(BaseView):
 
     decorators = [login_required]
 
-    def get(self):
+    def get(self, obj_id=None):
         if not 'content' in request.endpoint:
             from page.models import Page
             from wtforms import FormField
@@ -93,7 +93,7 @@ class AdminPageView(BaseView):
             self._form = EditContentForm
         return self.render()
 
-    def post(self):
+    def post(self,obj_id=None):
         if 'content' in request.endpoint:
             session['content'] = request.form['content'][:]
             return self.redirect('admin.add_page')
@@ -185,10 +185,11 @@ class AdminTemplateView(BaseView):
     def post(self):
         from page.models import Template
         from auth.models import User
-        self._form = model_form(Template,Template.session,base_class=Form,exclude=['blocks','pages','body'])(request.form)
+        self._form = model_form(Template,Template.session,base_class=Form,exclude=['blocks','pages'])(request.form)
         if self._form.validate():
             template = Template()
             self._form.populate_obj(template)
+            template.body = request.form['body-body']
             template.save()
             filename = template.filename
             if template.body is not None:

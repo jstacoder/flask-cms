@@ -55,7 +55,7 @@ routes = [
             ('/paged/template/<page_num>',AdminListPageView.as_view('page_template')),
             ('/paged/block/<page_num>',AdminListPageView.as_view('page_block')),
             ('/view/block/<name>',AdminDetailView.as_view('block_view')),
-            ('/view/page/<slug>',AdminDetailView.as_view('page_view')),
+            ('/view/page/<int:obj_id>',AdminDetailView.as_view('page_view')),
             ('/view/template/<name>',AdminDetailView.as_view('template_view')),
             ('/edit/block/<item_id>',AdminEditView.as_view('edit_block')),
             ('/edit/page/<item_id>',AdminEditView.as_view('edit_page')),

@@ -1,6 +1,6 @@
 from flask_cms.settings import BaseConfig
 from flask import g
-from flask_cms.core.context_processors import get_model
+#from flask_cms.core.context_processors import get_model
 
 # define blueprint specific context processors
 
@@ -107,7 +107,7 @@ def admin_nav():
 '''
 
 def sidebar():
-    get_sidebar_tabs = [x.tab_id for x in get_model('admin_tab','admin').query.all()]
+    get_sidebar_tabs = [x.tab_id for x in []]#get_model('admin_tab','admin').query.all()]
     return dict(
         sidebar_links=
         (

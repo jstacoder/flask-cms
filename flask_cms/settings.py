@@ -26,7 +26,7 @@ class BaseConfig(LocalConfig):
     ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 
     URL_MODULES = [
-            'flask_cms.core.urls.routes',
+            'core.urls.routes',
             'flask_cms.admin.urls.routes',
             'flask_cms.auth.urls.routes',
             'flask_cms.blog.urls.routes',
@@ -36,7 +36,7 @@ class BaseConfig(LocalConfig):
     ]
 
     BLUEPRINTS = [
-            'core.core',
+            'core.core_blueprint',
             'member.member',
             'admin.admin',
             'menu.menu',
