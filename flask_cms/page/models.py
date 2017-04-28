@@ -32,7 +32,6 @@ pages_template_blocks = Table('pages_template_blocks',BaseMixin.metadata,
     extend_existing=True
 )
 
-
 class Template(BaseMixin):
 
     _filename = None
@@ -126,6 +125,10 @@ class Template(BaseMixin):
     @staticmethod
     def get_base_templates():
         return []
+
+    @property
+    def filename(self):
+        return "{}.html".format(self.name if self.name else self.id)
 
 class Block(BaseMixin):
 
@@ -365,6 +368,7 @@ class TemplateBlock(BaseMixin):
 
 
 class Page(BaseMixin):
+    _use_base_template = None
 
     name = Column(String(255))
     description = Column(Text)
@@ -381,10 +385,8 @@ class Page(BaseMixin):
     added_by = relationship('flask_cms.auth.models.User')
     user_id = Column(Integer,ForeignKey('users.id'))
     short_url = Column(String(255))
-    macros = relationship(Macro,secondary='pages_macros',
-                            lazy='dynamic')
+    macros = relationship(Macro,secondary='pages_macros',lazy='dynamic')
     _blocks = relationship(TemplateBlock,secondary='pages_template_blocks', lazy='dynamic')
-
     content = Column(Text)
 
     def __repr__(self):
@@ -396,10 +398,14 @@ class Page(BaseMixin):
 
     @property
     def use_base_template(self):
-        return bool(self.template)
+        return bool(self.template) if self._use_base_template is None else self._use_base_template
+
+    @use_base_template.setter
+    def use_base_template(self, val):
+         self._use_base_template = val
 
     def _get_page_url(self):
-        return url_for('page.pages',obj_id=self.id)
+        return url_for('page.pages',slug=self.slug)
 
     @staticmethod
     def _get_create_url():
@@ -410,7 +416,7 @@ class Page(BaseMixin):
         return cls.query.filter(cls.slug==slug).first()
 
     def _get_absolute_url(self):
-        return url_for('admin.page_view',obj_id=self.id)
+        return url_for('admin.page_view',slug=self.slug)
 
     def _get_edit_url(self):
         return url_for('admin.edit_page',item_id=int(self.id))
@@ -438,7 +444,6 @@ class Page(BaseMixin):
     def blocks(self):
         return self._template.blocks.keys()
 
-
     def get_block(self,block):
         return self._template.blocks[block]
         return str(self._blocks.get_by_name(block))
@@ -449,5 +454,3 @@ class Page(BaseMixin):
             def __init__(self):
                 self.blocks = {'blocka':'','blockb':'','blockc':'x','blockd':''}
         return template()
-
-

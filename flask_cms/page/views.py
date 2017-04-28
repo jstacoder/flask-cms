@@ -116,7 +116,7 @@ class AddPageView(BaseView):
             res = 0
         else:
             tags = [x.name for x in Tag.query.all()]
-            for tag in data['tags']:
+            for tag in data.get('tags',[]):
                 if not tag in tags:
                     t = Tag()
                     t.name = tag

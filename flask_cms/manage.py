@@ -26,8 +26,8 @@ def show_routes():
         for arg in rule.arguments:
             options[arg] = "<{0}>".format(arg)
         methods = ','.join(rule.methods)
-        url = url_for(rule.endpoint,**options)
-        line = urllib.unquote("{:30s} {:20s} {}".format(rule.endpoint,methods,url))
+        url = rule.rule #url_for(rule.endpoint,**options)
+        line = urllib.unquote("{:40s} {:30s} {}".format(rule.endpoint,methods,url))
         output.append(line)
     for line in sorted(output):
         print line
