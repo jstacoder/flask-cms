@@ -1,4 +1,4 @@
-{% macro render_blog_nav(nav_links) %}
+{% macro render_blog_nav(title, nav_links) %}
     <div class="blog-masthead">
       <div class="container-fluid">
         <nav class="blog-nav">
@@ -10,5 +10,5 @@
     </div>
 {% endmacro %}
 {% if nav_links %}
-    {{ render_blog_nav(nav_links) }}
+    {{ render_blog_nav('blog', nav_links) }}
 {% endif %}

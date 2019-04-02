@@ -106,7 +106,7 @@
 {% endmacro %}
 #}
 
-{% macro render_nav(nav_type='bs_std',title,nav_links) %}
+{% macro render_nav(nav_type,title,nav_links) %}
     {% if nav_type == 'bs_std' %}
         {{ render_navbar(title,nav_links) }}
     {% elif nav_type == 'bs_inverse' %}
@@ -114,6 +114,6 @@
     {% elif nav_type == 'clean' %}
         {{ render_frontend_nav(nav_links,title) }}
     {% else %}
-        {{ render_blog_nav(title,nav_links) }}
+        {{ render_blog_nav('blog',nav_links) }}
     {% endif %}
 {% endmacro %}

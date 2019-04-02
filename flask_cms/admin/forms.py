@@ -3,21 +3,21 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms import fields, validators,widgets
 from wtforms.widgets.core import Option
 #from admin.models import Type
-from blog.fields import TagField
+from flask_cms.blog.fields import TagField
 #from .fields import TagField
 from flask_pagedown.fields import PageDownField
 from flask_codemirror.fields import CodeMirrorField
-from page.fields import CKTextEditorField
+from flask_cms.page.fields import CKTextEditorField
 #from blog.models import Category
 from wtforms.widgets.html5 import DateInput as DateWidget
 #from icons import el_icon as icons
-from . import icons as admin_icons
-from .fields import AceEditorField
+from flask_cms.admin import icons as admin_icons
+from flask_cms.admin.fields import AceEditorField
 from flask import Markup
 from flask_cms.settings import BaseConfig
 
 
-from page.utils import get_page_templates
+from flask_cms.page.utils import get_page_templates
 
 lib = BaseConfig.DEFAULT_ICON_LIBRARY
 icons = __import__('flask_cms.admin.icons',[],[],'icons').__dict__[lib]

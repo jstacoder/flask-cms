@@ -1,8 +1,8 @@
-from flask.ext.wtf import Form,RecaptchaField
-from .fields import TagField
+from flask_wtf import Form,RecaptchaField
+from flask_cms.blog.fields import TagField
 from wtforms import StringField, validators, PasswordField, TextAreaField, HiddenField,SubmitField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from flask.ext.pagedown.fields import PageDownField
+from flask_pagedown.fields import PageDownField
 
 strip_filter = lambda x: x.strip() if x else None
 

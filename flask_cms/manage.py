@@ -6,14 +6,15 @@
 """
 import subprocess
 from flask import url_for
-from flask.ext.script import Shell, Manager, prompt_bool
-from flask.ext.script.commands import Clean,ShowUrls
+from flask_script import Shell, Manager, prompt_bool
+from flask_script.commands import Clean,ShowUrls
 from app import app
 import urllib
 import sqlalchemy_utils as squ
-from flask.ext.alembic.cli.script import manager as alembic_manager
+from flask_alembic.cli.script import manager as alembic_manager
 from get_files import get_templates, get_pyfiles
 from flask_xxl.basemodels import BaseMixin as db
+from flask_cms.auth.models import User
 manager = Manager(app)
 
 

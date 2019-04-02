@@ -7,7 +7,7 @@
 """
 import os
 from datetime import datetime
-from flask.ext.wtf import Form
+from flask_wtf import Form
 from wtforms.fields import FormField,SelectField
 from wtforms.ext.sqlalchemy.orm import model_form
 #from wtalchemy.orm import model_form

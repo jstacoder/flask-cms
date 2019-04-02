@@ -6,12 +6,12 @@
     :license: BSD, see LICENSE for more details
 """
 
-from flask.ext.debugtoolbar import DebugToolbarExtension
-from flask.ext.wtf import Form
-from flask.ext.codemirror import CodeMirror
-from flask.ext.pagedown import PageDown
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_wtf import Form
+from flask_codemirror import CodeMirror
+from flask_pagedown import PageDown
 #from flask.ext.script import Manager
-from flask.ext.alembic import Alembic
+from flask_alembic import Alembic
 
 
 #manager = Manager()

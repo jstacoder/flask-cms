@@ -218,7 +218,7 @@ def base():
         .row-offcanvas {
             position: relative;
             -webkit-transition: all .25s ease-out;
-   7         -o-transition: all .25s ease-out;
+            -o-transition: all .25s ease-out;
             transition: all .25s ease-out;
         }
 

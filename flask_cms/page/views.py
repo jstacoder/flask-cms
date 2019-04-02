@@ -3,7 +3,7 @@ import datetime as dt
 from flask_xxl.baseviews import BaseView
 from flask.templating import render_template_string
 from flask import jsonify
-from menu import context_processors
+from flask_cms.menu import context_processors
 from flask import request
 from . import page
 

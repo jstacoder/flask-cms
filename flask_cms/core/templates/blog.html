@@ -4,7 +4,7 @@
   {{lst}}
 {% endmacro %}
 
-{% macro render_blog_nav(nav_links) %}
+{% macro render_blog_nav(title, nav_links) %}
     <div class="blog-masthead">
       <div class="container-fluid">
         <nav class="blog-nav">
@@ -50,7 +50,7 @@
           </ul>
     {% endif %}
     {% if nav_links %}
-        {{ render_blog_nav(nav_links) }}
+        {{ render_blog_nav('blog', nav_links) }}
         {% endif %}
         #}{{ get_block('blog_navbar_test')|safe }}
 {% endblock header %}

@@ -1,6 +1,6 @@
-from flask.ext.codemirror.fields import CodeMirrorField
+from flask_codemirror.fields import CodeMirrorField
 from wtforms import fields
-from flask.ext.wtf import Form
+from flask_wtf import Form
 
 class CodeForm(Form):
     content = CodeMirrorField('content')

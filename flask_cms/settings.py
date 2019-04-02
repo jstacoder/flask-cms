@@ -83,12 +83,12 @@ class BaseConfig(LocalConfig):
     ]
 
     TEMPLATE_FILTERS = [
-            'flask.ext.xxl.filters.date',
-            'flask.ext.xxl.filters.date_pretty',
-            'flask.ext.xxl.filters.datetime',
-            'flask.ext.xxl.filters.pluralize',
-            'flask.ext.xxl.filters.month_name',
-            'flask.ext.xxl.filters.markdown',
+            'flask_xxl.filters.date',
+            'flask_xxl.filters.date_pretty',            
+            'flask_xxl.filters.datetime',
+            'flask_xxl.filters.pluralize',
+            'flask_xxl.filters.month_name',
+            'flask_xxl.filters.markdown',
             'core.context_processors.fix_body',
             'core.filters.split',
             'blog.filters.markdown',

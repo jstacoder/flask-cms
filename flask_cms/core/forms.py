@@ -5,13 +5,13 @@
     ~~~~~~~~~~
 """
 
-from flask.ext.codemirror.fields import CodeMirrorField
+from flask_codemirror.fields import CodeMirrorField
 from wtforms import TextField, validators, PasswordField, TextAreaField, HiddenField
-from flask.ext.wtf import Form 
+from flask_wtf import Form 
 from wtforms.ext.sqlalchemy.fields import QuerySelectField,QuerySelectMultipleField
 from wtforms.validators import Email, DataRequired
 from wtforms import validators, fields
-from flask.ext.pagedown.fields import PageDownField
+from flask_pagedown.fields import PageDownField
 
 class MarkdownEditor(Form):
     content = PageDownField('content')
