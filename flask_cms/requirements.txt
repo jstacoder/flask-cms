@@ -1,5 +1,5 @@
 Faker==0.0.4
-Flask==0.10.1
+Flask==0.12.3
 Flask-Alembic==1.0.2
 Flask-DebugToolbar==0.9.2
 Flask-PageDown==0.1.5
@@ -24,7 +24,7 @@ blinker==1.3
 #git+https://gitorious.org/flask-codemirror/flask-codemirror-latest.git
 flask-codemirror==0.0.3
 #-r https://github.com/jstacoder/flask-xxl.git#egg=flask-xxl
-flask-xxl==0.9.20
+flaskxxl==0.10.2
 itsdangerous==0.24
 jinja2-highlight==0.6.1
 slugify==0.0.1
