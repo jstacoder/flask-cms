@@ -13,6 +13,7 @@ from flask_cms.settings import BaseConfig
 from admin.forms import AddPageForm
 from test_jinja import main,row,col
 from jinja2 import Template
+from flask_cms.auth.models import User
 
 '''
 class AddRowView(BaseView):

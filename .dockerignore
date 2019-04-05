@@ -1,0 +1,7 @@
+**/*.pyc
+**/local_settings*
+**/venv/**
+**/egg*
+t.py
+.idea/**
+**/*.db

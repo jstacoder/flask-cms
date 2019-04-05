@@ -4,3 +4,9 @@ venv/*
 */venv/*
 *egg*
 t.py
+.idea/modules.xml
+.idea/flask-cms.iml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/workspace.xml
+tmp.db

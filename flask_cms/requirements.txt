@@ -29,3 +29,4 @@ itsdangerous==0.24
 jinja2-highlight==0.6.1
 slugify==0.0.1
 wsgiref==0.1.2
+psycopg2

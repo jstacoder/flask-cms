@@ -1,5 +1,5 @@
 include README.md
 
 recursive-include flask_cms *
-recursive-graft *.pyc 
+recursive-exclude *.pyc 
 

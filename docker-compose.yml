@@ -1,0 +1,47 @@
+version: '3'
+
+volumes:
+  db_data:
+    external: ${DB_DATA_EXTERNAL:-false}
+
+networks:
+  default:
+
+services: 
+  
+  app:
+    build:      
+      context: .
+      dockerfile: ./compose/app/Dockerfile
+      args:
+        DB_HOST: pg
+    environment:
+      DATABASE_URI: postgres://user:pw@pg:5432/db
+    volumes:
+      - .:/app:delegated
+      - ./postgresql.sock:/var/run/postgres.sock
+    ports:
+      - "5000:5000"
+    links:
+      - redis
+      - pg
+    depends_on:
+      - pg
+    command: ["python", "flask_cms/manage.py", "runserver", "--host", "0.0.0.0", "--port", "5000"]
+
+  pg:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pw
+      - POSTGRES_DB=db
+      - POSTGRES_PORT=5433
+      - POSTGRES_HOST=0.0.0.0
+    volumes:
+      - ./postgresql.sock/:/var/run/postgres/postgres.sock
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis

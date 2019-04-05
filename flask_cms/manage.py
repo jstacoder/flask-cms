@@ -10,6 +10,7 @@ from flask_script import Shell, Manager, prompt_bool
 from flask_script.commands import Clean,ShowUrls
 from app import app
 import urllib
+import os
 import sqlalchemy_utils as squ
 from flask_alembic.cli.script import manager as alembic_manager
 from get_files import get_templates, get_pyfiles
@@ -35,24 +36,33 @@ def show_routes():
 
 @manager.command
 def init_data():
-    """Fish data for project"""
-    if prompt_bool('Do you want to kill your db?'):
-        if squ.database_exists(db.engine.url):
-            squ.drop_database(db.engine.url)
-    try:
-        db.metadata.drop_all()
-    except:
-        pass
-    try:
-        squ.create_database(db.engine.url)
-        db.metadata.create_all()
-    except:
-        pass
+    with app.test_request_context():
+	    db.metadata = User.metadata
+	    db.metadata.bind = User.engine
+	    """Fish data for project"""
+	    #if prompt_bool('Do you want to kill your db?'):
+	    try:
+                if squ.database_exists(db.engine.url):
+                    squ.drop_database(db.engine.url)
+            except:
+                pass
+	    try:
+		db.metadata.drop_all()
+	    except:
+		pass
+	    try:
+		squ.create_database(db.engine.url)
+            except:
+                pass
+            try:
+ 		db.metadata.create_all()
+	    except:
+		pass
 
-    user = User.query.filter(User.email=='kyle@level2designs.com').first()
-    if user is None:
-       user = User(username='kyle', email='kyle@level2designs.com', password='test')
-    user.save()
+	    user = User.query.filter(User.email=='kyle@level2designs.com').first()
+	    if user is None:
+	       user = User(username='kyle', email='kyle@level2designs.com', password='test')
+	    user.save()
 
 
 manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': db}))
@@ -69,5 +79,11 @@ if __name__ == '__main__':
     manager.add_command('db',alembic_manager)
     get_templates = manager.command(get_templates)
     get_pyfiles = manager.command(get_pyfiles)
-    app.test_request_context().push()
-    manager.run()
+    #print os.environ.get('DATABASE_URL')
+    #items = [(k, app.config[k]) for k in app.config.keys()]
+    #for item in items:
+    #    print item
+    with app.test_request_context():
+
+        User.metadata.bind = User.engine
+        manager.run()

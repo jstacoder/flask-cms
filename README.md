@@ -1,6 +1,6 @@
-#Flask CMS
+# Flask CMS
 
-##A full cms, implemented in python, built on top of [Flask-XXL](https://github.com/jstacoder/flask-xxl)
+## A full cms, implemented in python, built on top of [Flask-XXL](https://github.com/jstacoder/flask-xxl)
 
 for documentation on layout, concepts etc.. see the [Flask-XXL wiki](https://github.com/jstacoder/flask-xxl/wiki)
 
@@ -12,41 +12,25 @@ __tags__
 __Comments__  
 
 
-to use:
-  - just put your settings in settings.py
-  - then system and database info in the local\_settings.py file
+to try it out just use docker-compose:
+  - first checkout the repo
+    - `git clone https://github.com/jstacoder/flask-cms.git && cd flask-cms`
+  - then build the app using docker compose
+    - `docker-compose build`
+  - then if this is the first time you've ran this you need to initalize your database
+    - `docker-compose run app /initalize.sh`
+  - and now you can go ahead and run the app
+    - `docker-compose up`   
+  
+  after a few seconds you should see:
 
-for a quick db setup just add 
-
-```python
-class LocalConfig(object):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///tmp.db"
-    SECRET_KEY = "your key"
-
-```
-
-to local\_settings.py (you have to create this file as well) and the in the shell type
-
-
-<kbd>python manage.py db upgrade</kbd>
-
-after a few seconds:
-
-
-
-<kbd>./start.sh</kbd>
-
-then you should see:
-
-```shell
- * Running on http://0.0.0.0:8080/
+```bash
+ * Running on http://0.0.0.0:5000/
  * Restarting with reloader
 ```
 
-then just connect to your ip address: ie
-192.168.1.155:8080 or 127.0.0.1:8080
-or w/e yours is 
----
+then just connect to your docker ip address,   
+proably just localhost
 
 
 
