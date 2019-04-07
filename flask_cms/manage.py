@@ -37,32 +37,12 @@ def show_routes():
 @manager.command
 def init_data():
     with app.test_request_context():
-	    db.metadata = User.metadata
-	    db.metadata.bind = User.engine
-	    """Fish data for project"""
-	    #if prompt_bool('Do you want to kill your db?'):
-	    try:
-                if squ.database_exists(db.engine.url):
-                    squ.drop_database(db.engine.url)
-            except:
-                pass
-	    try:
-		db.metadata.drop_all()
-	    except:
-		pass
-	    try:
-		squ.create_database(db.engine.url)
-            except:
-                pass
-            try:
- 		db.metadata.create_all()
-	    except:
-		pass
-
-	    user = User.query.filter(User.email=='kyle@level2designs.com').first()
-	    if user is None:
-	       user = User(username='kyle', email='kyle@level2designs.com', password='test')
-	    user.save()
+        db.metadata = User.metadata
+        db.metadata.bind = User.engine	   
+        user = User.query.filter(User.email=='kyle@level2designs.com')
+        if user.count() > 0:
+            user = User(username='kyle', email='kyle@level2designs.com', password='test')
+            user.save()
 
 
 manager.add_command('shell', Shell(make_context=lambda:{'app': app, 'db': db}))

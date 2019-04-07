@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 """
     core.views
@@ -8,10 +9,10 @@
 from flask_xxl.baseviews import BaseView
 from flask import flash, redirect, request, url_for,jsonify,session
 #from flask_cms.blog.models import Category,Tag
-from .forms import MarkdownEditor, ColumnForm
+from flask_cms.core.forms import MarkdownEditor, ColumnForm
 from flask_cms.settings import BaseConfig
-from admin.forms import AddPageForm
-from test_jinja import main,row,col
+from flask_cms.admin.forms import AddPageForm
+from flask_cms.core.test_jinja import main,row,col
 from jinja2 import Template
 from flask_cms.auth.models import User
 
@@ -76,6 +77,8 @@ class IndexView(BaseView):
         #    self._context['rows'] = content + footer
 
         #self._context['layouts'] = self._layouts.keys()
+        if 'email' in session:
+            return redirect(url_for('core.blockview', alt_layout=3))
         x = self.render()
         return x
 

@@ -9,6 +9,7 @@ Create Date: 2014-10-27 17:44:34.984694
 # revision identifiers, used by Alembic.
 revision = 'eb5cd7b8c4c'
 down_revision = None
+from uuid import uuid4 
 
 from alembic import op
 import sqlalchemy as sa
@@ -177,8 +178,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('type', sa.String(length=255), nullable=False),
-    sa.Column('color', sa.Enum('blue', 'grey', 'light-blue', 'yellow', 'green', 'red', name='color_enum'), nullable=False),
-    sa.Column('size', sa.Enum('XL', 'L', 'M', 'S', 'XS', name='size_enum'), nullable=False),
+    sa.Column('color', sa.Enum('blue', 'grey', 'light-blue', 'yellow', 'green', 'red',name="color_enum_{}".format(uuid4().hex)), nullable=False),
+    sa.Column('size', sa.Enum('XL', 'L', 'M', 'S', 'XS',name="size_enum_{}".format(uuid4().hex)), nullable=False),
     sa.Column('text', sa.String(length=255), nullable=True),
     sa.Column('icon', sa.String(length=255), nullable=True),
     sa.Column('icon_library', sa.String(length=255), nullable=True),
@@ -217,7 +218,7 @@ def upgrade():
     sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('author_id', sa.Integer(), nullable=True),
     sa.Column('icon_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
+   sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
     sa.ForeignKeyConstraint(['icon_id'], ['font_icons.id'], ),
     sa.PrimaryKeyConstraint('id')

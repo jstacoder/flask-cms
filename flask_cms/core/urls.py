@@ -1,7 +1,10 @@
 from werkzeug.utils import import_string
-from flask_cms.core import views
+from . import views
 from flask_cms import core
 
+print "in core urls"
+
+core.core_blueprint.json_decoder = None
 
 routes = [
     ((core.core_blueprint,),

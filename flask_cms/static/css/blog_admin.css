@@ -23,7 +23,14 @@
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(219, 128, 117, 0.6);    
 }
 
+div.admin-head div.inner {
+    display: contents;
+}
 
+div.admin-head2 {
+    padding-left: 20px;
+    padding-right: 20px;    
+}
 div.admin-head {
     position:absolute;
     top:6px;
@@ -32,6 +39,10 @@ div.admin-head {
     border-radius:16px;
     border:1.8px solid black;
     display:-webkit-inline-box;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    padding-left: 15px;
+
 }
 
 body#body {

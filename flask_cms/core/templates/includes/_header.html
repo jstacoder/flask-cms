@@ -31,12 +31,15 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login Options<b class="caret"></b></a>
                             <ul class="dropdown-menu">
+                                {% if 'email' in session%}
+                               <li><a href="{{ url_for('blog.index') }}">Blogs</a></li>
+                                <li><a href="{{ url_for('core.index') }}">Dashboard</a></li>
+                                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                {% else %}
                                 <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                                <li><a href="#">SignUp</a></li>
-                                {#<li><a href="{{ url_for('base.">Action</a></li>#}
-                                <li class="divider"></li>
-                                <li><a href="#">Blogs</a></li>
-                                <li><a href="#">Dashboard</a></li>
+                                <li><a href="{{ url_for('auth.signup') }}">SignUp</a></li>                                
+                                {% endif %}                                
+ 
                             </ul>
                         </li>
                     </ul>

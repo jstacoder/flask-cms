@@ -1,5 +1,6 @@
-from main.basewidgets import ModelWidget
-from blog import models
+from __future__ import absolute_import
+from ..main.basewidgets import ModelWidget
+from ..blog import models
 
 class TagWidget(ModelWidget):
     _model = models.Tag

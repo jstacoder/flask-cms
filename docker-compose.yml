@@ -1,8 +1,8 @@
 version: '3'
 
 volumes:
-  db_data:
-    external: ${DB_DATA_EXTERNAL:-false}
+  db_data: {}
+  
 
 networks:
   default:
@@ -17,9 +17,8 @@ services:
         DB_HOST: pg
     environment:
       DATABASE_URI: postgres://user:pw@pg:5432/db
-    volumes:
-      - .:/app:delegated
-      - ./postgresql.sock:/var/run/postgres.sock
+   
+      
     ports:
       - "5000:5000"
     links:
@@ -40,7 +39,6 @@ services:
       - POSTGRES_PORT=5433
       - POSTGRES_HOST=0.0.0.0
     volumes:
-      - ./postgresql.sock/:/var/run/postgres/postgres.sock
       - db_data:/var/lib/postgresql/data
 
   redis:
